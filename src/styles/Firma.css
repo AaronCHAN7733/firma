@@ -1,0 +1,53 @@
+/* src/styles/firma.css */
+
+.firma-container {
+    background-color: white;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    width: 400px;
+    margin: 50px auto;
+    text-align: center;
+  }
+  
+  .firma-container h2 {
+    color: #2d3436;
+    margin-bottom: 20px;
+  }
+  
+  .firma-container label {
+    display: block;
+    text-align: left;
+    margin-bottom: 8px;
+    color: #636e72;
+  }
+  
+  .firma-container input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #dfe6e9;
+    margin-bottom: 20px;
+    font-size: 16px;
+  }
+  
+  .firma-container button {
+    padding: 12px 20px;
+    background-color: #00cec9;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  
+  .firma-container button:hover {
+    background-color: #00b894;
+  }
+  
+  .firma-container p {
+    margin-top: 20px;
+    font-size: 16px;
+    color: #2d3436;
+  }
+  

@@ -1,46 +1,50 @@
 /* src/styles/home.css */
 
-body {
-    background: linear-gradient(135deg, #ffeaa7, #fab1a0);
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  .home-container {
-    background-color: white;
-    padding: 50px;
-    border-radius: 15px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-    text-align: center;
-    width: 400px;
-    transition: transform 0.3s ease;
-  }
-  
-  .home-container:hover {
-    transform: scale(1.03);
-  }
-  
-  h1 {
-    color: #2d3436;
-    margin-bottom: 30px;
-    font-size: 26px;
-    text-align: center;
-  }
-  
-  button {
-    padding: 12px 30px;
-    background-color: #d63031;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-  }
-  
-  button:hover {
-    background-color: #e74c3c;
-  }
-  
+/* ... estilos existentes ... */
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #0984e3;
+  padding: 10px 20px;
+  border-radius: 8px;
+}
+
+.navbar h2 {
+  color: white;
+  margin: 0;
+}
+
+.navbar ul {
+  list-style: none;
+  display: flex;
+  margin: 0;
+}
+
+.navbar li {
+  margin-left: 20px;
+}
+
+.navbar a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.navbar button {
+  background-color: #d63031;
+  border: none;
+  padding: 8px 12px;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.navbar button:hover {
+  background-color: #e74c3c;
+}
+
+.welcome {
+  margin-top: 50px;
+}

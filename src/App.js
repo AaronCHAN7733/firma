@@ -5,6 +5,7 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { auth } from './firebase';
 import Login from './components/Login';
 import Home from './components/Home';
+import Firma from './components/Firma'; // Importar el nuevo componente
 
 function App() {
   const [user, setUser] = useState(null);
@@ -19,19 +20,18 @@ function App() {
   return (
     <Router>
       <Routes>
-        {/* Ruta de Login */}
         <Route
           path="/login"
           element={user ? <Navigate to="/home" /> : <Login onLogin={setUser} />}
         />
-
-        {/* Ruta de Home */}
         <Route
           path="/home"
           element={user ? <Home user={user} /> : <Navigate to="/login" />}
         />
-
-        {/* Redireccionar a Login si la ruta no existe */}
+        <Route
+          path="/firma"
+          element={user ? <Firma user={user} /> : <Navigate to="/login" />}
+        />
         <Route path="*" element={<Navigate to="/login" />} />
       </Routes>
     </Router>
