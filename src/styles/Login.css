@@ -1,0 +1,76 @@
+/* src/styles/login.css */
+
+body {
+    background: linear-gradient(135deg, #81ecec, #74b9ff);
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .login-container {
+    background-color: white;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    width: 350px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: transform 0.3s ease;
+  }
+  
+  .login-container:hover {
+    transform: scale(1.02);
+  }
+  
+  h2 {
+    color: #2d3436;
+    margin-bottom: 20px;
+    font-size: 24px;
+  }
+  
+  label {
+    color: #636e72;
+    margin-bottom: 5px;
+    font-size: 14px;
+    text-align: left;
+    display: block;
+  }
+  
+  input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #dfe6e9;
+    margin-bottom: 20px;
+    transition: border-color 0.3s;
+  }
+  
+  input:focus {
+    outline: none;
+    border-color: #0984e3;
+  }
+  
+  button {
+    width: 100%;
+    padding: 12px;
+    background-color: #00cec9;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  button:hover {
+    background-color: #00b894;
+  }
+  
+  p {
+    color: red;
+    font-size: 14px;
+    text-align: center;
+  }
+  

@@ -1,0 +1,46 @@
+/* src/styles/home.css */
+
+body {
+    background: linear-gradient(135deg, #ffeaa7, #fab1a0);
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .home-container {
+    background-color: white;
+    padding: 50px;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    width: 400px;
+    transition: transform 0.3s ease;
+  }
+  
+  .home-container:hover {
+    transform: scale(1.03);
+  }
+  
+  h1 {
+    color: #2d3436;
+    margin-bottom: 30px;
+    font-size: 26px;
+    text-align: center;
+  }
+  
+  button {
+    padding: 12px 30px;
+    background-color: #d63031;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  button:hover {
+    background-color: #e74c3c;
+  }
+  
