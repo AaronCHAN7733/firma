@@ -1,0 +1,126 @@
+/* Estilo para la tabla de usuarios */
+.user-table {
+    width: 100%;
+    margin-top: 20px;
+    border-collapse: collapse;
+    background-color: white;
+  }
+  
+  .user-table th, .user-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+  }
+  
+  .user-table th {
+    background-color: #2196F3;
+    color: white;
+  }
+  
+  .user-table td button {
+    background-color: #6EB8F5;
+    border: none;
+    color: white;
+    padding: 5px 10px;
+    margin: 2px;
+    cursor: pointer;
+  }
+  
+  .user-table td button:hover {
+    background-color: #45a049;
+  }
+  
+  /* Botón para agregar usuario */
+  .add-user-btn {
+    background-color: #84b6f4;
+    color: white;
+    padding: 10px 20px;
+    margin-bottom: 20px;
+    cursor: pointer;
+    border: none;
+  }
+  
+  .add-user-btn:hover {
+    background-color: #4d82bc;
+  }
+  
+  /* Estilo para el modal */
+  .ReactModal__Overlay {
+    opacity: 0;
+    transition: opacity 200ms ease-in-out;
+  }
+  
+  .ReactModal__Overlay--after-open {
+    opacity: 1;
+  }
+  
+  .ReactModal__Overlay--before-close {
+    opacity: 0;
+  }
+  
+  form label {
+    display: block;
+    margin: 10px 0;
+  }
+  
+  form input {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+  }
+  /* Estilos para el modal */
+.Modal {
+  background-color: #e1f0fb;  /* Fondo celeste claro */
+  padding: 20px;
+  border-radius: 10px;
+  max-width: 400px;
+  width: 100%;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.Modal h2 {
+  text-align: center;
+  font-size: 20px;
+  margin-bottom: 20px;
+}
+
+.Modal form label {
+  display: block;
+  margin-bottom: 10px;
+  font-weight: bold;
+  color: #333;
+}
+
+.Modal form input {
+  width: 95%;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  margin-bottom: 15px;
+  background-color: #C3E3FD;  /* Fondo de los inputs celeste */
+}
+
+.Modal button {
+  background-color: #9acef8;  /* Color del botón */
+  color: black;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 25px;
+  cursor: pointer;
+  display: block;
+  width: 100%;
+  text-align: center;
+}
+
+.Modal button:hover {
+  background-color: #2196F3;  /* Efecto hover más oscuro */
+}
+
+.Modal button.close {
+  background-color: #84b6f4;
+  margin-top: 10px;
+}
+
+.Modal button.close:hover {
+  background-color: #4d82bc;
+}

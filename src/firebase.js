@@ -4,17 +4,17 @@ import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore'; // Importar Firestore
 
 const firebaseConfig = {
-    apiKey: "AIzaSyCTIcAxkiZgDfiEoKoWcIMx5AcSaIyJqoI",
-    authDomain: "strong-box2.firebaseapp.com",
-    databaseURL: "https://strong-box2-default-rtdb.firebaseio.com",
-    projectId: "strong-box2",
-    storageBucket: "strong-box2.appspot.com",
-    messagingSenderId: "1024256847796",
-    appId: "1:1024256847796:web:c2fb7ace47207dcf03cce1"
+    apiKey: "AIzaSyCfmRRTzHnX8GUJfvTWJ2mGqOYLQsY3fK4",
+    authDomain: "sistema-requisiciones-ead59.firebaseapp.com",
+    projectId: "sistema-requisiciones-ead59",
+    storageBucket: "sistema-requisiciones-ead59.appspot.com",
+    messagingSenderId: "539118408128",
+    appId: "1:539118408128:web:3ca80b4a4b765b3dab7825"
 };
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
+
 
