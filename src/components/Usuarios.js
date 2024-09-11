@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import Navbar from './Navbar';  // Importamos el componente Navbar
-import TopBar from './TopBar';  // Importamos el componente TopBar
+import Navbar from './Navbar';
+import TopBar from './TopBar';
 import '../styles/Usuarios.css';
-import { collection, getDocs, addDoc, updateDoc, deleteDoc, doc } from 'firebase/firestore';
-import { db } from '../firebase'; // Importa correctamente la base de datos de firebase
-import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth'; // Importar autenticación de Firebase
+import { collection, getDocs, setDoc, updateDoc, deleteDoc, doc } from 'firebase/firestore';
+import { db } from '../firebase';
+import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
 import Modal from 'react-modal';
 
-Modal.setAppElement('#root'); // Para accesibilidad
+Modal.setAppElement('#root');
 
 function Usuarios({ user }) {
   const [isSidebarVisible, setSidebarVisible] = useState(false);
@@ -19,7 +19,7 @@ function Usuarios({ user }) {
     nombre: '',
     role: '',
     telefono: '',
-    password: ''  // Incluimos el campo de contraseña para agregar usuarios
+    password: ''
   });
 
   const toggleSidebar = () => {
@@ -43,7 +43,8 @@ function Usuarios({ user }) {
       const userCredential = await createUserWithEmailAndPassword(auth, newUser.correo, newUser.password);
       const userId = userCredential.user.uid;
 
-      await addDoc(collection(db, 'users'), {
+      // Utiliza setDoc para establecer el uid del usuario como ID del documento
+      await setDoc(doc(db, 'users', userId), {
         uid: userId,
         correo: newUser.correo,
         nombre: newUser.nombre,
@@ -65,7 +66,7 @@ function Usuarios({ user }) {
   const handleEditUser = (user) => {
     setEditingUser(user);
     setModalIsOpen(true);
-    setNewUser({ ...user, password: '' }); // El campo de la contraseña se deja vacío para la edición
+    setNewUser({ ...user, password: '' });
   };
 
   const handleUpdateUser = async () => {
@@ -140,79 +141,78 @@ function Usuarios({ user }) {
           </table>
 
           <Modal
-  isOpen={modalIsOpen}
-  onRequestClose={closeModal}
-  contentLabel="Formulario de Usuario"
-  className="Modal"
-  style={{
-    overlay: {
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      backgroundColor: 'rgba(0, 0, 0, 0.5)'  // Agrega un fondo oscuro semi-transparente
-    },
-    content: {
-      position: 'relative',  // Para que no sobrescriba el posicionamiento
-      maxWidth: '400px',     // Limitar el ancho del modal
-      width: '100%',         // Asegurarse de que ocupe el 100% del contenedor disponible
-      padding: '20px',
-      borderRadius: '10px',
-      backgroundColor: '#e1f0fb', // Celeste claro
-    }
-  }}
->
-  <h2>{editingUser ? 'Editar Usuario' : 'Agregar Usuario'}</h2>
-  <form>
-    <label>
-      Correo:
-      <input
-        type="email"
-        value={newUser.correo}
-        onChange={(e) => setNewUser({ ...newUser, correo: e.target.value })}
-        disabled={!!editingUser}  // Deshabilitar el campo correo si está editando un usuario
-      />
-    </label>
-    <label>
-      Nombre:
-      <input
-        type="text"
-        value={newUser.nombre}
-        onChange={(e) => setNewUser({ ...newUser, nombre: e.target.value })}
-      />
-    </label>
-    <label>
-      Rol:
-      <input
-        type="text"
-        value={newUser.role}
-        onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}
-      />
-    </label>
-    <label>
-      Teléfono:
-      <input
-        type="text"
-        value={newUser.telefono}
-        onChange={(e) => setNewUser({ ...newUser, telefono: e.target.value })}
-      />
-    </label>
-    {!editingUser && (  // Mostrar el campo de contraseña solo si estamos agregando un nuevo usuario
-      <label>
-        Contraseña:
-        <input
-          type="password"
-          value={newUser.password}
-          onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
-        />
-      </label>
-    )}
-  </form>
-  <button onClick={editingUser ? handleUpdateUser : handleAddUser}>
-    {editingUser ? 'Actualizar' : 'Agregar'}
-  </button>
-  <button className="close" onClick={closeModal}>Cerrar</button>
-</Modal>
-
+            isOpen={modalIsOpen}
+            onRequestClose={closeModal}
+            contentLabel="Formulario de Usuario"
+            className="Modal"
+            style={{
+              overlay: {
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                backgroundColor: 'rgba(0, 0, 0, 0.5)'
+              },
+              content: {
+                position: 'relative',
+                maxWidth: '400px',
+                width: '100%',
+                padding: '20px',
+                borderRadius: '10px',
+                backgroundColor: '#e1f0fb',
+              }
+            }}
+          >
+            <h2>{editingUser ? 'Editar Usuario' : 'Agregar Usuario'}</h2>
+            <form>
+              <label>
+                Correo:
+                <input
+                  type="email"
+                  value={newUser.correo}
+                  onChange={(e) => setNewUser({ ...newUser, correo: e.target.value })}
+                  disabled={!!editingUser}
+                />
+              </label>
+              <label>
+                Nombre:
+                <input
+                  type="text"
+                  value={newUser.nombre}
+                  onChange={(e) => setNewUser({ ...newUser, nombre: e.target.value })}
+                />
+              </label>
+              <label>
+                Rol:
+                <input
+                  type="text"
+                  value={newUser.role}
+                  onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}
+                />
+              </label>
+              <label>
+                Teléfono:
+                <input
+                  type="text"
+                  value={newUser.telefono}
+                  onChange={(e) => setNewUser({ ...newUser, telefono: e.target.value })}
+                />
+              </label>
+              {!editingUser && (
+                <label>
+                  Contraseña:
+                  <input
+                    type="password"
+                    value={newUser.password}
+                    onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
+                  />
+                </label>
+              )}
+            </form>
+            <button onClick={editingUser ? handleUpdateUser : handleAddUser}>
+              {editingUser ? 'Actualizar' : 'Agregar'}
+            </button>
+            <button className="close" onClick={closeModal}>Cerrar</button>
+          </Modal>
 
         </section>
       </main>
