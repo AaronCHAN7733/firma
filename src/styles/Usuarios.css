@@ -38,6 +38,7 @@
     margin-bottom: 20px;
     cursor: pointer;
     border: none;
+    margin-left: 60px;
   }
   
   .add-user-btn:hover {

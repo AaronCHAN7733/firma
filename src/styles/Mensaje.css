@@ -1,0 +1,96 @@
+
+
+/* Estilo del título del formulario */
+  
+  /* Estilo para el contenedor del formulario */
+  .form-container {
+    background-color: #e1f0fb;
+    padding: 20px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+    max-width: 350px;  /* Limita el tamaño del formulario */
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);  /* Añade sombra */
+    
+    /* Alineación centrada */
+    margin: 0 auto;  /* Asegura que esté centrado horizontalmente */
+  }
+  
+  /* Estilo de cada campo del formulario */
+  .form-group {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .form-group label {
+    margin-bottom: 5px;
+    font-size: 16px;
+  }
+  
+  .form-input, .form-textarea {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #c4e0f9;
+    font-size: 16px;
+  }
+  
+  .form-textarea {
+    resize: none;
+    height: 150px;
+  }
+  
+  /* Contenedor del ícono */
+  .icon-container {
+    text-align: right;
+    margin-top: -30px;
+    margin-right: 10px;
+  }
+  
+  .icon-paper {
+    font-size: 24px;
+    cursor: pointer;
+  }
+  
+  /* Estilos de los botones */
+  .form-actions {
+    display: flex;
+    justify-content: space-between;
+  }
+  
+  .btn-cancel, .btn-submit {
+    background-color: #4fa8f0;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 30px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+  
+  .btn-cancel {
+    background-color: #62a4c9;
+  }
+  
+  .btn-cancel:hover, .btn-submit:hover {
+    background-color: #357ab7;
+  }
+  
+  /* Estilos responsivos */
+  @media (max-width: 768px) {
+    .form-container {
+      padding: 10px;
+    }
+  
+    .form-actions {
+      flex-direction: column;
+      gap: 10px;
+    }
+  
+    .btn-cancel, .btn-submit {
+      width: 100%;
+    }
+  }
+  

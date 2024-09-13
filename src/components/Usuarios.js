@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import Navbar from './Navbar';
 import TopBar from './TopBar';
 import '../styles/Usuarios.css';
-import { collection, getDocs, setDoc, updateDoc, deleteDoc, doc } from 'firebase/firestore';
+import { collection, getDocs, setDoc, updateDoc, doc } from 'firebase/firestore';
 import { db } from '../firebase';
-import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
+import { getAuth, createUserWithEmailAndPassword, signOut } from 'firebase/auth';
 import Modal from 'react-modal';
 
 Modal.setAppElement('#root');
@@ -21,6 +21,7 @@ function Usuarios({ user }) {
     telefono: '',
     password: ''
   });
+  const [error, setError] = useState('');
 
   const toggleSidebar = () => {
     setSidebarVisible(!isSidebarVisible);
@@ -28,22 +29,49 @@ function Usuarios({ user }) {
 
   useEffect(() => {
     const fetchUsers = async () => {
-      const querySnapshot = await getDocs(collection(db, 'users'));
-      const usersList = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      setUsuarios(usersList);
+      try {
+        const querySnapshot = await getDocs(collection(db, 'users'));
+        const usersList = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        setUsuarios(usersList);
+      } catch (error) {
+        console.error("Error al obtener los usuarios:", error);
+      }
     };
 
     fetchUsers();
   }, []);
 
+  const validateEmail = (email) => {
+    const allowedDomains = ['gmail.com', 'outlook.com', 'hotmail.com'];
+    const emailParts = email.split('@');
+    if (emailParts.length === 2 && allowedDomains.includes(emailParts[1])) {
+      return true;
+    }
+    return false;
+  };
+
   const handleAddUser = async () => {
     const auth = getAuth();
 
+    if (!newUser.correo || !newUser.nombre || !newUser.role || !newUser.telefono || !newUser.password) {
+      setError('Por favor, completa todos los campos');
+      return;
+    }
+
+    if (!validateEmail(newUser.correo)) {
+      setError('Por favor, ingresa un correo válido (e.g. @gmail.com, @outlook.com)');
+      return;
+    }
+
     try {
+      // Crear el usuario en Firebase Authentication
       const userCredential = await createUserWithEmailAndPassword(auth, newUser.correo, newUser.password);
       const userId = userCredential.user.uid;
 
-      // Utiliza setDoc para establecer el uid del usuario como ID del documento
+      // Cerrar la sesión inmediatamente después de crear el usuario
+      await signOut(auth);
+
+      // Guardar los datos del usuario en Firestore
       await setDoc(doc(db, 'users', userId), {
         uid: userId,
         correo: newUser.correo,
@@ -52,14 +80,17 @@ function Usuarios({ user }) {
         telefono: newUser.telefono
       });
 
+      // Limpiar el formulario y cerrar el modal
       setModalIsOpen(false);
       setNewUser({ correo: '', nombre: '', role: '', telefono: '', password: '' });
 
+      // Recargar la lista de usuarios
       const querySnapshot = await getDocs(collection(db, 'users'));
       const usersList = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       setUsuarios(usersList);
     } catch (error) {
-      console.error("Error al crear el usuario: ", error);
+      console.error("Error al crear el usuario:", error);
+      alert("Error al crear el usuario: " + error.message);
     }
   };
 
@@ -70,35 +101,43 @@ function Usuarios({ user }) {
   };
 
   const handleUpdateUser = async () => {
+    if (!newUser.nombre || !newUser.role || !newUser.telefono) {
+      alert('Por favor, completa todos los campos');
+      return;
+    }
+
     const userDocRef = doc(db, 'users', editingUser.id);
-    await updateDoc(userDocRef, {
-      nombre: newUser.nombre,
-      role: newUser.role,
-      telefono: newUser.telefono
-    });
-    setEditingUser(null);
-    setModalIsOpen(false);
-    setNewUser({ correo: '', nombre: '', role: '', telefono: '', password: '' });
+    try {
+      await updateDoc(userDocRef, {
+        nombre: newUser.nombre,
+        role: newUser.role,
+        telefono: newUser.telefono
+      });
 
-    const querySnapshot = await getDocs(collection(db, 'users'));
-    const usersList = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    setUsuarios(usersList);
-  };
+      setEditingUser(null);
+      setModalIsOpen(false);
+      setNewUser({ correo: '', nombre: '', role: '', telefono: '', password: '' });
 
-  const handleDeleteUser = async (id) => {
-    const userDocRef = doc(db, 'users', id);
-    await deleteDoc(userDocRef);
-    setUsuarios(usuarios.filter(user => user.id !== id));
+      // Recargar la lista de usuarios
+      const querySnapshot = await getDocs(collection(db, 'users'));
+      const usersList = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setUsuarios(usersList);
+    } catch (error) {
+      console.error("Error al actualizar el usuario:", error);
+      alert("Error al actualizar el usuario: " + error.message);
+    }
   };
 
   const openModal = () => {
     setModalIsOpen(true);
     setEditingUser(null);
+    setError('');
   };
 
   const closeModal = () => {
     setModalIsOpen(false);
     setNewUser({ correo: '', nombre: '', role: '', telefono: '', password: '' });
+    setError('');
   };
 
   return (
@@ -173,6 +212,7 @@ function Usuarios({ user }) {
                   disabled={!!editingUser}
                 />
               </label>
+              {error && <p style={{ color: 'red' }}>{error}</p>}
               <label>
                 Nombre:
                 <input

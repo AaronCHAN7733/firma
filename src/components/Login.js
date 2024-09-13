@@ -34,15 +34,16 @@ const Login = ({ onLogin }) => {
         // Redirigir según el rol
         if (role === 'admin') {
           navigate('/adminHome');
+        } else if (role === 'personal') {
+          navigate('/homeOperativos');
         } else {
-          navigate('/login'); // Redirige a la página normal si no es admin
+          navigate('/login'); // Redirige a la página normal si el rol no coincide
         }
       } else {
         setError('No se encontró el perfil del usuario.');
       }
     } catch (err) {
-      setError('Error al iniciar sesión:  Su correo y/o contraseña no son validos');
-
+      setError('Error al iniciar sesión: Su correo y/o contraseña no son válidos');
     }
     setLoading(false);
   };

@@ -6,7 +6,10 @@ import { doc, getDoc } from 'firebase/firestore';
 import Login from './components/Login';
 import Home from './components/Home';
 import AdminHome from './components/AdminHome';
-import Usuarios from './components/Usuarios';  // Importamos el nuevo componente Usuarios
+import Usuarios from './components/Usuarios';  // Importamos el componente Usuarios
+import Mensaje from './components/Mensaje';  // Importamos el componente Mensaje
+import HomeOperativos from './components/HomeOperativos';  // Nuevo componente para el rol 'personal'
+import LlenarRequisicion from './components/LlenarRequisicion';  // Componente de requisición
 
 function ProtectedRoute({ user, role, allowedRoles, children }) {
   if (!user) {
@@ -22,8 +25,6 @@ function ProtectedRoute({ user, role, allowedRoles, children }) {
 }
 
 function App() {
-
-  
   const [user, setUser] = useState(null);
   const [role, setRole] = useState(null); // Estado para almacenar el rol
   const [loading, setLoading] = useState(true);
@@ -80,7 +81,7 @@ function App() {
           }
         />
 
-        {/* Nueva ruta para el componente Usuarios, solo para administradores */}
+        {/* Ruta para el componente Usuarios, solo para administradores */}
         <Route
           path="/usuarios"
           element={
@@ -90,8 +91,38 @@ function App() {
           }
         />
 
+        {/* Nueva ruta para el componente Mensaje, solo para administradores */}
+        <Route
+          path="/mensaje"
+          element={
+            <ProtectedRoute user={user} role={role} allowedRoles={['admin']}>
+              <Mensaje />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Ruta para personal (rol 'personal') */}
+        <Route
+          path="/homeOperativos"
+          element={
+            <ProtectedRoute user={user} role={role} allowedRoles={['personal']}>
+              <HomeOperativos user={user} />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Ruta para el formulario de requisición, solo para 'personal' */}
+        <Route
+          path="/llenarRequisicion"
+          element={
+            <ProtectedRoute user={user} role={role} allowedRoles={['personal']}>
+              <LlenarRequisicion user={user} />
+            </ProtectedRoute>
+          }
+        />
+
         {/* Redireccionar rutas no válidas */}
-        <Route path="*" element={<Navigate to={user ? (role === 'admin' ? "/adminHome" : "/home") : "/login"} />} />
+        <Route path="*" element={<Navigate to={user ? (role === 'admin' ? "/adminHome" : role === 'personal' ? "/homeOperativos" : "/home") : "/login"} />} />
       </Routes>
     </Router>
   );

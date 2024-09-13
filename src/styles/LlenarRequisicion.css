@@ -1,0 +1,182 @@
+.requisition-form {
+    background-color: #e3f2fd;
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 1200px; /* Limita el ancho del formulario */
+    margin: 0 auto; /* Centra el formulario */
+  }
+  
+  h2, h3 {
+    text-align: center;
+    color: #0d47a1;
+  }
+  
+  .form-row {
+    display: flex;
+    flex-wrap: wrap; /* Asegura que los elementos se envuelvan si no caben en una fila */
+    justify-content: space-between;
+    margin-bottom: 15px;
+    gap: 10px; /* Espacio entre los elementos */
+  }
+  
+  .form-row label {
+    flex: 1; /* Ocupa todo el ancho disponible */
+    margin-right: 10px;
+    color: #0d47a1;
+  }
+  
+  .form-row input {
+    flex: 1; /* Ocupa todo el ancho disponible */
+    padding: 5px;
+    border: 1px solid #90caf9;
+    border-radius: 5px;
+    width: 100%; /* Asegura que los inputs no se reduzcan más de lo necesario */
+  }
+  
+  /* Estilos para la tabla */
+  .requisition-table {
+    width: 100%;
+    margin-top: 20px;
+    border-collapse: collapse;
+  }
+  
+  .requisition-table th, .requisition-table td {
+    border: 1px solid #90caf9;
+    padding: 10px;
+    text-align: center;
+  }
+  
+  .total-row {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+  }
+  
+  .total-row label {
+    color: #0d47a1;
+    margin-right: 10px;
+  }
+  
+  .submit-btn {
+    background-color: #42a5f5;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    display: block;
+    margin: 20px auto;
+  }
+  
+  .submit-btn:hover {
+    background-color: #1e88e5;
+  }
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+  }
+  
+  .modal {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 500px;
+    width: 100%;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
+    text-align: center;
+  }
+  
+  .modal h2 {
+    color: #007BFF; /* Azul */
+    margin-bottom: 5px;
+  }
+  
+  /* Estilo para el contenedor de los inputs dentro del modal */
+  .modal .form-row {
+    display: flex;
+    flex-direction: column; /* Coloca los inputs uno debajo del otro */
+    gap: 15px; /* Espacio entre los inputs */
+    margin-bottom: 10px; /* Añade espacio en la parte inferior */
+  }
+  
+  .modal label {
+    text-align: left;
+    color: #0d47a1;
+    margin-bottom: 1px; /* Espacio entre el label y el input */
+  }
+  
+  .modal input {
+    width: 95%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    margin-bottom: 1px;
+    background-color: #C3E3FD;  /* Fondo de los inputs celeste */
+  }
+  
+  .submit-btn-modal, .cancel-btn-modal {
+    background-color: #9acef8;  /* Color del botón */
+    color: black;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 25px;
+    cursor: pointer;
+    width: 80%;
+    text-align: center;
+    align-items: center;
+  }
+  
+  .cancel-btn-modal {
+    background-color: #dc3545; /* Rojo para el botón de cancelar */
+    text-align: center;
+    color: white;
+    margin-top: 10px;
+  }
+  
+  /* Responsividad para el modal */
+  @media (max-width: 768px) {
+    .modal {
+      max-width: 90%; /* Aumenta el ancho del modal en pantallas pequeñas */
+    }
+  }
+  
+  
+  
+  /* Responsividad para pantallas más pequeñas */
+  @media (max-width: 1024px) {
+    .form-row {
+      flex-direction: row;
+      gap: 15px;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .form-row {
+      flex-direction: column; /* Cambia a una columna por fila en pantallas pequeñas */
+    }
+  
+    .form-row input {
+      width: 95%; /* Asegura que los inputs ocupen todo el ancho en dispositivos móviles */
+    }
+  }
+  
+  /* Para dispositivos aún más pequeños */
+  @media (max-width: 480px) {
+    .form-row {
+      flex-direction: column; /* Sigue una columna, pero con menos margen entre los elementos */
+    }
+  
+    .form-row input {
+      padding: 8px;
+      font-size: 14px; /* Tamaño de texto ajustado */
+    }
+  }
+  

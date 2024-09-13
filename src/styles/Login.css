@@ -36,6 +36,9 @@ html, body {
   padding: 50px 20px; /* Ajusta el padding para que haya más espacio arriba y abajo */
   border-radius: 8px;
   box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.1); /* Añade sombra */
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .logo {
