@@ -36,8 +36,10 @@ const Login = ({ onLogin }) => {
           navigate('/adminHome');
         } else if (role === 'personal') {
           navigate('/homeOperativos');
+        } else if (role === 'firmante') {
+          navigate('/homeFirmante'); // Redirigir al HomeFirmante si el rol es "firmante"
         } else {
-          navigate('/login'); // Redirige a la página normal si el rol no coincide
+          navigate('/login'); // Redirige a la página de login si el rol no coincide
         }
       } else {
         setError('No se encontró el perfil del usuario.');

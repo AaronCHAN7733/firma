@@ -1,4 +1,4 @@
-/* src/styles/Login.css */
+/* Estilos globales */
 html, body {
   margin: 0;
   padding: 0;
@@ -6,6 +6,7 @@ html, body {
   font-family: 'Arial', sans-serif;
 }
 
+/* Contenedor principal de la página de login */
 .login-container {
   display: flex;
   height: 100vh; /* Ocupa toda la altura de la pantalla */
@@ -13,6 +14,7 @@ html, body {
   background-color: #DCEDFB;
 }
 
+/* Estilos para la parte izquierda del login */
 .login-left, .login-right {
   display: flex;
   flex-direction: column;
@@ -30,13 +32,14 @@ html, body {
 
 .form-container {
   width: 100%;
-  max-width: 300px; /* Disminuye el ancho máximo del formulario */
-  height: 550px; /* Aumenta la altura del formulario */
+  max-width: 300px; /* Ancho máximo del formulario */
+  height: auto;
   background-color: #DCEDFB;
-  padding: 50px 20px; /* Ajusta el padding para que haya más espacio arriba y abajo */
+  padding: 50px 20px; /* Ajusta el padding para que haya más espacio */
   border-radius: 8px;
   box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.1); /* Añade sombra */
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
 }
@@ -99,6 +102,7 @@ h2 {
   margin-top: 10px;
 }
 
+/* Estilos para la parte derecha del login */
 .login-right {
   background-color: white;
   padding: 40px;
@@ -125,4 +129,52 @@ h2 {
   color: #777777;
   margin-top: 20px;
   text-align: center;
+}
+
+/* MEDIA QUERIES */
+
+/* Estilos para pantallas con un ancho máximo de 768px (tabletas y móviles) */
+@media (max-width: 768px) {
+  /* Ocultar la parte derecha del formulario en pantallas pequeñas */
+  .login-right {
+    display: none;
+  }
+
+  /* Asegurar que la parte izquierda ocupe todo el ancho en dispositivos móviles */
+  .login-left {
+    flex: 1;
+    width: 100%;
+    padding: 20px;
+  }
+
+  /* Ajustes para la imagen del logo en móviles */
+  .logo {
+    width: 150px;
+    height: 60px;
+  }
+
+  /* Aumentar el ancho del formulario para adaptarse a pantallas más pequeñas */
+  .form-container {
+    max-width: 100%;
+    height: auto;
+    padding: 30px 15px;
+  }
+
+  h2 {
+    font-size: 18px;
+  }
+
+  .form-group input {
+    padding: 8px;
+    font-size: 12px;
+  }
+
+  .login-btn {
+    font-size: 14px;
+    padding: 8px;
+  }
+
+  .footer-text {
+    font-size: 10px;
+  }
 }

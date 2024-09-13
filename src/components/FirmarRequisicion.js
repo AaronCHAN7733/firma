@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import Navbar from './Navbar';  // Importamos el componente Navbar
+import FirmanteNavbar from './FirmanteNavbar';  // Importamos el componente FirmanteNavbar
 import TopBar from './TopBar';  // Importamos el nuevo componente TopBar
-import '../styles/AdminHome.css';
 
-function AdminHome({ user }) {
+function FirmarRequisicion({ user }) {
   const [isSidebarVisible, setSidebarVisible] = useState(false);
 
   const toggleSidebar = () => {
@@ -16,12 +15,12 @@ function AdminHome({ user }) {
         ☰
       </button>
 
-      {/* Usamos el componente Navbar aquí */}
-      <Navbar isSidebarVisible={isSidebarVisible} toggleSidebar={toggleSidebar} />
+      {/* Usamos el componente FirmanteNavbar aquí */}
+      <FirmanteNavbar isSidebarVisible={isSidebarVisible} toggleSidebar={toggleSidebar} />
 
       <main className={`main-content ${isSidebarVisible ? 'shifted' : ''}`}>
         {/* Usamos el nuevo componente TopBar */}
-        <TopBar userName="Administrador" />
+        <TopBar userName="Firmante" />
 
         <section className="content">
         </section>
@@ -30,4 +29,4 @@ function AdminHome({ user }) {
   );
 }
 
-export default AdminHome;
+export default FirmarRequisicion;

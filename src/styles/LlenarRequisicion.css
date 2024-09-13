@@ -23,6 +23,7 @@
     flex: 1; /* Ocupa todo el ancho disponible */
     margin-right: 10px;
     color: #0d47a1;
+    height: 20px;
   }
   
   .form-row input {
@@ -71,6 +72,16 @@
   .submit-btn:hover {
     background-color: #1e88e5;
   }
+  .delete-btn{
+    background-color: #42a5f5;
+    color: white;
+    padding: 10px ;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    display: block;
+    margin: 20px auto;
+  }  
   .modal-overlay {
     position: fixed;
     top: 0;
@@ -88,22 +99,22 @@
     background-color: #fff;
     padding: 20px;
     border-radius: 8px;
-    max-width: 500px;
+    max-width: 350px;
     width: 100%;
-    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.5);
     text-align: center;
   }
   
   .modal h2 {
-    color: #007BFF; /* Azul */
+    color: black; /* Azul */
     margin-bottom: 5px;
   }
   
   /* Estilo para el contenedor de los inputs dentro del modal */
   .modal .form-row {
-    display: flex;
+    display: block;
     flex-direction: column; /* Coloca los inputs uno debajo del otro */
-    gap: 15px; /* Espacio entre los inputs */
+    gap: 20px; /* Espacio entre los inputs */
     margin-bottom: 10px; /* Añade espacio en la parte inferior */
   }
   
@@ -114,12 +125,13 @@
   }
   
   .modal input {
-    width: 95%;
+    width: 80%;
     padding: 10px;
     border-radius: 5px;
     border: 1px solid #ccc;
     margin-bottom: 1px;
     background-color: #C3E3FD;  /* Fondo de los inputs celeste */
+    align-items: center;
   }
   
   .submit-btn-modal, .cancel-btn-modal {
@@ -135,16 +147,23 @@
   }
   
   .cancel-btn-modal {
-    background-color: #dc3545; /* Rojo para el botón de cancelar */
+    background-color: #0d47a1; /* Rojo para el botón de cancelar */
     text-align: center;
     color: white;
     margin-top: 10px;
+  }
+  .cancel-btn-modal:hover{
+    background-color: red;
+  }
+  .submit-btn-modal:hover{
+    background-color: darkblue;
+    color: white;
   }
   
   /* Responsividad para el modal */
   @media (max-width: 768px) {
     .modal {
-      max-width: 90%; /* Aumenta el ancho del modal en pantallas pequeñas */
+      max-width: 50%; /* Aumenta el ancho del modal en pantallas pequeñas */
     }
   }
   
@@ -155,6 +174,7 @@
     .form-row {
       flex-direction: row;
       gap: 15px;
+      display: block;
     }
   }
   
@@ -165,6 +185,7 @@
   
     .form-row input {
       width: 95%; /* Asegura que los inputs ocupen todo el ancho en dispositivos móviles */
+      
     }
   }
   

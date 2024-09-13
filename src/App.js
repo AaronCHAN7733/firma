@@ -8,8 +8,10 @@ import Home from './components/Home';
 import AdminHome from './components/AdminHome';
 import Usuarios from './components/Usuarios';  // Importamos el componente Usuarios
 import Mensaje from './components/Mensaje';  // Importamos el componente Mensaje
-import HomeOperativos from './components/HomeOperativos';  // Nuevo componente para el rol 'personal'
+import HomeOperativos from './components/HomeOperativos';  // Componente para el rol 'personal'
 import LlenarRequisicion from './components/LlenarRequisicion';  // Componente de requisición
+import HomeFirmante from './components/HomeFirmante';  // Componente para el rol 'firmante'
+import FirmarRequisicion from './components/FirmarRequisicion'; // Componente para firmar requisición
 
 function ProtectedRoute({ user, role, allowedRoles, children }) {
   if (!user) {
@@ -91,7 +93,7 @@ function App() {
           }
         />
 
-        {/* Nueva ruta para el componente Mensaje, solo para administradores */}
+        {/* Ruta para el componente Mensaje, solo para administradores */}
         <Route
           path="/mensaje"
           element={
@@ -121,8 +123,33 @@ function App() {
           }
         />
 
+        {/* Ruta para firmante (rol 'firmante') */}
+        <Route
+          path="/homeFirmante"
+          element={
+            <ProtectedRoute user={user} role={role} allowedRoles={['firmante']}>
+              <HomeFirmante user={user} />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Ruta para firmar requisiciones, solo para firmantes */}
+        <Route
+          path="/firmarRequisicion"
+          element={
+            <ProtectedRoute user={user} role={role} allowedRoles={['firmante']}>
+              <FirmarRequisicion user={user} />
+            </ProtectedRoute>
+          }
+        />
+
         {/* Redireccionar rutas no válidas */}
-        <Route path="*" element={<Navigate to={user ? (role === 'admin' ? "/adminHome" : role === 'personal' ? "/homeOperativos" : "/home") : "/login"} />} />
+        <Route
+          path="*"
+          element={
+            <Navigate to={user ? (role === 'admin' ? "/adminHome" : role === 'personal' ? "/homeOperativos" : role === 'firmante' ? "/homeFirmante" : "/home") : "/login"} />
+          }
+        />
       </Routes>
     </Router>
   );
