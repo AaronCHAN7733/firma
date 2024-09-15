@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { auth, db } from '../firebase'; // Asegúrate de que `db` sea la referencia a tu Firestore
 import { doc, getDoc } from 'firebase/firestore';
 import '../styles/Login.css';
+import Swal from 'sweetalert';
 
 const Login = ({ onLogin }) => {
   const [email, setEmail] = useState('');
@@ -45,7 +46,11 @@ const Login = ({ onLogin }) => {
         setError('No se encontró el perfil del usuario.');
       }
     } catch (err) {
-      setError('Error al iniciar sesión: Su correo y/o contraseña no son válidos');
+      Swal({
+        title: "¡Tu correo y/o contraseña son invalidos!",
+        icon: "warning",
+        button: "OK"
+      });
     }
     setLoading(false);
   };

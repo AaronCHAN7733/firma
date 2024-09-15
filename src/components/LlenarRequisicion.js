@@ -131,12 +131,13 @@ function LlenarRequisicion() {
       return;
     }
 
-    // Datos que se van a enviar a Firestore, incluyendo el nombre del usuario
+    // Datos que se van a enviar a Firestore, incluyendo el nombre del usuario y el estatus "En Firma"
     const requisicion = {
       ...formInfo,
       items,
       total,
-      nombreUsuario: userName  // Enviar el nombre del usuario obtenido de Firestore
+      nombreUsuario: userName,  // Enviar el nombre del usuario obtenido de Firestore
+      estatus: "En Firma"  // Estatus automático "En Firma"
     };
 
     try {
@@ -166,7 +167,7 @@ function LlenarRequisicion() {
     });
     setItems([]);
     setTotal(0);
-  };
+};
 
   return (
     <div className={`admin-container ${isSidebarVisible ? 'shifted' : ''}`}>

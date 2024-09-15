@@ -12,6 +12,7 @@ import HomeOperativos from './components/HomeOperativos';  // Componente para el
 import LlenarRequisicion from './components/LlenarRequisicion';  // Componente de requisición
 import HomeFirmante from './components/HomeFirmante';  // Componente para el rol 'firmante'
 import FirmarRequisicion from './components/FirmarRequisicion'; // Componente para firmar requisición
+import HistorialRequisiciones from './components/HistorialRequisciones'; // Importamos el componente Historial
 
 function ProtectedRoute({ user, role, allowedRoles, children }) {
   if (!user) {
@@ -119,6 +120,16 @@ function App() {
           element={
             <ProtectedRoute user={user} role={role} allowedRoles={['personal']}>
               <LlenarRequisicion user={user} />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Ruta para historial, solo para 'personal' */}
+        <Route
+          path="/historial"
+          element={
+            <ProtectedRoute user={user} role={role} allowedRoles={['personal']}>
+              <HistorialRequisiciones user={user} />
             </ProtectedRoute>
           }
         />
