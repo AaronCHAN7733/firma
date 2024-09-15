@@ -125,3 +125,44 @@
 .Modal button.close:hover {
   background-color: #4d82bc;
 }
+
+/* Estilos para el contenedor de búsqueda */
+.search-container {
+  display: flex;
+  justify-content: flex-end; /* Posiciona el buscador a la derecha */
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+/* Estilos para el input de búsqueda */
+.search-input {
+  width: 100%;
+  max-width: 300px;
+  padding: 10px 35px 10px 15px; /* Añade espacio para el ícono */
+  font-size: 16px;
+  border: 2px solid #007BFF;
+  border-radius: 5px;
+  outline: none;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+/* Estilo del ícono de búsqueda */
+.search-icon {
+  position: relative;
+  left: -30px;
+  color: #007BFF;
+}
+
+/* Efecto al enfocar el input */
+.search-input:focus {
+  border-color: #0056b3;
+  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+/* Ajustes para pantallas pequeñas */
+@media (max-width: 600px) {
+  .search-input {
+    max-width: 40%;
+  }
+}

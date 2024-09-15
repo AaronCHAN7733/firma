@@ -45,9 +45,9 @@ html, body {
 }
 
 .logo {
-  width: 180px;
+  width: 80%;
   height: 80px;
-  background-image: url('/src/img/logo.png');
+  background-image: url('/src/img/BannerLogos.png');
   background-repeat: no-repeat;
   background-size: contain;
   background-position: center;
@@ -138,6 +138,16 @@ h2 {
   /* Ocultar la parte derecha del formulario en pantallas pequeñas */
   .login-right {
     display: none;
+  }
+
+  /* Mostrar el título en la parte superior de la izquierda */
+  .login-left:before {
+    content: "Sistema de requisiciones de materiales y/o servicios";
+    display: block;
+    font-size: 18px;
+    text-align: center;
+    margin-bottom: 20px;
+    color: #333;
   }
 
   /* Asegurar que la parte izquierda ocupe todo el ancho en dispositivos móviles */

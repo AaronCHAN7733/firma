@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import OperativoNavbar from './OperativoNavbar';
 import TopBar from './TopBar';
+import Swal from 'sweetalert';
 import { db } from '../firebase';  // Importar Firestore
 import { collection, addDoc, doc, getDoc } from 'firebase/firestore';  // Funciones necesarias para agregar y leer de Firestore
 import { auth } from '../firebase';  // Importar la autenticación
 import '../styles/LlenarRequisicion.css';  // External CSS file for styling
+import Select from 'react-select';
+import PartidasPresupuestales from './PartidasPresupuestales';
+
 
 function LlenarRequisicion() {
   const [isSidebarVisible, setSidebarVisible] = useState(false);
@@ -29,6 +33,10 @@ function LlenarRequisicion() {
     folio: ''
   });
   const [userName, setUserName] = useState('');  // Estado para almacenar el nombre del usuario
+
+
+  
+  
 
   // Obtener el nombre del usuario autenticado desde Firestore
   useEffect(() => {
@@ -113,7 +121,13 @@ function LlenarRequisicion() {
       !formInfo.fechaElaboracion || !formInfo.componente || !formInfo.nombreEvento || 
       !formInfo.fechaEvento || !formInfo.folio || items.length === 0
     ) {
-      alert('Por favor, completa todos los campos y agrega al menos un material o servicio.');
+      Swal({
+        title: "Campos incompletos",
+        text: "Por favor, completa todos los campos y agrega al menos un material o servicio.",
+        icon: "warning",
+        button: "Entendido"
+      });
+      
       return;
     }
 
@@ -128,7 +142,13 @@ function LlenarRequisicion() {
     try {
       // Guardar en Firestore (en la colección "requisiciones")
       await addDoc(collection(db, 'requisiciones'), requisicion);
-      alert('Requisición enviada correctamente');
+      Swal({
+        title: "¡Éxito!",
+        text: "Requisición enviada correctamente.",
+        icon: "success",
+        button: "Aceptar"
+      });
+      
     } catch (error) {
       console.error('Error al enviar requisición:', error);
     }
@@ -180,7 +200,7 @@ function LlenarRequisicion() {
               <label>Nombre de evento:</label>
               <input type="text" name="nombreEvento" value={formInfo.nombreEvento} onChange={handleFormInfoChange} />
               <label>Fecha del evento:</label>
-              <input type="date" name="fechaEvento" value={formInfo.fechaEvento} onChange={handleFormInfoChange} />
+              <input type="text" name="fechaEvento" value={formInfo.fechaEvento} onChange={handleFormInfoChange} />
               <label>Folio:</label>
               <input type="text" name="folio" value={formInfo.folio} onChange={handleFormInfoChange} />
             </div>
@@ -278,13 +298,11 @@ function LlenarRequisicion() {
                     required
                   />
                   <label>Partida:</label>
-                  <input
-                    type="text"
-                    name="partida"
-                    value={formValues.partida}
-                    onChange={handleChange}
-                    required
-                  />
+                  <Select
+                     options={PartidasPresupuestales}
+                      onChange={(selectedOption) => setFormValues({ ...formValues, partida: selectedOption.value })}
+                      value={PartidasPresupuestales.find(option => option.value === formValues.partida)}
+                   />
                 </div>
                 <button type="submit" className="submit-btn-modal">Agregar</button>
                 <button type="button" className="cancel-btn-modal" onClick={closeModal}>Cancelar</button>

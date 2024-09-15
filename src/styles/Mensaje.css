@@ -4,7 +4,7 @@
   
   /* Estilo para el contenedor del formulario */
   .form-container {
-    background-color: #e1f0fb;
+    background-color: white;
     padding: 20px;
     border-radius: 10px;
     display: flex;
@@ -12,7 +12,7 @@
     gap: 20px;
     width: 100%;
     max-width: 350px;  /* Limita el tamaño del formulario */
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);  /* Añade sombra */
+    box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .15) !important;
     
     /* Alineación centrada */
     margin: 0 auto;  /* Asegura que esté centrado horizontalmente */
