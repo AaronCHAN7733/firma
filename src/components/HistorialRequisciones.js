@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import OperativoNavbar from './OperativoNavbar';
 import TopBar from './TopBar';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, query, where, getDocs } from 'firebase/firestore';
 import { db } from '../firebase';
 import '../styles/HistorialRequisiciones.css';
 
@@ -20,19 +20,19 @@ function HistorialRequisiciones({ user }) {
   useEffect(() => {
     const fetchRequisiciones = async () => {
       const requisicionesCollection = collection(db, 'requisiciones');
-      const requisicionesSnapshot = await getDocs(requisicionesCollection);
+      const q = query(requisicionesCollection, where('userId', '==', user.uid)); // Filtra por el usuario actual
+      const requisicionesSnapshot = await getDocs(q);
       const requisicionesList = requisicionesSnapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
       }));
       setRequisiciones(requisicionesList);
-      setFilteredRequisiciones(requisicionesList); // Inicialmente, la lista filtrada es la misma
+      setFilteredRequisiciones(requisicionesList);
     };
 
     fetchRequisiciones();
-  }, []);
+  }, [user.uid]);
 
-  // Función para manejar la ordenación
   const handleSort = (key) => {
     let direction = 'asc';
     if (sortConfig.key === key && sortConfig.direction === 'asc') {
@@ -63,7 +63,6 @@ function HistorialRequisiciones({ user }) {
     setSelectedRequisicion(null);
   };
 
-  // Calcula el total sumando los subtotales de cada ítem
   const calcularTotal = () => {
     if (!selectedRequisicion || !selectedRequisicion.items) return 0;
     return selectedRequisicion.items.reduce((acc, item) => acc + parseFloat(item.subtotal || 0), 0);
@@ -128,6 +127,7 @@ function HistorialRequisiciones({ user }) {
             <div className="modal-content">
               <h3>Detalles de la Requisición</h3>
               <div className="modal-details-grid">
+                <div><strong>Usuario que realizo la Requisición:</strong> {selectedRequisicion.nombreUsuario}</div> {/* Campo añadido */}
                 <div><strong>Área solicitante:</strong> {selectedRequisicion.areaSolicitante}</div>
                 <div><strong>Componente:</strong> {selectedRequisicion.componente}</div>
                 <div><strong>Concepto:</strong> {selectedRequisicion.concepto}</div>

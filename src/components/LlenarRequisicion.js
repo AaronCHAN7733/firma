@@ -114,7 +114,7 @@ function LlenarRequisicion() {
 
   const handleSubmitRequisicion = async (e) => {
     e.preventDefault();
-
+  
     // Validar que todos los campos estén llenos y que haya al menos un item en la tabla
     if (
       !formInfo.areaSolicitante || !formInfo.direccionAdscripcion || !formInfo.concepto || 
@@ -130,16 +130,23 @@ function LlenarRequisicion() {
       
       return;
     }
-
+  
+    const user = auth.currentUser;  // Asegúrate de tener el usuario autenticado
+    if (!user) {
+      console.error('No se encontró el usuario autenticado');
+      return;
+    }
+  
     // Datos que se van a enviar a Firestore, incluyendo el nombre del usuario y el estatus "En Firma"
     const requisicion = {
       ...formInfo,
       items,
       total,
       nombreUsuario: userName,  // Enviar el nombre del usuario obtenido de Firestore
-      estatus: "En Firma"  // Estatus automático "En Firma"
+      userId: user.uid,         // Guardar el ID del usuario autenticado
+      estatus: "En Firma"       // Estatus automático "En Firma"
     };
-
+  
     try {
       // Guardar en Firestore (en la colección "requisiciones")
       await addDoc(collection(db, 'requisiciones'), requisicion);
@@ -153,7 +160,7 @@ function LlenarRequisicion() {
     } catch (error) {
       console.error('Error al enviar requisición:', error);
     }
-
+  
     // Reiniciar formulario
     setFormInfo({
       areaSolicitante: '',
@@ -167,8 +174,8 @@ function LlenarRequisicion() {
     });
     setItems([]);
     setTotal(0);
-};
-
+  };
+  
   return (
     <div className={`admin-container ${isSidebarVisible ? 'shifted' : ''}`}>
       <button className={`hamburger-btn ${isSidebarVisible ? 'shifted' : ''}`} onClick={toggleSidebar}>
