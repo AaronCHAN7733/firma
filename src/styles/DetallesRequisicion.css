@@ -1,0 +1,177 @@
+.detalles-requisicion-container {
+    background-color: #f0f8ff; /* Azul claro */
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+    width: 100%;
+  }
+  
+  .detalles-requisicion-header {
+    font-size: 24px;
+    font-weight: bold;
+    color: #1e3a8a; /* Azul oscuro */
+    margin-bottom: 20px;
+  }
+  
+  .detalles-requisicion-content {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+  }
+  
+  .detalles-requisicion-content div {
+    background-color: #e0f2fe; /* Fondo azul suave */
+    padding: 10px;
+    border-radius: 5px;
+  }
+  
+  .detalles-requisicion-content strong {
+    color: #1d4ed8; /* Azul intenso */
+  }
+  
+  .detalles-requisicion-content p {
+    margin: 5px 0;
+    color: #1e3a8a;
+  }
+  
+  .detalles-requisicion-table {
+    width: 100%;
+    margin-top: 20px;
+    border-collapse: collapse;
+  }
+  
+  .detalles-requisicion-table th, .detalles-requisicion-table td {
+    border: 1px solid #cbd5e1; /* Borde gris suave */
+    padding: 10px;
+    text-align: left;
+  }
+  
+  .detalles-requisicion-table th {
+    background-color: #1e40af; /* Azul intenso */
+    color: white;
+  }
+  
+  .detalles-requisicion-table td {
+    background-color: #e0f2fe; /* Azul claro */
+  }
+  
+  .total-section-firmante {
+    text-align: left;
+    margin-top: 20px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #1d4ed8;
+  }
+  
+  .detalles-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .detalles-close-button {
+    background-color: #ef4444; /* Color rojo para el botón de cierre */
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+    font-size: 18px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .detalles-close-button:hover {
+    background-color: #dc2626; /* Rojo más oscuro al pasar el cursor */
+  }
+
+  .firmar-button {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  /* Estilos para el modal de firma */
+.modal-firma {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Fondo oscuro transparente */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000; /* Asegurarse de que el modal esté por encima de todo */
+  }
+  
+  .modal-content {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    width: 400px;
+    max-width: 90%;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    position: relative;
+    text-align: center;
+  }
+  
+  .modal-content h4 {
+    margin-bottom: 20px;
+    font-size: 1.2em;
+    color: #333;
+  }
+  
+  .modal-content input {
+    width: 95%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1em;
+  }
+  
+  .modal-content button {
+    background-color: lightblue;
+    color: black;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s ease;
+    margin-right: 10px;
+  }
+  
+  .modal-content button:hover {
+    background-color: red;
+    color: white;
+  }
+  
+  .modal-content button:nth-child(3) {
+    background-color: lightblue; /* Botón de cancelar en rojo */
+  }
+  
+  .modal-content button:nth-child(3):hover {
+    background-color: green;
+  }
+  
+  .error-message {
+    color: #f44336;
+    font-size: 0.9em;
+    margin-bottom: 15px;
+  }
+  
+  
+  
+  
+  

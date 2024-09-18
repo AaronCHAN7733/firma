@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import Navbar from './Navbar';
-import TopBar from './TopBar';
-import '../styles/Usuarios.css';
+import Navbar from '../Navbar';
+import TopBar from '../TopBar';
+import '../../styles/Usuarios.css';
 import { collection, getDocs, setDoc, doc } from 'firebase/firestore';
-import { db } from '../firebase';
+import { db } from '../../firebase';
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth'; // Importa Firebase Auth
 import Modal from 'react-modal';
 import Swal from 'sweetalert';

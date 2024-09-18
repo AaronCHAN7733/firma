@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import Navbar from './Navbar';  // Importamos el componente Navbar
-import TopBar from './TopBar';  // Importamos el nuevo componente TopBar
-import '../styles/AdminHome.css';
+import Navbar from '../Navbar';  // Importamos el componente Navbar
+import TopBar from '../TopBar';  // Importamos el nuevo componente TopBar
+import '../../styles/AdminHome.css';
 
 function AdminHome({ user }) {
   const [isSidebarVisible, setSidebarVisible] = useState(false);

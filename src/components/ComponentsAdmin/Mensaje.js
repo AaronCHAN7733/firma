@@ -3,7 +3,7 @@ import Navbar from './Navbar';
 import TopBar from './TopBar';
 import { db } from '../firebase'; // Firebase ya configurado
 import { collection, addDoc, query, where, getDocs } from 'firebase/firestore'; // Importar las funciones de Firestore
-import '../styles/Mensaje.css'; // Estilos
+import '../../styles/Mensaje.css'; // Estilos
 
 function Mensaje({ user }) {
   const [isSidebarVisible, setSidebarVisible] = useState(false);

@@ -1,0 +1,13 @@
+.firmar-btn, .rechazar-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 5px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-left: 10px;
+  }
+  
+  .firmar-btn:hover, .rechazar-btn:hover {
+    background-color: #0056b3;
+  }

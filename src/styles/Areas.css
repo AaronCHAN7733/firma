@@ -1,0 +1,297 @@
+/* Estilo general del contenedor */
+.areas-container {
+    width: 90%; /* Ampliar el ancho para dispositivos móviles */
+    margin: 20px auto;
+    padding: 15px;
+    background-color: #f0f8ff; /* Fondo azul claro */
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Sombra ligera */
+}
+
+/* Título principal */
+.areas-title {
+    text-align: center;
+    color: #1a73e8;
+    font-size: 24px; /* Tamaño de fuente reducido para móviles */
+    margin-bottom: 15px;
+    font-weight: bold;
+    font-family: 'Arial', sans-serif;
+}
+
+/* Botón Agregar Área */
+.add-area-btn {
+    display: inline-block;
+    margin-bottom: 15px;
+    padding: 10px 15px; /* Ajustar el padding para móviles */
+    background-color: #1a73e8;
+    color: white;
+    border: none;
+    border-radius: 25px;
+    font-size: 14px; /* Tamaño de fuente reducido para móviles */
+    font-family: 'Arial', sans-serif;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    text-align: center;
+}
+
+.add-area-btn:hover {
+    background-color: #135bb2;
+    transform: scale(1.05); /* Efecto de zoom */
+}
+
+/* Tabla */
+.areas-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #e6f2ff;
+}
+
+.areas-table th {
+    background-color: #1a73e8;
+    color: white;
+    padding: 12px; /* Ajustar el padding para móviles */
+    font-size: 16px; /* Tamaño de fuente reducido para móviles */
+    text-align: left;
+    font-family: 'Arial', sans-serif;
+}
+
+.areas-table td {
+    padding: 10px; /* Ajustar el padding para móviles */
+    font-size: 14px; /* Tamaño de fuente reducido para móviles */
+    text-align: left;
+    border-bottom: 1px solid #1a73e8; /* Línea divisoria más delgada */
+    background-color: #f0f8ff;
+    font-family: 'Arial', sans-serif;
+}
+
+/* Estilo de los botones */
+.details-cell {
+    display: flex;
+    flex-direction: column; /* Coloca los botones uno debajo del otro */
+    align-items: flex-start; /* Alinea los botones al inicio de la celda */
+    gap: 8px; /* Espaciado reducido para móviles */
+}
+
+.edit-btn-area, .delete-btn-area {
+    padding: 8px 15px; /* Ajustar el padding para móviles */
+    border-radius: 25px;
+    border: none;
+    cursor: pointer;
+    font-size: 12px; /* Tamaño de fuente reducido para móviles */
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    font-family: 'Arial', sans-serif;
+    width: 80px; /* Ajustar el ancho para móviles */
+    text-align: center; /* Centra el texto dentro del botón */
+}
+
+/* Botón Editar */
+.edit-btn-area {
+    background-color: #1a73e8;
+    color: white;
+}
+
+.edit-btn-area:hover {
+    background-color: #135bb2;
+    transform: scale(1.05); /* Efecto de zoom */
+}
+
+/* Botón Borrar */
+.delete-btn-area {
+    background-color: #d9534f;
+    color: white;
+}
+
+.delete-btn-area:hover {
+    background-color: #b52e2a;
+    transform: scale(1.05); /* Efecto de zoom */
+}
+
+/* Estilos para celdas vacías o sin datos */
+.areas-table td:empty {
+    background-color: #e6f2ff; /* Fondo azul claro para celdas vacías */
+}
+
+/* Modal para agregar área */
+.modal-area {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.5); /* Fondo oscuro transparente */
+    z-index: 1000; /* Asegúrate de que esté sobre otros elementos */
+}
+
+.modal-content-area {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 12px;
+    width: 90%; /* Ajustar el ancho para dispositivos móviles */
+    max-width: 400px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.modal-content-area h2 {
+    margin-bottom: 15px;
+    color: #1a73e8;
+    font-family: 'Arial', sans-serif;
+    font-size: 20px; /* Tamaño de fuente reducido para móviles */
+}
+
+.modal-input-area {
+    width: 90%;
+    padding: 10px;
+    font-size: 14px; /* Tamaño de fuente reducido para móviles */
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    margin-bottom: 15px; /* Espaciado reducido para móviles */
+    font-family: 'Arial', sans-serif;
+}
+
+/* Botones del modal */
+.modal-buttons {
+    display: flex;
+    flex-direction: column; /* Coloca los botones uno debajo del otro en móviles */
+    gap: 10px; /* Espaciado entre los botones */
+    justify-content: center;
+    align-items: center;
+}
+
+/* Estilos generales para los botones dentro del modal */
+.modal-add-btn, .modal-close-btn {
+    padding: 10px;
+    border-radius: 25px;
+    border: none;
+    cursor: pointer;
+    font-size: 14px; /* Tamaño de fuente reducido para móviles */
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    font-family: 'Arial', sans-serif;
+    width: 50%; /* Botones ocupan el ancho completo en móviles */
+    text-align: center; /* Centra el texto dentro del botón */
+}
+
+/* Botón Agregar (modal) */
+.modal-add-btn {
+    background-color: #1a73e8; /* Color azul principal */
+    color: white;
+}
+
+.modal-add-btn:hover {
+    background-color: #135bb2; /* Color azul más oscuro al pasar el mouse */
+    transform: scale(1.05); /* Efecto de zoom al pasar el mouse */
+}
+
+.modal-add-btn:active {
+    transform: scale(0.95); /* Leve reducción de tamaño al hacer clic */
+    background-color: #0d4e8e; /* Azul más oscuro al hacer clic */
+}
+
+/* Botón Cerrar (modal) */
+.modal-close-btn {
+    background-color: #d9534f; /* Color rojo principal */
+    color: white;
+}
+
+.modal-close-btn:hover {
+    background-color: #b52e2a; /* Color rojo más oscuro al pasar el mouse */
+    transform: scale(1.05); /* Efecto de zoom al pasar el mouse */
+}
+
+.modal-close-btn:active {
+    transform: scale(0.95); /* Leve reducción de tamaño al hacer clic */
+    background-color: #99231e; /* Rojo más oscuro al hacer clic */
+}
+
+/* Consultas de medios para ajustar el diseño en pantallas pequeñas */
+@media (max-width: 768px) {
+    .areas-container {
+        width: 95%;
+        padding: 10px;
+    }
+
+    .areas-title {
+        font-size: 20px;
+        margin-bottom: 10px;
+    }
+
+    .add-area-btn {
+        padding: 8px 15px;
+        font-size: 14px;
+    }
+
+    .areas-table th, .areas-table td {
+        font-size: 14px;
+        padding: 8px;
+    }
+
+    .edit-btn-area, .delete-btn-area {
+        font-size: 12px;
+        width: 80px;
+        padding: 8px 10px;
+    }
+
+    .modal-content-area {
+        width: 90%;
+        padding: 15px;
+    }
+
+    .modal-content-area h2 {
+        font-size: 18px;
+        margin-bottom: 10px;
+    }
+
+    .modal-input-area {
+        font-size: 14px;
+        padding: 8px;
+    }
+
+    .modal-add-btn, .modal-close-btn {
+        font-size: 14px;
+        padding: 8px;
+    }
+}
+
+@media (max-width: 480px) {
+    .areas-title {
+        font-size: 18px;
+    }
+
+    .add-area-btn {
+        padding: 6px 10px;
+        font-size: 12px;
+    }
+
+    .areas-table th, .areas-table td {
+        font-size: 12px;
+        padding: 6px;
+    }
+
+    .edit-btn-area, .delete-btn-area {
+        font-size: 10px;
+        width: 70px;
+        padding: 6px 8px;
+    }
+
+    .modal-content-area {
+        width: 95%;
+        padding: 10px;
+    }
+
+    .modal-content-area h2 {
+        font-size: 16px;
+    }
+
+    .modal-input-area {
+        font-size: 12px;
+        padding: 6px;
+    }
+
+    .modal-add-btn, .modal-close-btn {
+        font-size: 12px;
+        padding: 6px;
+    }
+}

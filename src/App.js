@@ -5,14 +5,20 @@ import { auth, db } from './firebase'; // Asegúrate de importar `db` desde tu a
 import { doc, getDoc } from 'firebase/firestore';
 import Login from './components/Login';
 import Home from './components/Home';
-import AdminHome from './components/AdminHome';
-import Usuarios from './components/Usuarios';  // Importamos el componente Usuarios
-import Mensaje from './components/Mensaje';  // Importamos el componente Mensaje
+import AdminHome from './components/ComponentsAdmin/AdminHome';
+import Usuarios from './components/ComponentsAdmin/Usuarios';  // Importamos el componente Usuarios
 import HomeOperativos from './components/HomeOperativos';  // Componente para el rol 'personal'
 import LlenarRequisicion from './components/LlenarRequisicion';  // Componente de requisición
 import HomeFirmante from './components/HomeFirmante';  // Componente para el rol 'firmante'
 import FirmarRequisicion from './components/FirmarRequisicion'; // Componente para firmar requisición
 import HistorialRequisiciones from './components/HistorialRequisciones'; // Importamos el componente Historial
+import DetallesRequisicion from './components/DetallesRequisicion';  // Importamos el componente para los detalles de la requisición
+import Datos from './components/ComponentsAdmin/Datos';
+import Areas from './components/ComponentsAdmin/Areas';
+import Direcciones from './components/ComponentsAdmin/Direcciones';
+import Partidas from './components/ComponentsAdmin/Partidas';
+import Componentes from './components/ComponentsAdmin/Componentes';
+import Organigrama from './components/ComponentsAdmin/Organigrama'; 
 
 function ProtectedRoute({ user, role, allowedRoles, children }) {
   if (!user) {
@@ -94,15 +100,64 @@ function App() {
           }
         />
 
-        {/* Ruta para el componente Mensaje, solo para administradores */}
-        <Route
-          path="/mensaje"
-          element={
-            <ProtectedRoute user={user} role={role} allowedRoles={['admin']}>
-              <Mensaje />
-            </ProtectedRoute>
-          }
-        />
+          <Route
+            path="/datos"
+            element={
+              <ProtectedRoute user={user} role={role} allowedRoles={['admin']}>
+                <Datos />
+              </ProtectedRoute>
+            }
+          />
+          {/* Ruta para el componente Areas, solo para administradores */}
+          <Route
+            path="/areas"
+            element={
+              <ProtectedRoute user={user} role={role} allowedRoles={['admin']}>
+                <Areas />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Ruta para el componente Direcciones, solo para administradores */}
+          <Route
+            path="/direcciones"
+            element={
+              <ProtectedRoute user={user} role={role} allowedRoles={['admin']}>
+                <Direcciones />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Ruta para el componente Partidas, solo para administradores */}
+          <Route
+            path="/partidas"
+            element={
+              <ProtectedRoute user={user} role={role} allowedRoles={['admin']}>
+                <Partidas />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Ruta para el componente Componentes, solo para administradores */}
+          <Route
+            path="/componentes"
+            element={
+              <ProtectedRoute user={user} role={role} allowedRoles={['admin']}>
+                <Componentes />
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Ruta para el componente Organigrama, solo para administradores */}
+          <Route
+            path="/organigrama"
+            element={
+              <ProtectedRoute user={user} role={role} allowedRoles={['admin']}>
+                <Organigrama />
+              </ProtectedRoute>
+            }
+          />
+
 
         {/* Ruta para personal (rol 'personal') */}
         <Route
@@ -150,6 +205,16 @@ function App() {
           element={
             <ProtectedRoute user={user} role={role} allowedRoles={['firmante']}>
               <FirmarRequisicion user={user} />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Ruta para ver detalles y firmar una requisición, solo para firmantes */}
+        <Route
+          path="/firmar"
+          element={
+            <ProtectedRoute user={user} role={role} allowedRoles={['firmante']}>
+              <DetallesRequisicion />
             </ProtectedRoute>
           }
         />
