@@ -19,6 +19,7 @@ import Direcciones from './components/ComponentsAdmin/Direcciones';
 import Partidas from './components/ComponentsAdmin/Partidas';
 import Componentes from './components/ComponentsAdmin/Componentes';
 import Organigrama from './components/ComponentsAdmin/Organigrama'; 
+import LlenarRequisiciones from './components/ComponentsAdmin/LlenarRequisiciones';
 
 function ProtectedRoute({ user, role, allowedRoles, children }) {
   if (!user) {
@@ -114,6 +115,15 @@ function App() {
             element={
               <ProtectedRoute user={user} role={role} allowedRoles={['admin']}>
                 <Areas />
+              </ProtectedRoute>
+            }
+          />
+            {/* Ruta para el componente LlenarRequisiciones, solo para administradores */}
+            <Route
+            path="/LlenarRequisiciones"
+            element={
+              <ProtectedRoute user={user} role={role} allowedRoles={['admin']}>
+                <LlenarRequisiciones />
               </ProtectedRoute>
             }
           />

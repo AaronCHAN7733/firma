@@ -58,11 +58,11 @@ const Login = ({ onLogin }) => {
   return (
     <div className="login-container">
       <div className="login-left">
-        <div className="form-container">
+        <div className="form-container-login">
           <div className="logo"></div>
           <h2>Accede con tu usuario y contraseña</h2>
           <form onSubmit={handleLogin}>
-            <div className="form-group">
+            <div className="form-group-login">
               <label htmlFor="email">Correo</label>
               <input
                 type="email"
@@ -72,7 +72,7 @@ const Login = ({ onLogin }) => {
                 required
               />
             </div>
-            <div className="form-group">
+            <div className="form-group-login">
               <label htmlFor="password">Contraseña</label>
               <input
                 type="password"

@@ -11,15 +11,22 @@ function Direcciones() {
   const [isModalOpen, setIsModalOpen] = useState(false); // Estado para controlar el modal
   const [isEditing, setIsEditing] = useState(false); // Estado para saber si estamos editando
   const [currentDireccionId, setCurrentDireccionId] = useState(null); // Guardar la dirección actual en edición
+
   // Función para cargar las direcciones desde Firestore
   const fetchDirecciones = async () => {
     const querySnapshot = await getDocs(collection(db, 'direcciones')); // Asume que tienes una colección llamada 'direcciones'
     const direccionesList = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-    setDirecciones(direccionesList);
+
+    // Ordenar las direcciones por claveUR de menor a mayor
+    const sortedDirecciones = direccionesList.sort((a, b) => a.claveUR.localeCompare(b.claveUR));
+    
+    setDirecciones(sortedDirecciones);
   };
+
   useEffect(() => {
     fetchDirecciones(); // Carga las direcciones al montar el componente
   }, []);
+
   // Función para agregar o editar una dirección
   const handleSaveDireccion = async () => {
     if (newDireccion && newClaveUR) {
@@ -27,9 +34,12 @@ function Direcciones() {
         // Si estamos en modo edición, actualizamos la dirección
         const direccionDoc = doc(db, 'direcciones', currentDireccionId);
         await updateDoc(direccionDoc, { descripcion: newDireccion, claveUR: newClaveUR });
+
+        // Actualizar la lista de direcciones y ordenar
         const updatedDirecciones = direcciones.map((direccion) =>
           direccion.id === currentDireccionId ? { ...direccion, descripcion: newDireccion, claveUR: newClaveUR } : direccion
-        );
+        ).sort((a, b) => a.claveUR.localeCompare(b.claveUR));
+        
         setDirecciones(updatedDirecciones);
         Swal.fire('¡Éxito!', 'La dirección ha sido actualizada correctamente.', 'success'); // Confirmación de edición
       } else {
@@ -38,7 +48,13 @@ function Direcciones() {
           descripcion: newDireccion,
           claveUR: newClaveUR,
         });
-        setDirecciones([...direcciones, { id: docRef.id, descripcion: newDireccion, claveUR: newClaveUR }]);
+
+        // Añadir la nueva dirección y ordenar
+        const newDirecciones = [...direcciones, { id: docRef.id, descripcion: newDireccion, claveUR: newClaveUR }]
+          .sort((a, b) => a.claveUR.localeCompare(b.claveUR));
+
+        setDirecciones(newDirecciones);
+
         // SweetAlert2 de confirmación
         Swal.fire({
           title: '¡Dirección Agregada!',
@@ -47,6 +63,7 @@ function Direcciones() {
           confirmButtonText: 'OK',
         });
       }
+
       setNewDireccion(''); // Limpiar el input
       setNewClaveUR(''); // Limpiar el input
       setIsModalOpen(false); // Cerrar modal después de guardar
@@ -54,6 +71,7 @@ function Direcciones() {
       setCurrentDireccionId(null); // Limpiar la dirección actual en edición
     }
   };
+
   // Función para eliminar una dirección
   const handleDeleteDireccion = async (id, descripcion) => {
     const result = await Swal.fire({
@@ -66,12 +84,19 @@ function Direcciones() {
       confirmButtonColor: '#d9534f',
       cancelButtonColor: '#6c757d',
     });
+
     if (result.isConfirmed) {
       await deleteDoc(doc(db, 'direcciones', id));
-      setDirecciones(direcciones.filter((direccion) => direccion.id !== id));
+
+      // Eliminar la dirección y ordenar
+      const updatedDirecciones = direcciones.filter((direccion) => direccion.id !== id)
+        .sort((a, b) => a.claveUR.localeCompare(b.claveUR));
+        
+      setDirecciones(updatedDirecciones);
       Swal.fire('¡Eliminado!', 'La dirección ha sido eliminada correctamente.', 'success');
     }
   };
+
   // Función para abrir el modal en modo de edición
   const handleEditDireccion = (id, descripcion, claveUR) => {
     setNewDireccion(descripcion); // Llenar el campo de entrada con la descripción existente
@@ -80,6 +105,7 @@ function Direcciones() {
     setIsEditing(true); // Cambiar a modo de edición
     setIsModalOpen(true); // Abrir el modal
   };
+
   return (
     <div className="areas-container">
       <h1 className="areas-title">Direcciones</h1>
@@ -120,6 +146,7 @@ function Direcciones() {
           </div>
         </div>
       )}
+
       <table className="areas-table">
         <thead>
           <tr>

@@ -30,11 +30,11 @@ html, body {
   box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.form-container {
+.form-container-login {
   width: 100%;
-  max-width: 300px; /* Ancho máximo del formulario */
+  max-width: 400px; /* Ancho máximo del formulario */
   height: auto;
-  background-color: #DCEDFB;
+  background-color: white;
   padding: 50px 20px; /* Ajusta el padding para que haya más espacio */
   border-radius: 8px;
   box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.1); /* Añade sombra */
@@ -60,19 +60,19 @@ h2 {
   text-align: center;
 }
 
-.form-group {
+.form-group-login {
   width: 100%;
   margin-bottom: 15px;
 }
 
-.form-group label {
+.form-group-login label {
   display: block;
   margin-bottom: 5px;
   font-size: 14px;
 }
 
-.form-group input {
-  width: 100%;
+.form-group-login input {
+  width: 250px;
   padding: 10px;
   font-size: 14px;
   border: 1px solid #C3E3FD;

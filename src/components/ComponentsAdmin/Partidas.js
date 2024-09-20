@@ -15,7 +15,11 @@ function Partidas() {
   const fetchPartidas = async () => {
     const querySnapshot = await getDocs(collection(db, 'partidas')); // Asume que tienes una colección llamada 'partidas'
     const partidasList = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-    setPartidas(partidasList);
+
+    // Ordenar las partidas por descripción de menor a mayor
+    const sortedPartidas = partidasList.sort((a, b) => a.descripcion.localeCompare(b.descripcion));
+    
+    setPartidas(sortedPartidas);
   };
 
   useEffect(() => {
@@ -29,15 +33,23 @@ function Partidas() {
         // Si estamos en modo edición, actualizamos la partida
         const partidaDoc = doc(db, 'partidas', currentPartidaId);
         await updateDoc(partidaDoc, { descripcion: newPartida });
+
+        // Actualizar la lista de partidas y ordenar
         const updatedPartidas = partidas.map((partida) =>
           partida.id === currentPartidaId ? { ...partida, descripcion: newPartida } : partida
-        );
+        ).sort((a, b) => a.descripcion.localeCompare(b.descripcion));
+        
         setPartidas(updatedPartidas);
         Swal.fire('¡Éxito!', 'La partida ha sido actualizada correctamente.', 'success'); // Confirmación de edición
       } else {
         // Si estamos agregando una nueva partida
         const docRef = await addDoc(collection(db, 'partidas'), { descripcion: newPartida });
-        setPartidas([...partidas, { id: docRef.id, descripcion: newPartida }]);
+
+        // Añadir la nueva partida y ordenar
+        const newPartidas = [...partidas, { id: docRef.id, descripcion: newPartida }]
+          .sort((a, b) => a.descripcion.localeCompare(b.descripcion));
+
+        setPartidas(newPartidas);
 
         // SweetAlert2 de confirmación
         Swal.fire({
@@ -70,7 +82,12 @@ function Partidas() {
 
     if (result.isConfirmed) {
       await deleteDoc(doc(db, 'partidas', id));
-      setPartidas(partidas.filter((partida) => partida.id !== id));
+
+      // Eliminar la partida y ordenar
+      const updatedPartidas = partidas.filter((partida) => partida.id !== id)
+        .sort((a, b) => a.descripcion.localeCompare(b.descripcion));
+        
+      setPartidas(updatedPartidas);
       Swal.fire('¡Eliminado!', 'La partida ha sido eliminada correctamente.', 'success');
     }
   };

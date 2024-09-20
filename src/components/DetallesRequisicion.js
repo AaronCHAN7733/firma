@@ -5,6 +5,7 @@ import { getAuth } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore'; 
 import { db } from '../firebase';
 import Swal from 'sweetalert';
+
 function DetallesRequisicion() {
   const location = useLocation();
   const { requisicion } = location.state || {};
@@ -147,7 +148,7 @@ function DetallesRequisicion() {
       {/* Modal de firma */}
       {modalVisible && (
         <div className="modal-firma">
-          <div className="modal-content">
+          <div className="modal-content-firma">
             <h4>{firmaExistente ? 'Validar Firma' : 'Crear Firma'}</h4>
             <input 
               type="text" 

@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import OperativoNavbar from './OperativoNavbar';
-import TopBar from './TopBar';
+import Navbar from '../Navbar';
+import TopBar from '../TopBar';
 import Swal from 'sweetalert';
-import { db } from '../firebase';  // Importar Firestore
+import { db } from '../../firebase';  // Importar Firestore
 import { collection, addDoc, doc, getDoc, getDocs } from 'firebase/firestore';  // Funciones necesarias para agregar y leer de Firestore
-import { auth } from '../firebase';  // Importar la autenticación
-import '../styles/LlenarRequisicion.css';  // External CSS file for styling
+import { auth } from '../../firebase';  // Importar la autenticación
+import '../../styles/LlenarRequisicion.css';  // External CSS file for styling
 import Select from 'react-select';
 
 const customStyles = {
@@ -18,7 +18,7 @@ const customStyles = {
   }),
 };
 
-function LlenarRequisicion() {
+function LlenarRequisiciones() {
   const [isSidebarVisible, setSidebarVisible] = useState(false);
   const [items, setItems] = useState([]);
   const [componentes, setComponentes] = useState([]); // Estado para almacenar los componentes
@@ -268,7 +268,7 @@ function LlenarRequisicion() {
         ☰
       </button>
 
-      <OperativoNavbar isSidebarVisible={isSidebarVisible} toggleSidebar={toggleSidebar} />
+      <Navbar isSidebarVisible={isSidebarVisible} toggleSidebar={toggleSidebar} />
 
       <main className={`main-content ${isSidebarVisible ? 'shifted' : ''}`}>
         <TopBar userName={userName || 'Operativo'} />  {/* Mostrar el nombre del usuario si está disponible */}
@@ -409,4 +409,4 @@ function LlenarRequisicion() {
   );
 }
 
-export default LlenarRequisicion;
+export default LlenarRequisiciones;

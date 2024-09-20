@@ -1,6 +1,6 @@
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHome, faUser, faPen, faClock, faHeadset, faDatabase, faCog, faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
+import { faHome, faUser, faPen, faClock, faHeadset, faDatabase, faCog, faSignOutAlt,faFileAlt } from '@fortawesome/free-solid-svg-icons';
 import { signOut } from 'firebase/auth'; 
 import { auth } from '../firebase'; 
 import '../styles/AdminHome.css';
@@ -26,6 +26,7 @@ const Navbar = ({ isSidebarVisible, toggleSidebar }) => {
         <li><a href="/tiempos"><FontAwesomeIcon icon={faClock} /> Tiempos</a></li>
         <li><a href="/soporte"><FontAwesomeIcon icon={faHeadset} /> Soporte</a></li>
         <li><a href="/datos"><FontAwesomeIcon icon={faDatabase} /> Datos</a></li>
+        <li><a href="/llenarRequisiciones"><FontAwesomeIcon icon={faFileAlt} /> Llenar requisición</a></li>
         <li><a href="/configuracion"><FontAwesomeIcon icon={faCog} /> Configuración</a></li>
         <div className="logout">
           <button className="logout-btn" onClick={handleLogout}>

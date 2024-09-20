@@ -114,24 +114,24 @@
     z-index: 1000; /* Asegurarse de que el modal esté por encima de todo */
   }
   
-  .modal-content {
+  .modal-content-firma {
     background-color: #fff;
     padding: 20px;
     border-radius: 8px;
-    width: 400px;
+    width: 300px;
     max-width: 90%;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     position: relative;
     text-align: center;
   }
   
-  .modal-content h4 {
+  .modal-content-firma h4 {
     margin-bottom: 20px;
     font-size: 1.2em;
     color: #333;
   }
   
-  .modal-content input {
+  .modal-content-firma input {
     width: 95%;
     padding: 10px;
     margin-bottom: 15px;
@@ -140,7 +140,7 @@
     font-size: 1em;
   }
   
-  .modal-content button {
+  .modal-content-firma button {
     background-color: lightblue;
     color: black;
     padding: 10px 20px;
@@ -152,16 +152,16 @@
     margin-right: 10px;
   }
   
-  .modal-content button:hover {
+  .modal-content-firma button:hover {
     background-color: red;
     color: white;
   }
   
-  .modal-content button:nth-child(3) {
+  .modal-content-firma button:nth-child(3) {
     background-color: lightblue; /* Botón de cancelar en rojo */
   }
   
-  .modal-content button:nth-child(3):hover {
+  .modal-content-firma button:nth-child(3):hover {
     background-color: green;
   }
   

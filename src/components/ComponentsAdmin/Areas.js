@@ -144,37 +144,42 @@ function Areas() {
         </div>
       )}
 
-      <table className="areas-table">
-        <thead>
-          <tr>
-            <th>Descripción del Área</th>
-            <th>Dirección</th>
-            <th>Detalles</th>
-          </tr>
-        </thead>
-        <tbody>
-          {areas.map((area) => (
-            <tr key={area.id}>
-              <td>{area.descripcion}</td>
-              <td>{direcciones.find(direccion => direccion.id === area.direccionId)?.descripcion || 'Sin dirección'}</td>
-              <td className="details-cell">
-                <button
-                  className="edit-btn-area"
-                  onClick={() => handleEditArea(area.id, area.descripcion, area.direccionId)}
-                >
-                  Editar
-                </button>
-                <button
-                  className="delete-btn-area"
-                  onClick={() => handleDeleteArea(area.id, area.descripcion)}
-                >
-                  Borrar
-                </button>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+<table className="areas-table">
+  <thead>
+    <tr>
+      <th>Descripción del Área</th>
+      <th>Dirección</th>
+      <th>Detalles</th>
+    </tr>
+  </thead>
+  <tbody>
+    {areas.map((area) => {
+      const direccion = direcciones.find(direccion => direccion.id === area.direccionId);
+      return (
+        <tr key={area.id}>
+          <td>{area.descripcion}</td>
+          {/* Mostrar clave UR junto con la descripción */}
+          <td>{direccion ? `${direccion.claveUR} ${direccion.descripcion}` : 'Sin dirección'}</td>
+          <td className="details-cell">
+            <button
+              className="edit-btn-area"
+              onClick={() => handleEditArea(area.id, area.descripcion, area.direccionId)}
+            >
+              Editar
+            </button>
+            <button
+              className="delete-btn-area"
+              onClick={() => handleDeleteArea(area.id, area.descripcion)}
+            >
+              Borrar
+            </button>
+          </td>
+        </tr>
+      );
+    })}
+  </tbody>
+</table>
+
     </div>
   );
 }

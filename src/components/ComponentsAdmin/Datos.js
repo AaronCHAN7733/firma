@@ -44,6 +44,9 @@ function Datos({ user }) {
             <button className="card" onClick={() => handleNavigation('/organigrama')}>
               Organigrama
             </button>
+            <button className="card" onClick={() => handleNavigation('/organigrama')}>
+              Historial de Requisiciones
+            </button>
           </div>
         </section>
       </main>
