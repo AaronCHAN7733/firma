@@ -1,93 +1,98 @@
 /* Estilo para la tabla de usuarios */
+/* Estilos generales */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f0f4ff; /* Fondo suave */
+}
+
+/* Tabla de usuarios */
 .user-table {
-    width: 100%;
-    margin-top: 20px;
-    border-collapse: collapse;
-    background-color: white;
-  }
-  
-  .user-table th, .user-table td {
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: center;
-  }
-  
-  .user-table th {
-    background-color: #2196F3;
-    color: white;
-  }
-  
-  .user-table td button {
-    background-color: #6EB8F5;
-    border: none;
-    color: white;
-    padding: 5px 10px;
-    margin: 2px;
-    cursor: pointer;
-  }
-  
-  .user-table td button:hover {
-    background-color: #45a049;
-  }
-  
-  /* Botón para agregar usuario */
-  .add-user-btn {
-    background-color: #84b6f4;
-    color: white;
-    padding: 10px 20px;
-    margin-bottom: 20px;
-    cursor: pointer;
-    border: none;
-    margin-left: 60px;
-  }
-  
-  .add-user-btn:hover {
-    background-color: #4d82bc;
-  }
-  
-  /* Estilo para el modal */
-  .ReactModal__Overlay {
-    opacity: 0;
-    transition: opacity 200ms ease-in-out;
-  }
-  
-  .ReactModal__Overlay--after-open {
-    opacity: 1;
-  }
-  
-  .ReactModal__Overlay--before-close {
-    opacity: 0;
-  }
-  
-  form label {
-    display: block;
-    margin: 10px 0;
-  }
-  
-  form input {
-    width: 100%;
-    padding: 8px;
-    margin-top: 5px;
-  }
-  /* Estilos para el modal */
+  width: 100%;
+  margin-top: 20px;
+  border-collapse: collapse;
+  background-color: #fff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.user-table th, .user-table td {
+  border: 1px solid #e0e0e0;
+  padding: 12px;
+  text-align: center;
+}
+
+.user-table th {
+  background-color: #007BFF; /* Azul principal */
+  color: white;
+  font-size: 1.1em;
+}
+
+.user-table td button {
+  background-color: #0056b3; /* Azul oscuro */
+  border: none;
+  color: white;
+  padding: 6px 12px;
+  margin: 2px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.user-table td button:hover {
+  background-color: #004494; /* Azul más oscuro */
+}
+
+/* Botón para agregar usuario */
+.add-user-btn {
+  background-color: #0069d9; /* Azul claro */
+  color: white;
+  padding: 12px 24px;
+  margin-bottom: 20px;
+  cursor: pointer;
+  border: none;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.add-user-btn:hover {
+  background-color: #0056b3; /* Azul oscuro */
+}
+
+/* Estilo para el modal */
+.ReactModal__Overlay {
+  opacity: 0;
+  transition: opacity 200ms ease-in-out;
+}
+
+.ReactModal__Overlay--after-open {
+  opacity: 1;
+}
+
+.ReactModal__Overlay--before-close {
+  opacity: 0;
+}
+
+/* Estilos para el modal */
 .Modal-user {
-  background-color: #e1f0fb;  /* Fondo celeste claro */
-  padding: 20px;
+  background-color: #e3f2fd; /* Fondo celeste claro */
+  padding: 30px;
   border-radius: 10px;
   max-width: 400px;
   width: 100%;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 }
 
 .Modal-user h2 {
   text-align: center;
-  font-size: 20px;
+  font-size: 24px;
+  color: #007BFF; /* Azul principal */
   margin-bottom: 20px;
 }
 
 .Modal-user form label {
   display: block;
-  margin-bottom: 1px;
+  margin-bottom: 5px;
   font-weight: bold;
   color: #333;
 }
@@ -97,63 +102,43 @@
   padding: 10px;
   border-radius: 5px;
   border: 1px solid #ccc;
-  margin-bottom: 5px;
-  background-color: #C3E3FD;  /* Fondo de los inputs celeste */
+  margin-bottom: 15px;
+  background-color: #f0f8ff; /* Fondo de los inputs */
 }
 
 .Modal-user button {
-  background-color: #9acef8;  /* Color del botón */
-  color: black;
+  background-color: #007BFF; /* Azul principal */
+  color: white;
   padding: 10px 20px;
   border: none;
-  border-radius: 25px;
+  border-radius: 5px;
   cursor: pointer;
   display: block;
   width: 50%;
   text-align: center;
-  margin-top: 5px;
+  margin: 10px auto; /* Centrar el botón */
+  transition: background-color 0.3s ease;
 }
 
 .Modal-user button:hover {
-  background-color: #2196F3;  /* Efecto hover más oscuro */
+  background-color: #0056b3; /* Azul oscuro */
 }
 
-.Modal-user button.close {
-  background-color: #84b6f4;
-  margin-top: 10px;
-}
-
-.Modal-user button.close:hover {
-  background-color: #4d82bc;
-}
 .Modal-user select {
   width: 100%;
   padding: 10px;
   border-radius: 5px;
   border: 1px solid #ccc;
-  background-color: #C3E3FD; /* Fondo celeste claro */
+  background-color: #f0f8ff; /* Fondo celeste claro */
   margin-bottom: 15px;
   font-size: 16px;
-  color: #333;
-  cursor: pointer;
-}
-
-.Modal-user select:focus {
-  border-color: #007BFF;
-  box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
-}
-
-/* Estilos para las opciones del select */
-.Modal-user option {
-  padding: 10px;
-  background-color: #fff;
   color: #333;
 }
 
 /* Estilos para el contenedor de búsqueda */
 .search-container {
   display: flex;
-  justify-content: flex-end; /* Posiciona el buscador a la derecha */
+  justify-content: flex-end;
   align-items: center;
   margin-bottom: 20px;
 }
@@ -162,20 +147,12 @@
 .search-input {
   width: 100%;
   max-width: 300px;
-  padding: 10px 35px 10px 15px; /* Añade espacio para el ícono */
+  padding: 10px 15px;
   font-size: 16px;
   border: 2px solid #007BFF;
   border-radius: 5px;
   outline: none;
-  transition: all 0.3s ease;
-  position: relative;
-}
-
-/* Estilo del ícono de búsqueda */
-.search-icon {
-  position: relative;
-  left: -30px;
-  color: #007BFF;
+  transition: border-color 0.3s ease;
 }
 
 /* Efecto al enfocar el input */
@@ -187,6 +164,6 @@
 /* Ajustes para pantallas pequeñas */
 @media (max-width: 600px) {
   .search-input {
-    max-width: 40%;
+    max-width: 100%;
   }
 }

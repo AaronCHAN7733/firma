@@ -3,6 +3,9 @@ import '../../styles/Areas.css';
 import { db } from '../../firebase'; // Importa tu configuración de Firebase
 import { collection, addDoc, getDocs, updateDoc, deleteDoc, doc } from 'firebase/firestore';
 import Swal from 'sweetalert2'; // Importa SweetAlert2
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
+
 
 function Areas() {
   const [areas, setAreas] = useState([]);
@@ -161,18 +164,20 @@ function Areas() {
           {/* Mostrar clave UR junto con la descripción */}
           <td>{direccion ? `${direccion.claveUR} ${direccion.descripcion}` : 'Sin dirección'}</td>
           <td className="details-cell">
-            <button
+          <button
               className="edit-btn-area"
               onClick={() => handleEditArea(area.id, area.descripcion, area.direccionId)}
             >
-              Editar
+              <FontAwesomeIcon icon={faEdit} /> Editar
             </button>
+
             <button
               className="delete-btn-area"
               onClick={() => handleDeleteArea(area.id, area.descripcion)}
             >
-              Borrar
-            </button>
+              <FontAwesomeIcon icon={faTrash} /> Borrar
+          </button>
+
           </td>
         </tr>
       );

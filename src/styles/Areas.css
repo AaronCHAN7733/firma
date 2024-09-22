@@ -1,87 +1,133 @@
 /* Estilo general del contenedor */
 .areas-container {
-    width: 90%; /* Ampliar el ancho para dispositivos móviles */
+    width: 90%;
     margin: 20px auto;
     padding: 15px;
-    background-color: #f0f8ff; /* Fondo azul claro */
+    background-color: #f9f9fb;
     border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Sombra ligera */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.3s ease;
+}
+
+.areas-container:hover {
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
 }
 
 /* Título principal */
 .areas-title {
     text-align: center;
     color: #1a73e8;
-    font-size: 24px; /* Tamaño de fuente reducido para móviles */
-    margin-bottom: 15px;
+    font-size: 24px;
+    margin-bottom: 20px;
     font-weight: bold;
     font-family: 'Arial', sans-serif;
+    transition: color 0.3s ease;
+}
+
+.areas-title:hover {
+    color: #135bb2;
 }
 
 /* Botón Agregar Área */
 .add-area-btn {
     display: inline-block;
     margin-bottom: 15px;
-    padding: 10px 15px; /* Ajustar el padding para móviles */
+    padding: 10px 20px;
     background-color: #1a73e8;
     color: white;
     border: none;
     border-radius: 25px;
-    font-size: 14px; /* Tamaño de fuente reducido para móviles */
+    font-size: 16px;
     font-family: 'Arial', sans-serif;
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.2s ease;
     text-align: center;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.add-area-btn i {
+    font-size: 18px; /* Ajusta el tamaño del icono */
 }
 
 .add-area-btn:hover {
     background-color: #135bb2;
-    transform: scale(1.05); /* Efecto de zoom */
+    transform: translateY(-2px);
 }
 
 /* Tabla */
 .areas-table {
     width: 100%;
     border-collapse: collapse;
-    background-color: #e6f2ff;
+    background-color: #f9f9fb;
+    transition: background-color 0.3s ease;
 }
 
 .areas-table th {
     background-color: #1a73e8;
     color: white;
-    padding: 12px; /* Ajustar el padding para móviles */
-    font-size: 16px; /* Tamaño de fuente reducido para móviles */
+    padding: 15px;
+    font-size: 18px;
     text-align: left;
     font-family: 'Arial', sans-serif;
+    position: relative;
+    overflow: hidden;
+}
+
+.areas-table th::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 3px;
+    background-color: #135bb2;
+    transition: width 0.3s ease, left 0.3s ease;
+}
+
+.areas-table th:hover::after {
+    width: 100%;
+    left: 0;
 }
 
 .areas-table td {
-    padding: 10px; /* Ajustar el padding para móviles */
-    font-size: 14px; /* Tamaño de fuente reducido para móviles */
+    padding: 12px;
+    font-size: 16px;
     text-align: left;
-    border-bottom: 1px solid #1a73e8; /* Línea divisoria más delgada */
+    border-bottom: 1px solid #ddd;
     background-color: #f0f8ff;
     font-family: 'Arial', sans-serif;
+    transition: background-color 0.3s ease;
+}
+
+.areas-table td:hover {
+    background-color: #e0f0ff;
 }
 
 /* Estilo de los botones */
 .details-cell {
     display: flex;
-    flex-direction: column; /* Coloca los botones uno debajo del otro */
-    align-items: flex-start; /* Alinea los botones al inicio de la celda */
-    gap: 8px; /* Espaciado reducido para móviles */
+    gap: 10px;
+    justify-content: flex-start;
 }
 
 .edit-btn-area, .delete-btn-area {
-    padding: 8px 15px; /* Ajustar el padding para móviles */
+    padding: 8px 15px;
     border-radius: 25px;
     border: none;
     cursor: pointer;
-    font-size: 12px; /* Tamaño de fuente reducido para móviles */
-    transition: background-color 0.3s ease, transform 0.2s ease;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
     font-family: 'Arial', sans-serif;
-    width: 80px; /* Ajustar el ancho para móviles */
-    text-align: center; /* Centra el texto dentro del botón */
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    text-align: center;
+}
+
+.edit-btn-area i, .delete-btn-area i {
+    font-size: 16px; /* Ajusta el tamaño del icono */
 }
 
 /* Botón Editar */
@@ -92,7 +138,7 @@
 
 .edit-btn-area:hover {
     background-color: #135bb2;
-    transform: scale(1.05); /* Efecto de zoom */
+    transform: translateY(-2px);
 }
 
 /* Botón Borrar */
@@ -103,13 +149,28 @@
 
 .delete-btn-area:hover {
     background-color: #b52e2a;
-    transform: scale(1.05); /* Efecto de zoom */
+    transform: translateY(-2px);
 }
 
-/* Estilos para celdas vacías o sin datos */
+/* Animación de celdas vacías o sin datos */
 .areas-table td:empty {
-    background-color: #e6f2ff; /* Fondo azul claro para celdas vacías */
+    background-color: #e6f2ff;
+    animation: pulse 1.5s infinite;
 }
+
+@keyframes pulse {
+    0% {
+        background-color: #e6f2ff;
+    }
+    50% {
+        background-color: #cce6ff;
+    }
+    100% {
+        background-color: #e6f2ff;
+    }
+}
+
+
 
 /* Modal para agregar área */
 .modal-area {
@@ -230,7 +291,7 @@
 
     .edit-btn-area, .delete-btn-area {
         font-size: 12px;
-        width: 80px;
+        width: 30px;
         padding: 8px 10px;
     }
 
@@ -272,12 +333,12 @@
 
     .edit-btn-area, .delete-btn-area {
         font-size: 10px;
-        width: 70px;
+        width: 25px;
         padding: 6px 8px;
     }
 
     .modal-content-area {
-        width: 95%;
+        width: 80%;
         padding: 10px;
     }
 

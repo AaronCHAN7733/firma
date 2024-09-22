@@ -8,6 +8,7 @@ import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth'; // Impo
 import Modal from 'react-modal';
 import Swal from 'sweetalert';
 import { FaSearch } from 'react-icons/fa'; // Importa el ícono de lupa
+import Select from 'react-select';
 
 Modal.setAppElement('#root');
 
@@ -109,9 +110,9 @@ const fetchAreas = async () => {
         nombre: newUser.nombre,
         role: newUser.role,
         telefono: newUser.telefono,
-        direccionId: newUser.direccionId, // Usar direccionId en lugar de la descripción
-        areaId: newUser.areaId, // Guardar área seleccionada
-        estado: 'activo' // Establecer estado inicial
+        direccionId: newUser.direccionId,
+        areaId: newUser.areaId,
+        estado: 'activo'
       });
   
       Swal({
@@ -121,13 +122,17 @@ const fetchAreas = async () => {
         confirmButtonText: 'Aceptar'
       });
   
+      // Mantener el modal cerrado y restablecer el estado del nuevo usuario
       setModalIsOpen(false);
       setNewUser({ correo: '', nombre: '', role: '', telefono: '', password: '', direccionId: '', areaId: '' });
   
-      // Actualizar la lista de usuarios
+      // Actualizar la lista de usuarios sin redirigir
       const querySnapshot = await getDocs(collection(db, 'users'));
       const usersList = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       setUsuarios(usersList);
+      
+      // Asegúrate de no tener ninguna redirección aquí
+  
     } catch (error) {
       console.error("Error al crear el usuario:", error);
       Swal({
@@ -138,6 +143,8 @@ const fetchAreas = async () => {
       });
     }
   };
+  
+  
 
   const handleEditUser = (user) => {
     setEditingUser(user);
@@ -313,110 +320,109 @@ const fetchAreas = async () => {
   </tbody>
 </table>
 
-          <Modal
-            isOpen={modalIsOpen}
-            onRequestClose={closeModal}
-            contentLabel="Formulario de Usuario"
-            className="Modal-user"
-            style={{
-              overlay: {
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                backgroundColor: 'rgba(0, 0, 0, 0.5)'
-              },
-              content: {
-                position: 'relative',
-                maxWidth: '400px',
-                width: '100%',
-                padding: '20px',
-                borderRadius: '10px',
-                backgroundColor: '#e1f0fb',
-              }
-            }}
-          >
-            <h2>{editingUser ? 'Editar Usuario' : 'Agregar Usuario'}</h2>
-            <form>
-              <label>
-                Correo:
-                <input
-                  type="email"
-                  value={newUser.correo}
-                  onChange={(e) => setNewUser({ ...newUser, correo: e.target.value })}
-                  disabled={!!editingUser}
-                />
-              </label>
-              {error && <p style={{ color: 'red' }}>{error}</p>}
-              <label>
-                Nombre:
-                <input
-                  type="text"
-                  value={newUser.nombre}
-                  onChange={(e) => setNewUser({ ...newUser, nombre: e.target.value })}
-                />
-              </label>
-              <label>
-                Rol:
-                <input
-                  type="text"
-                  value={newUser.role}
-                  onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}
-                />
-              </label>
-              <label>
-                Área:
-                <select
-                  value={newUser.areaId}
-                  onChange={(e) => handleAreaChange(e.target.value)}
-                >
-                  <option value="">Seleccionar área</option>
-                  {areas.map((area) => (
-                    <option key={area.id} value={area.id}>
-                      {area.descripcion}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <label>
-                Dirección:
-                <select
-                  value={newUser.direccionId}
-                  onChange={(e) => setNewUser({ ...newUser, direccionId: e.target.value })}
-                >
-                  <option value="">Seleccionar dirección</option>
-                  {direcciones.map((direccion) => (
-                    <option key={direccion.id} value={direccion.id}>
-                      {direccion.descripcion}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <label>
-                Teléfono:
-                <input
-                  type="text"
-                  value={newUser.telefono}
-                  onChange={(e) => setNewUser({ ...newUser, telefono: e.target.value })}
-                />
-              </label>
-              {!editingUser && (
-                <label>
-                  Contraseña:
-                  <input
-                    type="password"
-                    value={newUser.password}
-                    onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
-                  />
-                </label>
-              )}
-            </form>
-            <div className="modal-buttons">
-              <button onClick={editingUser ? handleUpdateUser : handleAddUser}>
-                {editingUser ? 'Actualizar' : 'Agregar'}
-              </button>
-              <button onClick={closeModal}>Cancelar</button>
-            </div>
-          </Modal>
+<Modal
+        isOpen={modalIsOpen}
+        onRequestClose={closeModal}
+        contentLabel="Formulario de Usuario"
+        className="Modal-user"
+        style={{
+          overlay: {
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+          },
+          content: {
+            position: 'relative',
+            maxWidth: '400px',
+            width: '100%',
+            padding: '20px',
+            borderRadius: '10px',
+            backgroundColor: '#e1f0fb',
+          },
+        }}
+      >
+        <h2>{editingUser ? 'Editar Usuario' : 'Agregar Usuario'}</h2>
+        <form>
+          <label>
+            Correo:
+            <input
+              type="email"
+              value={newUser.correo}
+              onChange={(e) => setNewUser({ ...newUser, correo: e.target.value })}
+              disabled={!!editingUser}
+            />
+          </label>
+          {error && <p style={{ color: 'red' }}>{error}</p>}
+          <label>
+            Nombre:
+            <input
+              type="text"
+              value={newUser.nombre}
+              onChange={(e) => setNewUser({ ...newUser, nombre: e.target.value })}
+            />
+          </label>
+          <label>
+  Rol:
+  <Select
+    options={[
+      { value: 'secretario', label: 'Secretario' },
+      { value: 'solicitante', label: 'Solicitante' },
+      { value: 'autorizante', label: 'Autorizante' },
+      { value: 'bloqueado', label: 'Bloqueado' },
+      { value: 'receptor', label: 'Receptor' },
+      { value: 'admin', label: 'Admin' },
+    ]}
+    value={newUser.role ? { value: newUser.role, label: newUser.role.charAt(0).toUpperCase() + newUser.role.slice(1) } : null}
+    onChange={(selected) => setNewUser({ ...newUser, role: selected.value })}
+    placeholder="Seleccionar rol"
+  />
+</label>
+
+          <label>
+            Área:
+            <Select
+              options={areas.map(area => ({ value: area.id, label: area.descripcion }))}
+              value={newUser.areaId ? { value: newUser.areaId, label: areas.find(area => area.id === newUser.areaId)?.descripcion } : null}
+              onChange={(selected) => handleAreaChange(selected.value)}
+              placeholder="Seleccionar área"
+            />
+          </label>
+          <label>
+            Dirección:
+            <Select
+              options={direcciones.map(direccion => ({ value: direccion.id, label: direccion.descripcion }))}
+              value={newUser.direccionId ? { value: newUser.direccionId, label: direcciones.find(d => d.id === newUser.direccionId)?.descripcion } : null}
+              onChange={(selected) => setNewUser({ ...newUser, direccionId: selected.value })}
+              placeholder="Seleccionar dirección"
+            />
+          </label>
+          <label>
+            Teléfono:
+            <input
+              type="text"
+              value={newUser.telefono}
+              onChange={(e) => setNewUser({ ...newUser, telefono: e.target.value })}
+            />
+          </label>
+          {!editingUser && (
+            <label>
+              Contraseña:
+              <input
+                type="password"
+                value={newUser.password}
+                onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
+              />
+            </label>
+          )}
+        </form>
+        <div className="modal-buttons">
+          <button onClick={editingUser ? handleUpdateUser : handleAddUser}>
+            {editingUser ? 'Actualizar' : 'Agregar'}
+          </button>
+          <button onClick={closeModal}>Cancelar</button>
+        </div>
+      </Modal>
         </section>
       </main>
     </div>

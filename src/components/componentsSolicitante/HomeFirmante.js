@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import FirmanteNavbar from './FirmanteNavbar';
-import TopBar from './TopBar';
+import TopBar from '../TopBar';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faUser } from '@fortawesome/free-solid-svg-icons';
 import { getDoc, doc } from 'firebase/firestore'; // Importa las funciones necesarias de Firestore
-import { auth, db } from '../firebase'; // Importa la instancia de Firebase y Firestore
-import '../styles/HomeFirmante.css';
+import { auth, db } from '../../firebase'; // Importa la instancia de Firebase y Firestore
+import '../../styles/HomeFirmante.css';
 
 function HomeFirmante() {
   const [isSidebarVisible, setSidebarVisible] = useState(false);

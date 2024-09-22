@@ -9,10 +9,6 @@ import AdminHome from './components/ComponentsAdmin/AdminHome';
 import Usuarios from './components/ComponentsAdmin/Usuarios';  // Importamos el componente Usuarios
 import HomeOperativos from './components/HomeOperativos';  // Componente para el rol 'personal'
 import LlenarRequisicion from './components/LlenarRequisicion';  // Componente de requisición
-import HomeFirmante from './components/HomeFirmante';  // Componente para el rol 'firmante'
-import FirmarRequisicion from './components/FirmarRequisicion'; // Componente para firmar requisición
-import HistorialRequisiciones from './components/HistorialRequisciones'; // Importamos el componente Historial
-import DetallesRequisicion from './components/DetallesRequisicion';  // Importamos el componente para los detalles de la requisición
 import Datos from './components/ComponentsAdmin/Datos';
 import Areas from './components/ComponentsAdmin/Areas';
 import Direcciones from './components/ComponentsAdmin/Direcciones';
@@ -20,6 +16,11 @@ import Partidas from './components/ComponentsAdmin/Partidas';
 import Componentes from './components/ComponentsAdmin/Componentes';
 import Organigrama from './components/ComponentsAdmin/Organigrama'; 
 import LlenarRequisiciones from './components/ComponentsAdmin/LlenarRequisiciones';
+import FirmarRequisicion from './components/componentsSolicitante/FirmarRequisicion';
+import DetallesRequisicion from './components/componentsSolicitante/DetallesRequisicion';
+import HomeFirmante from './components/componentsSolicitante/HomeFirmante';
+import HistorialRequisiciones from './components/HistorialRequisciones'
+import LlenarNuevaRequisicion from './components/componentsSolicitante/LlenarNuevaRequisicion'
 
 function ProtectedRoute({ user, role, allowedRoles, children }) {
   if (!user) {
@@ -173,7 +174,7 @@ function App() {
         <Route
           path="/homeOperativos"
           element={
-            <ProtectedRoute user={user} role={role} allowedRoles={['personal']}>
+            <ProtectedRoute user={user} role={role} allowedRoles={['secretario']}>
               <HomeOperativos user={user} />
             </ProtectedRoute>
           }
@@ -183,7 +184,7 @@ function App() {
         <Route
           path="/llenarRequisicion"
           element={
-            <ProtectedRoute user={user} role={role} allowedRoles={['personal']}>
+            <ProtectedRoute user={user} role={role} allowedRoles={['secretario']}>
               <LlenarRequisicion user={user} />
             </ProtectedRoute>
           }
@@ -193,7 +194,7 @@ function App() {
         <Route
           path="/historial"
           element={
-            <ProtectedRoute user={user} role={role} allowedRoles={['personal']}>
+            <ProtectedRoute user={user} role={role} allowedRoles={['secretario']}>
               <HistorialRequisiciones user={user} />
             </ProtectedRoute>
           }
@@ -203,17 +204,25 @@ function App() {
         <Route
           path="/homeFirmante"
           element={
-            <ProtectedRoute user={user} role={role} allowedRoles={['firmante']}>
+            <ProtectedRoute user={user} role={role} allowedRoles={['solicitante']}>
               <HomeFirmante user={user} />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/llenar-Requisicion"
+          element={
+            <ProtectedRoute user={user} role={role} allowedRoles={['solicitante']}>
+              <LlenarNuevaRequisicion />
             </ProtectedRoute>
           }
         />
 
         {/* Ruta para firmar requisiciones, solo para firmantes */}
         <Route
-          path="/firmarRequisicion"
+          path="/Seguimiento-Requisicion"
           element={
-            <ProtectedRoute user={user} role={role} allowedRoles={['firmante']}>
+            <ProtectedRoute user={user} role={role} allowedRoles={['solicitante']}>
               <FirmarRequisicion user={user} />
             </ProtectedRoute>
           }
@@ -223,17 +232,18 @@ function App() {
         <Route
           path="/firmar"
           element={
-            <ProtectedRoute user={user} role={role} allowedRoles={['firmante']}>
+            <ProtectedRoute user={user} role={role} allowedRoles={['solicitante']}>
               <DetallesRequisicion />
             </ProtectedRoute>
           }
         />
+        
 
         {/* Redireccionar rutas no válidas */}
         <Route
           path="*"
           element={
-            <Navigate to={user ? (role === 'admin' ? "/adminHome" : role === 'personal' ? "/homeOperativos" : role === 'firmante' ? "/homeFirmante" : "/home") : "/login"} />
+            <Navigate to={user ? (role === 'admin' ? "/adminHome" : role === 'secretario' ? "/homeOperativos" : role === 'solicitante' ? "/homeFirmante" : "/home") : "/login"} />
           }
         />
       </Routes>

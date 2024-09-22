@@ -35,9 +35,9 @@ const Login = ({ onLogin }) => {
         // Redirigir según el rol
         if (role === 'admin') {
           navigate('/adminHome');
-        } else if (role === 'personal') {
+        } else if (role === 'secretario') {
           navigate('/homeOperativos');
-        } else if (role === 'firmante') {
+        } else if (role === 'solicitante') {
           navigate('/homeFirmante'); // Redirigir al HomeFirmante si el rol es "firmante"
         } else {
           navigate('/login'); // Redirige a la página de login si el rol no coincide

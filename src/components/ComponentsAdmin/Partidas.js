@@ -3,6 +3,8 @@ import '../../styles/Areas.css'; // Reutilizamos el mismo archivo de estilos
 import { db } from '../../firebase'; // Importa tu configuración de Firebase
 import { collection, addDoc, getDocs, updateDoc, deleteDoc, doc } from 'firebase/firestore';
 import Swal from 'sweetalert2'; // Importa SweetAlert2
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 
 function Partidas() {
   const [partidas, setPartidas] = useState([]);
@@ -145,18 +147,20 @@ function Partidas() {
             <tr key={partida.id}>
               <td>{partida.descripcion}</td>
               <td className="details-cell">
-                <button
-                  className="edit-btn-area"
-                  onClick={() => handleEditPartida(partida.id, partida.descripcion)}
-                >
-                  Editar
-                </button>
-                <button
-                  className="delete-btn-area"
-                  onClick={() => handleDeletePartida(partida.id, partida.descripcion)}
-                >
-                  Borrar
-                </button>
+              <button
+                className="edit-btn-area"
+                onClick={() => handleEditPartida(partida.id, partida.descripcion)}
+              >
+                <FontAwesomeIcon icon={faEdit} /> Editar
+              </button>
+
+              <button
+                className="delete-btn-area"
+                onClick={() => handleDeletePartida(partida.id, partida.descripcion)}
+              >
+                <FontAwesomeIcon icon={faTrash} /> Borrar
+              </button>
+
               </td>
             </tr>
           ))}

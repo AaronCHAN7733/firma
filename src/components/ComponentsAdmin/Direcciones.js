@@ -3,6 +3,8 @@ import '../../styles/Areas.css'; // Reutilizamos el mismo archivo de estilos
 import { db } from '../../firebase'; // Importa tu configuración de Firebase
 import { collection, addDoc, getDocs, updateDoc, deleteDoc, doc } from 'firebase/firestore';
 import Swal from 'sweetalert2'; // Importa SweetAlert2
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 
 function Direcciones() {
   const [direcciones, setDirecciones] = useState([]);
@@ -161,18 +163,20 @@ function Direcciones() {
               <td>{direccion.claveUR}</td>
               <td>{direccion.descripcion}</td>
               <td className="details-cell">
-                <button
-                  className="edit-btn-area"
-                  onClick={() => handleEditDireccion(direccion.id, direccion.descripcion, direccion.claveUR)}
-                >
-                  Editar
-                </button>
-                <button
-                  className="delete-btn-area"
-                  onClick={() => handleDeleteDireccion(direccion.id, direccion.descripcion)}
-                >
-                  Borrar
-                </button>
+              <button
+                className="edit-btn-area"
+                onClick={() => handleEditDireccion(direccion.id, direccion.descripcion, direccion.claveUR)}
+              >
+                <FontAwesomeIcon icon={faEdit} /> 
+              </button>
+
+              <button
+                className="delete-btn-area"
+                onClick={() => handleDeleteDireccion(direccion.id, direccion.descripcion)}
+              >
+                <FontAwesomeIcon icon={faTrash} /> 
+              </button>
+
               </td>
             </tr>
           ))}

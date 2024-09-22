@@ -3,6 +3,9 @@ import '../../styles/Areas.css'; // Reutilizamos el mismo archivo de estilos
 import { db } from '../../firebase'; // Importa tu configuración de Firebase
 import { collection, addDoc, getDocs, updateDoc, deleteDoc, doc } from 'firebase/firestore';
 import Swal from 'sweetalert2'; // Importa SweetAlert2
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
+
 
 function Componentes() {
   const [componentes, setComponentes] = useState([]);
@@ -145,18 +148,20 @@ function Componentes() {
               <td>{componente.codigoComponente}</td> {/* Celda para el código */}
               <td>{componente.descripcion}</td>
               <td className="details-cell">
-                <button
-                  className="edit-btn-area"
-                  onClick={() => handleEditComponente(componente.id, componente.descripcion, componente.codigoComponente)}
-                >
-                  Editar
-                </button>
-                <button
-                  className="delete-btn-area"
-                  onClick={() => handleDeleteComponente(componente.id, componente.descripcion)}
-                >
-                  Borrar
-                </button>
+              <button
+                className="edit-btn-area"
+                onClick={() => handleEditComponente(componente.id, componente.descripcion, componente.codigoComponente)}
+              >
+                <FontAwesomeIcon icon={faEdit} /> Editar
+              </button>
+
+              <button
+                className="delete-btn-area"
+                onClick={() => handleDeleteComponente(componente.id, componente.descripcion)}
+              >
+                <FontAwesomeIcon icon={faTrash} /> Borrar
+              </button>
+
               </td>
             </tr>
           ))}
