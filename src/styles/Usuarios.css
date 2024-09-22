@@ -164,6 +164,6 @@ body {
 /* Ajustes para pantallas pequeñas */
 @media (max-width: 600px) {
   .search-input {
-    max-width: 100%;
+    max-width: 40%;
   }
 }

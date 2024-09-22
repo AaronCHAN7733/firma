@@ -252,7 +252,7 @@
     }
 }
 
-  .user-dropdown {
+.user-dropdown {
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -266,7 +266,7 @@
   .dropdown-menu {
     position: absolute;
     top: 60px; /* Ajustar según el diseño */
-    right: 10px;
+    right: 10px; /* Espaciado predeterminado */
     background-color: white;
     border: 1px solid #ddd;
     border-radius: 5px;
@@ -289,6 +289,29 @@
   .dropdown-menu li:hover {
     background-color: #f0f0f0;
   }
+  
+  /* Responsivo para dispositivos móviles */
+  @media (max-width: 768px) {
+    .dropdown-menu {
+      right: 0px; /* Alinear completamente a la derecha */
+      width: auto; /* Asegurar que no se recorte el contenido */
+    }
+  
+    .dropdown-menu li {
+      padding: 15px; /* Más espacio para facilidad en dispositivos táctiles */
+    }
+  }
+  
+  /* Ajustes adicionales para pantallas más pequeñas */
+  @media (max-width: 480px) {
+    .dropdown-menu {
+     left: 700px;
+      width: 50%; /* Ocupa toda la pantalla si es necesario */
+      box-shadow: none; /* Eliminar la sombra en pantallas pequeñas */
+      border-radius: 0; /* Quitar el borde redondeado en pantallas más pequeñas */
+    }
+  }
+  
 
   .boton {
     background-color: #84b6f4;

@@ -201,7 +201,7 @@
   }
 
   .modal {
-    max-width: 90%;
+    max-width: 50%;
     align-items: center; /* Aumentar el ancho en dispositivos móviles */
     text-align: center;
   }
@@ -213,8 +213,8 @@
   .items-table th, .items-table td {
     font-size: 0.9rem; /* Reducir el tamaño de la fuente en pantallas más pequeñas */
   }
-
+  
   .modal .form-row input {
-    width: 80%; /* Ajustar los inputs a la pantalla móvil */
+    width: 90%; /* Ajustar los inputs a la pantalla móvil */
   }
 }
