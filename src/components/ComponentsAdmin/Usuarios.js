@@ -4,9 +4,9 @@ import TopBar from '../TopBar';
 import '../../styles/Usuarios.css';
 import { collection, getDocs, setDoc, doc } from 'firebase/firestore';
 import { db } from '../../firebase';
-import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth'; // Importa Firebase Auth
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth'; // Importa Firebase Auth
 import Modal from 'react-modal';
-import Swal from 'sweetalert';
+import Swal from 'sweetalert2';
 import { FaSearch } from 'react-icons/fa'; // Importa el ícono de lupa
 import Select from 'react-select';
 
@@ -86,7 +86,7 @@ const fetchAreas = async () => {
     const emailParts = email.split('@');
     return emailParts.length === 2 && allowedDomains.includes(emailParts[1]);
   };
-
+  
   const handleAddUser = async () => {
     if (!newUser.correo || !newUser.nombre || !newUser.role || !newUser.telefono || !newUser.password || !newUser.direccionId) {
       setError('Por favor, completa todos los campos');
@@ -98,7 +98,27 @@ const fetchAreas = async () => {
       return;
     }
   
+    const auth = getAuth();
+    const adminUser = auth.currentUser; // Guardar al usuario administrador actual
+  
     try {
+      // Pedir la contraseña del administrador
+      const { value: adminPassword } = await Swal.fire({
+        title: 'Ingrese su contraseña',
+        input: 'password',
+        inputLabel: 'Contraseña de administrador',
+        inputPlaceholder: 'Ingrese su contraseña actual',
+        inputAttributes: {
+          autocapitalize: 'off',
+          required: true
+        },
+        showCancelButton: true
+      });
+  
+      if (!adminPassword) {
+        throw new Error("No se proporcionó la contraseña del administrador.");
+      }
+  
       // Crear el usuario en Firebase Authentication
       const userCredential = await createUserWithEmailAndPassword(auth, newUser.correo, newUser.password);
       const createdUser = userCredential.user;
@@ -115,27 +135,31 @@ const fetchAreas = async () => {
         estado: 'activo'
       });
   
-      Swal({
+      // Mostrar alerta de éxito
+      Swal.fire({
         title: '¡Usuario Creado!',
         text: 'El nuevo usuario ha sido creado exitosamente.',
         icon: 'success',
         confirmButtonText: 'Aceptar'
       });
   
-      // Mantener el modal cerrado y restablecer el estado del nuevo usuario
-      setModalIsOpen(false);
+      // Limpiar los datos del formulario pero mantener el modal abierto
       setNewUser({ correo: '', nombre: '', role: '', telefono: '', password: '', direccionId: '', areaId: '' });
+      setError('');
   
-      // Actualizar la lista de usuarios sin redirigir
+      // Actualizar la lista de usuarios sin cerrar el modal
       const querySnapshot = await getDocs(collection(db, 'users'));
       const usersList = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       setUsuarios(usersList);
-      
-      // Asegúrate de no tener ninguna redirección aquí
+  
+      // Restaurar la sesión del usuario administrador
+      if (adminUser) {
+        await signInWithEmailAndPassword(auth, adminUser.email, adminPassword); // Re-autentica al administrador
+      }
   
     } catch (error) {
       console.error("Error al crear el usuario:", error);
-      Swal({
+      Swal.fire({
         title: 'Error',
         text: 'Hubo un problema al crear el usuario. Revisa la consola para más detalles.',
         icon: 'error',
@@ -143,7 +167,6 @@ const fetchAreas = async () => {
       });
     }
   };
-  
   
 
   const handleEditUser = (user) => {
@@ -176,7 +199,7 @@ const fetchAreas = async () => {
         estado: 'activo' // Mantener el estado
       }, { merge: true });
 
-      Swal({
+      Swal.fire({
         title: '¡Usuario Actualizado!',
         text: 'El usuario ha sido actualizado exitosamente.',
         icon: 'success',
@@ -193,7 +216,7 @@ const fetchAreas = async () => {
       setUsuarios(usersList);
     } catch (error) {
       console.error("Error al actualizar el usuario:", error);
-      Swal({
+      Swal.fire({
         title: 'Error',
         text: 'Hubo un problema al actualizar el usuario. Revisa la consola para más detalles.',
         icon: 'error',
@@ -247,7 +270,7 @@ const fetchAreas = async () => {
 
   const closeModal = () => {
     setModalIsOpen(false);
-    setNewUser({ correo: '', nombre: '', role: '', telefono: '', password: '', direccionId: '', areaId: '' });
+    //setNewUser({ correo: '', nombre: '', role: '', telefono: '', password: '', direccionId: '', areaId: '' });
     setError('');
   };
 
@@ -319,7 +342,6 @@ const fetchAreas = async () => {
     })}
   </tbody>
 </table>
-
 <Modal
         isOpen={modalIsOpen}
         onRequestClose={closeModal}

@@ -4,11 +4,12 @@ import { db } from '../../firebase'; // Importa tu configuración de Firebase
 import { collection, addDoc, getDocs, updateDoc, deleteDoc, doc } from 'firebase/firestore';
 import Swal from 'sweetalert2'; // Importa SweetAlert2
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faTrash, faSearch } from '@fortawesome/free-solid-svg-icons';
 
 function Partidas() {
   const [partidas, setPartidas] = useState([]);
   const [newPartida, setNewPartida] = useState('');
+  const [searchTerm, setSearchTerm] = useState(''); // Estado para el término de búsqueda
   const [isModalOpen, setIsModalOpen] = useState(false); // Estado para controlar el modal
   const [isEditing, setIsEditing] = useState(false); // Estado para saber si estamos editando
   const [currentPartidaId, setCurrentPartidaId] = useState(null); // Guardar la partida actual en edición
@@ -102,9 +103,26 @@ function Partidas() {
     setIsModalOpen(true); // Abrir el modal
   };
 
+  // Filtrar las partidas según el término de búsqueda
+  const filteredPartidas = partidas.filter((partida) =>
+    partida.descripcion.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <div className="areas-container">
       <h1 className="areas-title">Partidas</h1>
+
+      {/* Campo de búsqueda */}
+      <div className="search-container">
+          <FontAwesomeIcon icon={faSearch} className="search-icon" />
+          <input
+            type="text"
+            placeholder="Buscar partida..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="search-input"
+          />
+        </div>
 
       {/* Botón para abrir el modal en modo agregar */}
       <button className="add-area-btn" onClick={() => {
@@ -143,7 +161,7 @@ function Partidas() {
           </tr>
         </thead>
         <tbody>
-          {partidas.map((partida) => (
+          {filteredPartidas.map((partida) => (
             <tr key={partida.id}>
               <td>{partida.descripcion}</td>
               <td className="details-cell">
@@ -151,14 +169,14 @@ function Partidas() {
                 className="edit-btn-area"
                 onClick={() => handleEditPartida(partida.id, partida.descripcion)}
               >
-                <FontAwesomeIcon icon={faEdit} /> Editar
+                <FontAwesomeIcon icon={faEdit} /> 
               </button>
 
               <button
                 className="delete-btn-area"
                 onClick={() => handleDeletePartida(partida.id, partida.descripcion)}
               >
-                <FontAwesomeIcon icon={faTrash} /> Borrar
+                <FontAwesomeIcon icon={faTrash} /> 
               </button>
 
               </td>

@@ -4,7 +4,7 @@ import { db } from '../../firebase'; // Importa tu configuración de Firebase
 import { collection, addDoc, getDocs, updateDoc, deleteDoc, doc } from 'firebase/firestore';
 import Swal from 'sweetalert2'; // Importa SweetAlert2
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { faEdit, faTrash, faSearch } from '@fortawesome/free-solid-svg-icons';
 
 function Direcciones() {
   const [direcciones, setDirecciones] = useState([]);
@@ -13,6 +13,7 @@ function Direcciones() {
   const [isModalOpen, setIsModalOpen] = useState(false); // Estado para controlar el modal
   const [isEditing, setIsEditing] = useState(false); // Estado para saber si estamos editando
   const [currentDireccionId, setCurrentDireccionId] = useState(null); // Guardar la dirección actual en edición
+  const [searchTerm, setSearchTerm] = useState(''); // Estado para el valor de búsqueda
 
   // Función para cargar las direcciones desde Firestore
   const fetchDirecciones = async () => {
@@ -108,9 +109,26 @@ function Direcciones() {
     setIsModalOpen(true); // Abrir el modal
   };
 
+  // Filtrar direcciones en base al término de búsqueda
+  const filteredDirecciones = direcciones.filter((direccion) =>
+    direccion.descripcion.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    direccion.claveUR.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <div className="areas-container">
       <h1 className="areas-title">Direcciones</h1>
+
+      <div className="search-container">
+          <FontAwesomeIcon icon={faSearch} className="search-icon" />
+          <input
+            type="text"
+            placeholder="Buscar partida..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="search-input"
+          />
+        </div>
 
       {/* Botón para abrir el modal en modo agregar */}
       <button className="add-area-btn" onClick={() => {
@@ -158,7 +176,7 @@ function Direcciones() {
           </tr>
         </thead>
         <tbody>
-          {direcciones.map((direccion) => (
+          {filteredDirecciones.map((direccion) => (
             <tr key={direccion.id}>
               <td>{direccion.claveUR}</td>
               <td>{direccion.descripcion}</td>

@@ -292,23 +292,39 @@
   
   /* Responsivo para dispositivos móviles */
   @media (max-width: 768px) {
-    .dropdown-menu {
-      right: 0px; /* Alinear completamente a la derecha */
-      width: auto; /* Asegurar que no se recorte el contenido */
-    }
-  
-    .dropdown-menu li {
-      padding: 15px; /* Más espacio para facilidad en dispositivos táctiles */
-    }
+    /* Asegurar que el dropdown siempre esté alineado a la derecha */
+.dropdown-menu {
+  position: absolute; /* Asegura que el dropdown pueda posicionarse relativo a su contenedor */
+  right: 0; /* Siempre alinear a la derecha */
+  width: auto; /* Mantener el contenido visible */
+}
+
+/* Ajustes adicionales para pantallas más pequeñas */
+@media (max-width: 768px) {
+  .dropdown-menu li {
+    padding: 15px; /* Más espacio para facilidad en dispositivos táctiles */
+  }
+}
+
+@media (max-width: 480px) {
+  .dropdown-menu {
+    width: auto; /* Mantener el ancho adaptativo */
+    box-shadow: none; /* Eliminar la sombra en pantallas pequeñas */
+    border-radius: 0; /* Quitar el borde redondeado en pantallas más pequeñas */
+  }
+}
+
   }
   
   /* Ajustes adicionales para pantallas más pequeñas */
   @media (max-width: 480px) {
     .dropdown-menu {
-     left: 700px;
-      width: 50%; /* Ocupa toda la pantalla si es necesario */
+      width: 30%; /* Ocupa toda la pantalla si es necesario */
       box-shadow: none; /* Eliminar la sombra en pantallas pequeñas */
       border-radius: 0; /* Quitar el borde redondeado en pantallas más pequeñas */
+    }
+    .solicitudes-dropdown{
+      left: 100px;
     }
   }
   
@@ -321,4 +337,80 @@
     cursor: pointer;
     border: none;
   }
+
+  /* Estilos generales */
+.solicitudes-wrapper {
+    position: relative;
+  }
+  
+  .solicitudes-dropdown {
+    position: absolute;
+    top: 35px; /* Ajusta según la posición del ícono de la carta */
+    right: 180px;
+    width: 250px; /* Ancho del dropdown */
+    background-color: #fff; /* Fondo blanco */
+    border: 1px solid #ccc; /* Borde gris claro */
+    border-radius: 4px; /* Bordes redondeados */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra para el dropdown */
+    z-index: 1000; /* Asegura que esté por encima de otros elementos */
+    padding: 10px;
+    overflow-y: auto;
+  }
+  
+  .solicitudes-dropdown h4 {
+    margin: 0;
+    padding-bottom: 8px;
+    font-size: 16px;
+    border-bottom: 1px solid #eee;
+    color: #333; /* Color del título */
+  }
+  
+  .solicitudes-dropdown ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .solicitudes-dropdown li {
+    padding: 8px;
+    font-size: 14px;
+    color: #555; /* Color del texto */
+    border-bottom: 1px solid #eee; /* Línea separadora */
+  }
+  
+  .solicitudes-dropdown li:last-child {
+    border-bottom: none; /* Elimina el borde del último elemento */
+  }
+  
+  .solicitudes-dropdown li:hover {
+    background-color: #f5f5f5; /* Color de fondo al pasar el mouse */
+    cursor: pointer; /* Manito cuando se pasa el mouse */
+  }
+  
+  .solicitudes-dropdown p {
+    font-size: 14px;
+    color: #777; /* Color gris claro para el texto de "No hay solicitudes" */
+    margin: 0;
+    padding: 8px;
+    text-align: center;
+  }
+  
+  /* Icono de la carta */
+  .message-icon {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    font-size: 18px;
+    color: #555; /* Color del ícono */
+  }
+  
+  .message-icon:hover {
+    color: #333; /* Cambia de color al pasar el mouse */
+  }
+  
+  .notification-icon {
+    margin-right: 15px; /* Espaciado entre íconos */
+  }
+  
   

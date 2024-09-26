@@ -4,13 +4,13 @@ import { db } from '../../firebase'; // Importa tu configuración de Firebase
 import { collection, addDoc, getDocs, updateDoc, deleteDoc, doc } from 'firebase/firestore';
 import Swal from 'sweetalert2'; // Importa SweetAlert2
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
-
+import { faEdit, faTrash,faSearch } from '@fortawesome/free-solid-svg-icons';
 
 function Componentes() {
   const [componentes, setComponentes] = useState([]);
   const [codigoComponente, setCodigoComponente] = useState(''); // Estado para el código del componente
   const [descripcionComponente, setDescripcionComponente] = useState(''); // Estado para la descripción del componente
+  const [searchTerm, setSearchTerm] = useState(''); // Estado para el término de búsqueda
   const [isModalOpen, setIsModalOpen] = useState(false); // Estado para controlar el modal
   const [isEditing, setIsEditing] = useState(false); // Estado para saber si estamos editando
   const [currentComponenteId, setCurrentComponenteId] = useState(null); // Guardar el componente actual en edición
@@ -93,9 +93,27 @@ function Componentes() {
     setIsModalOpen(true); // Abrir el modal
   };
 
+  // Filtrar los componentes según el término de búsqueda
+  const filteredComponentes = componentes.filter((componente) =>
+    componente.codigoComponente.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    componente.descripcion.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <div className="areas-container">
       <h1 className="areas-title">Componentes</h1>
+
+      {/* Campo de búsqueda */}
+      <div className="search-container">
+          <FontAwesomeIcon icon={faSearch} className="search-icon" />
+          <input
+            type="text"
+            placeholder="Buscar componente..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="search-input"
+          />
+        </div>
 
       {/* Botón para abrir el modal en modo agregar */}
       <button className="add-area-btn" onClick={() => {
@@ -143,7 +161,7 @@ function Componentes() {
           </tr>
         </thead>
         <tbody>
-          {componentes.map((componente) => (
+          {filteredComponentes.map((componente) => (
             <tr key={componente.id}>
               <td>{componente.codigoComponente}</td> {/* Celda para el código */}
               <td>{componente.descripcion}</td>
@@ -152,14 +170,14 @@ function Componentes() {
                 className="edit-btn-area"
                 onClick={() => handleEditComponente(componente.id, componente.descripcion, componente.codigoComponente)}
               >
-                <FontAwesomeIcon icon={faEdit} /> Editar
+                <FontAwesomeIcon icon={faEdit} /> 
               </button>
 
               <button
                 className="delete-btn-area"
                 onClick={() => handleDeleteComponente(componente.id, componente.descripcion)}
               >
-                <FontAwesomeIcon icon={faTrash} /> Borrar
+                <FontAwesomeIcon icon={faTrash} /> 
               </button>
 
               </td>

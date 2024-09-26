@@ -9,54 +9,43 @@ import '../../styles/FirmarRequisicion.css';
 function FirmarRequisicion({ user }) {
   const [isSidebarVisible, setSidebarVisible] = useState(false);
   const [requisiciones, setRequisiciones] = useState([]);
-  const [requisicionesFirmadas, setRequisicionesFirmadas] = useState([]); // Para almacenar IDs de requisiciones firmadas
-  const [isLoading, setIsLoading] = useState([]); // Estado de carga individual por requisición
+  const [expandedRows, setExpandedRows] = useState([]); // Estado para filas expandidas
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768); // Estado para detectar si es móvil
   const navigate = useNavigate();
+
+  // Detectar tamaño de pantalla
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    window.addEventListener('resize', handleResize);
+    
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
 
   const toggleSidebar = () => {
     setSidebarVisible(!isSidebarVisible);
   };
 
-  // Función para obtener las requisiciones firmadas desde la colección 'FlujoDeFirmas'
-  const fetchRequisicionesFirmadas = async (requisicionesList) => {
+  const fetchRequisiciones = async () => {
     try {
-      const flujoDeFirmasCollection = collection(db, 'FlujoDeFirmas');
-      const q = query(
-        flujoDeFirmasCollection,
-        where('requisicionId', 'in', requisicionesList.map((r) => r.id)) // Verificar si las requisiciones están firmadas
-      );
-      const firmadasSnapshot = await getDocs(q);
-      const firmadasList = firmadasSnapshot.docs.map((doc) => doc.data().requisicionId); // Obtener solo los IDs de las requisiciones firmadas
-      setRequisicionesFirmadas(firmadasList);
+      const requisicionesCollection = collection(db, 'requisiciones');
+      const q = query(requisicionesCollection, where('userId', '==', user.uid));
+      const requisicionesSnapshot = await getDocs(q);
+      const requisicionesList = requisicionesSnapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setRequisiciones(requisicionesList);
     } catch (error) {
-      console.error('Error fetching firmadas:', error);
+      console.error('Error fetching requisiciones:', error);
     }
   };
 
   useEffect(() => {
-    const fetchRequisiciones = async () => {
-      try {
-        const requisicionesCollection = collection(db, 'requisiciones');
-        const q = query(requisicionesCollection, where('userId', '==', user.uid)); // Obtiene todas las requisiciones creadas por el usuario
-        const requisicionesSnapshot = await getDocs(q);
-        const requisicionesList = requisicionesSnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        setRequisiciones(requisicionesList);
-
-        // Establece los estados de carga para cada requisición
-        setIsLoading(Array(requisicionesList.length).fill(true));
-
-        // Llama a la función para verificar las requisiciones firmadas
-        await fetchRequisicionesFirmadas(requisicionesList);
-      } catch (error) {
-        console.error('Error fetching requisiciones:', error);
-      } finally {
-        setIsLoading(Array(requisiciones.length).fill(false)); // Desactiva el estado de carga para todas las requisiciones
-      }
-    };
-
     fetchRequisiciones();
   }, [user.uid]);
 
@@ -64,7 +53,16 @@ function FirmarRequisicion({ user }) {
     navigate('/firmar', { state: { requisicion } });
   };
 
-  const requisicionesPendientes = requisiciones; // Mostrar todas las requisiciones del usuario
+  // Función para alternar la visualización completa del folio en móviles
+  const toggleFolioExpansion = (requisicionId) => {
+    if (expandedRows.includes(requisicionId)) {
+      setExpandedRows(expandedRows.filter((id) => id !== requisicionId)); // Ocultar
+    } else {
+      setExpandedRows([...expandedRows, requisicionId]); // Mostrar completo
+    }
+  };
+
+  const requisicionesPendientes = requisiciones;
 
   return (
     <div className={`admin-container ${isSidebarVisible ? 'shifted' : ''}`}>
@@ -98,21 +96,24 @@ function FirmarRequisicion({ user }) {
                 ) : (
                   requisicionesPendientes.map((requisicion, index) => (
                     <tr key={requisicion.id}>
-                      <td>{requisicion.folio}</td>
+                      <td
+                        onClick={() => isMobile && toggleFolioExpansion(requisicion.id)} // Solo expandir en móvil
+                        style={{ cursor: isMobile ? 'pointer' : 'default' }} // Mostrar puntero solo en móviles
+                      >
+                        {/* Mostrar solo los primeros 8 caracteres en móvil */}
+                        {isMobile && !expandedRows.includes(requisicion.id)
+                          ? `${requisicion.folio.substring(0, 8)}...`
+                          : requisicion.folio}
+                      </td>
                       <td>{requisicion.fechaElaboracion}</td>
                       <td>{requisicion.estatus}</td>
                       <td>
-                        {isLoading[index] ? (
-                          <span>Cargando...</span> // Mostrar "Cargando..." mientras se verifica cada requisición
-                        ) : (
-                          <>
-                            <button className="firmar-btn" onClick={() => handleFirmarRequisicion(requisicion)}>
-                              Ver Detalles
-                            </button>
-                            {!requisicionesFirmadas.includes(requisicion.id) && (
-                              <button className="rechazar-btn">Rechazar</button>
-                            )}
-                          </>
+                        <button className="firmar-btn" onClick={() => handleFirmarRequisicion(requisicion)}>
+                          Ver Detalles
+                        </button>
+                        {/* Quitar botón de rechazar si el estatus es "En autorización" */}
+                        {requisicion.estatus !== 'En autorización' && (
+                          <button className="rechazar-btn">Rechazar</button>
                         )}
                       </td>
                     </tr>

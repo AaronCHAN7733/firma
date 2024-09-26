@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react';
 import '../../styles/DetallesRequisicion.css';
 import { useLocation, useNavigate } from 'react-router-dom'; 
 import { getAuth } from 'firebase/auth'; 
-import { doc, getDoc, setDoc, collection } from 'firebase/firestore'; 
+import { doc, getDoc, setDoc, collection, addDoc, getDocs, updateDoc } from 'firebase/firestore'; 
 import { db } from '../../firebase';
-import Swal from 'sweetalert';
+import Swal from 'sweetalert2';
 
 function DetallesRequisicion() {
   const location = useLocation();
@@ -15,16 +15,29 @@ function DetallesRequisicion() {
   const [firmaExistente, setFirmaExistente] = useState(null);
   const [codigoFirma, setCodigoFirma] = useState('');
   const [firmaValidada, setFirmaValidada] = useState(false);
-  const [requisicionFirmada, setRequisicionFirmada] = useState(false); 
-  const [cargando, setCargando] = useState(true); // Nuevo estado de carga
+  const [estadoFirma, setEstadoFirma] = useState(null); 
+  const [cargandoRequisicion, setCargandoRequisicion] = useState(true); // Nueva variable de estado para carga de requisición
+  const [requisicionFirmada, setRequisicionFirmada] = useState(false);
 
   const auth = getAuth();
   const usuario = auth.currentUser;
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
   const calcularTotal = () => {
     if (!requisicion.items) return 0;
     return requisicion.items.reduce((acc, item) => acc + parseFloat(item.subtotal || 0), 0);
+  };
+
+  const verificarRequisicionFirmada = async () => {
+    const flujoRef = collection(db, 'flujoDeFirmas');
+    const querySnapshot = await getDocs(flujoRef);
+    querySnapshot.forEach((doc) => {
+      const data = doc.data();
+      if (data.requisicionId === requisicion.id) {
+        setRequisicionFirmada(true);
+      }
+    });
+    setCargandoRequisicion(false); // Cambiar estado de carga al terminar
   };
 
   const generarCodigoFirma = () => {
@@ -44,17 +57,18 @@ function DetallesRequisicion() {
     const firmaRef = doc(db, 'firmas', usuario.uid);
     const firmaSnap = await getDoc(firmaRef);
     if (firmaSnap.exists()) {
-      setFirmaExistente(firmaSnap.data()); 
+      const firmaData = firmaSnap.data();
+      setFirmaExistente(firmaData);
+      setEstadoFirma(firmaData.estado); 
+      if (firmaData.estado !== 'autorizado') {
+        Swal.fire({
+          title: 'Firma no autorizada',
+          text: 'Tu firma aún no ha sido autorizada. No puedes firmar la requisición hasta que otro usuario la autorice.',
+          icon: 'warning',
+          confirmButtonText: 'Entendido'
+        });
+      }
     }
-  };
-
-  const verificarRequisicionFirmada = async () => {
-    const flujoDeFirmasRef = doc(db, 'FlujoDeFirmas', requisicion.id);
-    const flujoSnap = await getDoc(flujoDeFirmasRef);
-    if (flujoSnap.exists()) {
-      setRequisicionFirmada(true); 
-    }
-    setCargando(false); // Cuando termina la verificación, dejamos de cargar
   };
 
   const abrirModal = async () => {
@@ -75,27 +89,51 @@ function DetallesRequisicion() {
         setMensajeError('La firma no es válida o no coincide');
         return;
       }
-      Swal({
-        title: "¡Éxito!",
-        text: "Firma válida.",
-        icon: "success",
-        button: "OK"
+      if (estadoFirma !== 'autorizado') {
+        Swal.fire({
+          title: 'Firma no autorizada',
+          text: 'Tu firma aún no ha sido autorizada. No puedes firmar la requisición hasta que el administrador la autorice.',
+          icon: 'warning',
+          confirmButtonText: 'Entendido'
+        });
+        return;
+      }
+
+      Swal.fire({
+        title: '¡Éxito!',
+        text: 'Firma válida.',
+        icon: 'success',
+        confirmButtonText: 'OK'
       });
-      setCodigoFirma(firmaExistente.codigo); 
+      setCodigoFirma(firmaExistente.codigo);
     } else {
-      const nuevoCodigoFirma = generarCodigoFirma(); 
+      const nuevoCodigoFirma = generarCodigoFirma();
       await setDoc(doc(db, 'firmas', usuario.uid), {
         firma: firmaHash,
-        codigo: nuevoCodigoFirma, 
+        codigo: nuevoCodigoFirma,
+        usuarioId: usuario.uid,
+        estado: 'pendiente'
       });
-      Swal({
-        title: "¡Éxito!",
-        text: "Firma creada exitosamente. Código de firma: " + nuevoCodigoFirma,
-        icon: "success",
-        button: "OK"
+      Swal.fire({
+        title: '¡Éxito!',
+        text: 'Firma creada exitosamente. Código de firma: ' + nuevoCodigoFirma,
+        icon: 'success',
+        confirmButtonText: 'OK'
       });
-      setCodigoFirma(nuevoCodigoFirma); 
+      setCodigoFirma(nuevoCodigoFirma);
+      setEstadoFirma('pendiente');
     }
+
+    // Enviar el código a la colección flujoDeFirmas
+    await addDoc(collection(db, 'flujoDeFirmas'), {
+      requisicionId: requisicion.id,
+      codigo: codigoFirma || firmaExistente.codigo
+    });
+
+    // Cambiar el estatus de la requisición a "En autorización"
+    await updateDoc(doc(db, 'requisiciones', requisicion.id), {
+      estatus: 'En autorización'
+    });
 
     setFirmaValidada(true);
     setModalVisible(false);
@@ -103,29 +141,10 @@ function DetallesRequisicion() {
     setFirma('');
   };
 
-  const enviarFirma = async () => {
-    const flujoDeFirmasRef = doc(collection(db, 'FlujoDeFirmas'), requisicion.id);
-    await setDoc(flujoDeFirmasRef, {
-      codigoFirma: codigoFirma,
-      requisicionId: requisicion.id,
-      // Remover usuarioId y fechaFirma
-    });
-  
-    Swal({
-      title: "¡Firma enviada!",
-      text: "El código de firma y la requisición han sido registrados.",
-      icon: "success",
-      button: "OK"
-    });
-  
-    setFirmaValidada(false);
-    navigate(-1);
-  };
-  
-
   useEffect(() => {
     if (requisicion) {
-      verificarRequisicionFirmada();
+      obtenerFirmaExistente();
+      verificarRequisicionFirmada(); // Verifica si la requisición ya está firmada
     }
   }, [requisicion]);
 
@@ -137,7 +156,6 @@ function DetallesRequisicion() {
     <div className="detalles-requisicion-container">
       <h3 className="detalles-requisicion-header">Detalles de la Requisición</h3>
       <div className="detalles-requisicion-content">
-        {/* Mostrar detalles de la requisición */}
         <div><strong>Usuario que realizó la Requisición:</strong> {requisicion.nombreUsuario}</div>
         <div><strong>Área solicitante:</strong> {requisicion.areaSolicitante}</div>
         <div><strong>Componente:</strong> {requisicion.componente}</div>
@@ -182,47 +200,47 @@ function DetallesRequisicion() {
         <strong>Total: </strong> {calcularTotal().toFixed(2)}
       </div>
 
-      {/* Mostrar si la requisición ya está firmada */}
-      {cargando ? (
-        <p>Cargando...</p>  // Mostrar mensaje de carga
-      ) : requisicionFirmada ? (
+      {firmaValidada ? (
+        <div className="firma-validada">
+          <p>Código de Firma: {codigoFirma}</p>
+        </div>
+      ) : cargandoRequisicion ? ( // Mostrar leyenda de carga si se está verificando
+        <div className="cargando">
+          <p>Cargando...</p>
+        </div>
+      ) : requisicionFirmada ? ( // Mostrar leyenda si ya está firmada
         <div className="requisicion-firmada">
-          <p>Requisición firmada verifica el estatus de tu Requisición</p>
+          <p>Esta requisición ya ha sido firmada.</p>
         </div>
       ) : (
-        <>
-          {/* Mostrar código de firma si ha sido validada */}
-          {firmaValidada && (
-            <div className="codigo-firma-section">
-              <p><strong>Código de Firma:</strong> {codigoFirma}</p>
-              <button onClick={enviarFirma}>Enviar Firma</button>
-            </div>
-          )}
-
-          {/* Botón para firmar solo si no ha sido validada la firma */}
-          {!firmaValidada && (
+        <div>
+          {firmaExistente ? (
             <button className="firmar-button" onClick={abrirModal}>
-              Firmar
+              Firmar Requisición
+            </button>
+          ) : (
+            <button className="firmar-button" onClick={abrirModal}>
+              Crear Firma
             </button>
           )}
-        </>
-      )}
 
-      {/* Modal de firma */}
-      {modalVisible && (
-        <div className="modal-firma">
-          <div className="modal-content-firma">
-            <h4>{firmaExistente ? 'Validar Firma' : 'Crear Firma'}</h4>
-            <input 
-              type="text" 
-              placeholder="Ingrese su firma (5 dígitos)" 
-              value={firma} 
-              onChange={(e) => setFirma(e.target.value)} 
-            />
-            {mensajeError && <p className="error-message">{mensajeError}</p>}
-            <button onClick={firmarRequisicion}>Confirmar Firma</button>
-            <button onClick={() => setModalVisible(false)}>Cancelar</button>
-          </div>
+          {modalVisible && (
+            <div className="firma-modal">
+              <div className="modal-content-firma">
+                <h4>Firma</h4>
+                <input
+                  type="text"
+                  maxLength={5}
+                  value={firma}
+                  onChange={(e) => setFirma(e.target.value)}
+                  placeholder="Ingrese su firma de 5 dígitos"
+                />
+                {mensajeError && <p className="error-firma">{mensajeError}</p>}
+                <button className="boton-firmar" onClick={firmarRequisicion}>Validar Firma</button>
+                <button className="boton-cancelar" onClick={() => setModalVisible(false)}>Cancelar</button>
+              </div>
+            </div>
+          )}
         </div>
       )}
     </div>

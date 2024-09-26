@@ -4,7 +4,6 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { auth, db } from './firebase'; // Asegúrate de importar `db` desde tu archivo de Firebase
 import { doc, getDoc } from 'firebase/firestore';
 import Login from './components/Login';
-import Home from './components/Home';
 import AdminHome from './components/ComponentsAdmin/AdminHome';
 import Usuarios from './components/ComponentsAdmin/Usuarios';  // Importamos el componente Usuarios
 import HomeOperativos from './components/HomeOperativos';  // Componente para el rol 'personal'
@@ -19,8 +18,8 @@ import LlenarRequisiciones from './components/ComponentsAdmin/LlenarRequisicione
 import FirmarRequisicion from './components/componentsSolicitante/FirmarRequisicion';
 import DetallesRequisicion from './components/componentsSolicitante/DetallesRequisicion';
 import HomeFirmante from './components/componentsSolicitante/HomeFirmante';
-import HistorialRequisiciones from './components/HistorialRequisciones'
-import LlenarNuevaRequisicion from './components/componentsSolicitante/LlenarNuevaRequisicion'
+import HistorialRequisiciones from './components/HistorialRequisciones';
+import LlenarNuevaRequisicion from './components/componentsSolicitante/LlenarNuevaRequisicion';
 
 function ProtectedRoute({ user, role, allowedRoles, children }) {
   if (!user) {
@@ -29,7 +28,7 @@ function ProtectedRoute({ user, role, allowedRoles, children }) {
 
   if (!allowedRoles.includes(role)) {
     // Redirige a una página de acceso denegado o la página por defecto para usuarios
-    return <Navigate to="/home" />;
+    return ;
   }
 
   return children;
@@ -72,15 +71,6 @@ function App() {
           element={<Login onLogin={(user, role) => { setUser(user); setRole(role); }} />}
         />
 
-        {/* Ruta para usuarios normales */}
-        <Route
-          path="/home"
-          element={
-            <ProtectedRoute user={user} role={role} allowedRoles={['user']}>
-              <Home user={user} />
-            </ProtectedRoute>
-          }
-        />
 
         {/* Ruta para administradores */}
         <Route
@@ -241,11 +231,19 @@ function App() {
 
         {/* Redireccionar rutas no válidas */}
         <Route
-          path="*"
-          element={
-            <Navigate to={user ? (role === 'admin' ? "/adminHome" : role === 'secretario' ? "/homeOperativos" : role === 'solicitante' ? "/homeFirmante" : "/home") : "/login"} />
-          }
-        />
+            path="*"
+            element={
+              <Navigate to={
+                user ? (
+                  role === 'admin' ? "/adminHome" : 
+                  role === 'secretario' ? "/homeOperativos" : 
+                  role === 'solicitante' ? "/homeFirmante" : 
+                  "/login" // Si el rol no coincide con ninguno, los manda a login
+                ) : "/login"
+              } />
+            }
+          />
+
       </Routes>
     </Router>
   );
