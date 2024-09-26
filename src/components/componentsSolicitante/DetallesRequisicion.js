@@ -81,9 +81,9 @@ function DetallesRequisicion() {
       setMensajeError('La firma debe ser un número de 5 dígitos');
       return;
     }
-
+  
     const firmaHash = await generarHashFirma(firma);
-
+  
     if (firmaExistente) {
       if (firmaHash !== firmaExistente.firma) {
         setMensajeError('La firma no es válida o no coincide');
@@ -98,7 +98,7 @@ function DetallesRequisicion() {
         });
         return;
       }
-
+  
       Swal.fire({
         title: '¡Éxito!',
         text: 'Firma válida.',
@@ -112,7 +112,7 @@ function DetallesRequisicion() {
         firma: firmaHash,
         codigo: nuevoCodigoFirma,
         usuarioId: usuario.uid,
-        estado: 'pendiente'
+        estado: 'pendiente' // El estado es 'pendiente' hasta que se autorice
       });
       Swal.fire({
         title: '¡Éxito!',
@@ -122,24 +122,37 @@ function DetallesRequisicion() {
       });
       setCodigoFirma(nuevoCodigoFirma);
       setEstadoFirma('pendiente');
+      
+      // Aquí se debe eliminar la siguiente línea para no cambiar el estatus aún
+      // setModalVisible(false); // Cierra el modal aquí
     }
-
-    // Enviar el código a la colección flujoDeFirmas
-    await addDoc(collection(db, 'flujoDeFirmas'), {
-      requisicionId: requisicion.id,
-      codigo: codigoFirma || firmaExistente.codigo
-    });
-
-    // Cambiar el estatus de la requisición a "En autorización"
-    await updateDoc(doc(db, 'requisiciones', requisicion.id), {
-      estatus: 'En autorización'
-    });
-
+  
+    // Enviar el código a la colección flujoDeFirmas solo si la firma fue autorizada
+    if (estadoFirma === 'autorizado') {
+      await addDoc(collection(db, 'flujoDeFirmas'), {
+        requisicionId: requisicion.id,
+        codigo: firmaExistente ? firmaExistente.codigo : codigoFirma
+      });
+  
+      // Cambiar el estatus de la requisición a "En autorización"
+      await updateDoc(doc(db, 'requisiciones', requisicion.id), {
+        estatus: 'En autorización'
+      });
+    } else {
+      Swal.fire({
+        title: 'Firma no autorizada',
+        text: 'Tu firma aún está pendiente de autorización. No se ha cambiado el estatus de la requisición.',
+        icon: 'info',
+        confirmButtonText: 'Entendido'
+      });
+    }
+  
     setFirmaValidada(true);
-    setModalVisible(false);
     setMensajeError('');
     setFirma('');
+    setModalVisible(false); // Cierra el modal aquí
   };
+  
 
   useEffect(() => {
     if (requisicion) {
