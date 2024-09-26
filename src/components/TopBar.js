@@ -2,7 +2,6 @@ import React, { useEffect, useState, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBell, faEnvelope, faUser } from '@fortawesome/free-solid-svg-icons';
 import { getFirestore, doc, getDocs, collection, query, where, getDoc, updateDoc, addDoc } from 'firebase/firestore';
-import { getDatabase, ref, set } from 'firebase/database';
 import { getAuth, signOut } from 'firebase/auth';
 import Modal from 'react-modal';
 import '../styles/AdminHome.css';
@@ -20,82 +19,102 @@ function TopBar() {
   const [notificationsVisible, setNotificationsVisible] = useState(false);
   const [pendingSignatures, setPendingSignatures] = useState([]);
   const [userNotifications, setUserNotifications] = useState([]);
-  const notificationDropdownRef = useRef(null);
+  const notificationDropdownRef = useRef(null); // Para el dropdown de notificaciones
   const [messagesVisible, setMessagesVisible] = useState(false);
   const [seenNotifications, setSeenNotifications] = useState([]);
 
+
   useEffect(() => {
-    const fetchUserRoleAndNotifications = async () => {
-      const auth = getAuth();
-      const user = auth.currentUser;
-      if (user) {
-        const db = getFirestore();
-        const userDoc = await getDoc(doc(db, 'users', user.uid));
-        if (userDoc.exists()) {
-          const data = userDoc.data();
-          setRole(data.role);
-          setUserData(data);
-          
-          // Fetch area and direction data
-          if (data.areaId) {
-            const areaDoc = await getDoc(doc(db, 'areas', data.areaId));
-            if (areaDoc.exists()) {
-              setAreaDescription(areaDoc.data().descripcion);
+    const fetchUserRole = async () => {
+      try {
+        const auth = getAuth();
+        const user = auth.currentUser;
+        if (user) {
+          const db = getFirestore();
+          const userDoc = await getDoc(doc(db, 'users', user.uid));
+          if (userDoc.exists()) {
+            const data = userDoc.data();
+            setRole(data.role);
+            setUserData(data);
+            if (data.areaId) {
+              const areaDoc = await getDoc(doc(db, 'areas', data.areaId));
+              if (areaDoc.exists()) {
+                setAreaDescription(areaDoc.data().descripcion);
+              } else {
+                console.error('No se encontró el documento de área');
+              }
             }
-          }
-          if (data.direccionId) {
-            const direccionDoc = await getDoc(doc(db, 'direcciones', data.direccionId));
-            if (direccionDoc.exists()) {
-              setDireccionData(direccionDoc.data());
+            if (data.direccionId) {
+              const direccionDoc = await getDoc(doc(db, 'direcciones', data.direccionId));
+              if (direccionDoc.exists()) {
+                setDireccionData(direccionDoc.data());
+              } else {
+                console.error('No se encontró el documento de dirección');
+              }
             }
+            // Obtener notificaciones del usuario
+            const notificationsQuery = query(collection(db, 'notificaciones'), where('usuarioId', '==', user.uid));
+            const notificationsSnapshot = await getDocs(notificationsQuery);
+            const notificationsData = notificationsSnapshot.docs.map((doc) => ({
+              id: doc.id,
+              ...doc.data()
+            }));
+            setUserNotifications(notificationsData);
+          } else {
+            console.error('El documento del usuario no existe');
           }
-          
-          // Fetch notifications
-          const notificationsQuery = query(collection(db, 'notificaciones'), where('usuarioId', '==', user.uid));
-          const notificationsSnapshot = await getDocs(notificationsQuery);
-          const notificationsData = notificationsSnapshot.docs.map((doc) => ({
-            id: doc.id,
-            ...doc.data()
-          }));
-          setUserNotifications(notificationsData);
+        } else {
+          console.error('No hay usuario autenticado');
         }
+      } catch (error) {
+        console.error('Error al obtener el rol del usuario:', error);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
+      const savedSeenNotifications = JSON.parse(localStorage.getItem('seenNotifications')) || [];
+  setSeenNotifications(savedSeenNotifications);
     };
 
-    fetchUserRoleAndNotifications();
-  }, []);
-
-  useEffect(() => {
     const fetchPendingSignatures = async () => {
-      const db = getFirestore();
-      const q = query(collection(db, 'firmas'), where('estado', '==', 'pendiente'));
-      const querySnapshot = await getDocs(q);
-      const firmasData = [];
-      for (const firmaDoc of querySnapshot.docs) {
-        const firma = firmaDoc.data();
-        const userDocRef = doc(db, 'users', firma.usuarioId);
-        const userDoc = await getDoc(userDocRef);
-        if (userDoc.exists()) {
-          const userData = userDoc.data();
-          firmasData.push({
-            id: firmaDoc.id,
-            codigo: firma.codigo,
-            estado: firma.estado,
-            nombreUsuario: userData.nombre,
-            usuarioId: firma.usuarioId
-          });
+      try {
+        const db = getFirestore();
+        const q = query(collection(db, 'firmas'), where('estado', '==', 'pendiente'));
+        const querySnapshot = await getDocs(q);
+        const firmasData = [];
+
+        for (const firmaDoc of querySnapshot.docs) {
+          const firma = firmaDoc.data();
+          const userDocRef = doc(db, 'users', firma.usuarioId);
+          const userDoc = await getDoc(userDocRef);
+          if (userDoc.exists()) {
+            const userData = userDoc.data();
+            firmasData.push({
+              id: firmaDoc.id,
+              codigo: firma.codigo,
+              estado: firma.estado,
+              nombreUsuario: userData.nombre,
+              usuarioId: firma.usuarioId
+            });
+          }
         }
+        setPendingSignatures(firmasData);
+      } catch (error) {
+        console.error('Error al obtener las firmas pendientes:', error);
       }
-      setPendingSignatures(firmasData);
     };
 
+    fetchUserRole();
     fetchPendingSignatures();
   }, []);
 
   const handleLogout = async () => {
     const auth = getAuth();
-    await signOut(auth);
+    try {
+      await signOut(auth);
+      console.log('Sesión cerrada exitosamente');
+    } catch (error) {
+      console.error('Error al cerrar sesión:', error);
+    }
   };
 
   const toggleDropdown = () => {
@@ -104,14 +123,13 @@ function TopBar() {
 
   const toggleNotifications = () => {
     setNotificationsVisible(!notificationsVisible);
-    setMessagesVisible(false);
+    setMessagesVisible(false); // Cerrar el dropdown de mensajes al abrir notificaciones
   };
-
+  
   const toggleMessages = () => {
     setMessagesVisible(!messagesVisible);
-    setNotificationsVisible(false);
+    setNotificationsVisible(false); // Cerrar el dropdown de notificaciones al abrir mensajes
   };
-
   const handleNotificationClick = (notificationId) => {
     if (!seenNotifications.includes(notificationId)) {
       const updatedSeenNotifications = [...seenNotifications, notificationId];
@@ -119,7 +137,10 @@ function TopBar() {
       localStorage.setItem('seenNotifications', JSON.stringify(updatedSeenNotifications));
     }
   };
+  
+  
 
+  // Maneja clics fuera del dropdown para cerrarlo
   useEffect(() => {
     const handleOutsideClick = (event) => {
       if (notificationDropdownRef.current && !notificationDropdownRef.current.contains(event.target)) {
@@ -140,22 +161,19 @@ function TopBar() {
       const firmaRef = doc(db, 'firmas', id);
       await updateDoc(firmaRef, { estado: newStatus });
 
+      // Almacenar notificación
       if (newStatus === 'autorizado') {
         await addDoc(collection(db, 'notificaciones'), {
           usuarioId: usuarioId,
           mensaje: `Tu firma ha sido ${newStatus}`,
           fecha: new Date().toISOString()
         });
-
-        const realtimeDb = getDatabase();
-        const notificationRef = ref(realtimeDb, `notificaciones/${usuarioId}/${Date.now()}`);
-        await set(notificationRef, {
-          mensaje: `Tu firma ha sido ${newStatus}`,
-          fecha: new Date().toISOString(),
-        });
       }
 
-      setPendingSignatures((prevSignatures) => prevSignatures.filter((signature) => signature.id !== id));
+      // Actualizar las firmas pendientes
+      setPendingSignatures((prevSignatures) => 
+        prevSignatures.filter((signature) => signature.id !== id)
+      );
     } catch (error) {
       console.error('Error al actualizar el estado de la firma:', error);
     }
@@ -172,59 +190,71 @@ function TopBar() {
   return (
     <header className="top-bar">
       <div className="right-content">
-        <div className="icons">
-          <button className="notification-icon" onClick={toggleNotifications}>
-            <FontAwesomeIcon icon={faBell} />
-            {userNotifications.length - seenNotifications.length > 0 && (
-              <span className="notification-badge">
-                {userNotifications.length - seenNotifications.length}
-              </span>
+      <div className="icons">
+  <button className="notification-icon" onClick={toggleNotifications}>
+    <FontAwesomeIcon icon={faBell} />
+    {userNotifications.length - seenNotifications.length > 0 && (
+  <span className="notification-badge">
+    {userNotifications.length - seenNotifications.length}
+  </span>
+)}
+
+
+  </button>
+  {notificationsVisible && (
+    <div className="solicitudes-dropdown" ref={notificationDropdownRef}>
+      <ul>
+      {userNotifications.length === 0 ? (
+        <li>No hay notificaciones recientes</li>
+      ) : (
+        userNotifications.map((notification, index) => (
+          <li key={index} onClick={() => handleNotificationClick(notification.id)}>
+            <strong></strong> {notification.mensaje} <br />
+            <strong></strong> {new Date(notification.fecha).toLocaleString()}
+          </li>
+        ))
+)}
+      </ul>
+    </div>
+  )}
+  {role === 'admin' && (
+    <div className="message-dropdown">
+      <button className="message-icon" onClick={toggleMessages}>
+        <FontAwesomeIcon icon={faEnvelope} />
+        {pendingSignatures.length > 0 && <span className="notification-badge">{pendingSignatures.length}</span>}
+      </button>
+      {messagesVisible && (
+        <div className="dropdown-menu">
+          <ul>
+            {pendingSignatures.length === 0 ? (
+              <li>No hay firmas pendientes</li>
+            ) : (
+              pendingSignatures.map((signature, index) => (
+                <li key={index}>
+                  <strong>Código:</strong> {signature.codigo} <br />
+                  <strong>Estado:</strong> {signature.estado} <br />
+                  <strong>Usuario:</strong> {signature.nombreUsuario}
+                  <div className="signature-actions">
+                    <button
+                      className="btn-accept"
+                      onClick={() => updateSignatureStatus(signature.id, 'autorizado', signature.usuarioId)}
+                    >
+                      Aceptar
+                    </button>
+                    <button
+                      className="btn-deny"
+                      onClick={() => updateSignatureStatus(signature.id, 'denegado', signature.usuarioId)}
+                    >
+                      Denegar
+                    </button>
+                  </div>
+                </li>
+              ))
             )}
-          </button>
-          {notificationsVisible && (
-            <div className="solicitudes-dropdown" ref={notificationDropdownRef}>
-              <ul>
-                {userNotifications.length === 0 ? (
-                  <li>No hay notificaciones recientes</li>
-                ) : (
-                  userNotifications.map((notification) => (
-                    <li key={notification.id} onClick={() => handleNotificationClick(notification.id)}>
-                      {notification.mensaje} <br />
-                      {new Date(notification.fecha).toLocaleString()}
-                    </li>
-                  ))
-                )}
-              </ul>
-            </div>
-          )}
-          {role === 'admin' && (
-            <div className="message-dropdown">
-              <button className="message-icon" onClick={toggleMessages}>
-                <FontAwesomeIcon icon={faEnvelope} />
-                {pendingSignatures.length > 0 && <span className="notification-badge">{pendingSignatures.length}</span>}
-              </button>
-              {messagesVisible && (
-                <div className="dropdown-menu">
-                  <ul>
-                    {pendingSignatures.length === 0 ? (
-                      <li>No hay firmas pendientes</li>
-                    ) : (
-                      pendingSignatures.map((signature) => (
-                        <li key={signature.id}>
-                          <strong>Código:</strong> {signature.codigo} <br />
-                          <strong>Estado:</strong> {signature.estado} <br />
-                          <strong>Usuario:</strong> {signature.nombreUsuario}
-                          <div className="signature-actions">
-                            <button className="btn-accept" onClick={() => updateSignatureStatus(signature.id, 'autorizado', signature.usuarioId)}>Aceptar</button>
-                            <button className="btn-deny" onClick={() => updateSignatureStatus(signature.id, 'denegado', signature.usuarioId)}>Denegar</button>
-                          </div>
-                        </li>
-                      ))
-                    )}
-                  </ul>
-                </div>
-              )}
-            </div>
+          </ul>
+        </div>
+      )}
+    </div>
   )}
 </div>
 
