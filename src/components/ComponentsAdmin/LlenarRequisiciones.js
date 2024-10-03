@@ -40,7 +40,7 @@ function LlenarRequisiciones() {
     componente: '',
     nombreEvento: '',
     fechaEvento: '',
-    folio: ''
+    folio: 'UTRM/'
   });
   const [userName, setUserName] = useState('');  // Estado para almacenar el nombre del usuario
   const [partidas, setPartidas] = useState([]);  // Estado para almacenar las partidas obtenidas de Firebase

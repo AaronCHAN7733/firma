@@ -20,6 +20,11 @@ import DetallesRequisicion from './components/componentsSolicitante/DetallesRequ
 import HomeFirmante from './components/componentsSolicitante/HomeFirmante';
 import HistorialRequisiciones from './components/HistorialRequisciones';
 import LlenarNuevaRequisicion from './components/componentsSolicitante/LlenarNuevaRequisicion';
+import Firmas from './components/ComponentsAdmin/Firmas';
+import HomeAutorizante from './components/componentsAutorizante/HomeAutorizante'
+import FirmarRequisicionAutorizante from './components/componentsAutorizante/FirmarRequisicionAutorizante';
+import AutorizarRequisicion from './components/componentsAutorizante/AutorizarRequisicion'; 
+import Autorizar from './components/componentsAutorizante/Autorizar';
 
 function ProtectedRoute({ user, role, allowedRoles, children }) {
   if (!user) {
@@ -97,6 +102,14 @@ function App() {
             element={
               <ProtectedRoute user={user} role={role} allowedRoles={['admin']}>
                 <Datos />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/firmas"
+            element={
+              <ProtectedRoute user={user} role={role} allowedRoles={['admin']}>
+                <Firmas />
               </ProtectedRoute>
             }
           />
@@ -227,6 +240,39 @@ function App() {
             </ProtectedRoute>
           }
         />
+         <Route
+          path="/homeAutorizante"
+          element={
+            <ProtectedRoute user={user} role={role} allowedRoles={['autorizante']}>
+              <HomeAutorizante />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/seguimiento-Requisiciones"
+          element={
+            <ProtectedRoute user={user} role={role} allowedRoles={['autorizante']}>
+              <FirmarRequisicionAutorizante user={user} />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/AutorizarRequisicion"
+          element={
+            <ProtectedRoute user={user} role={role} allowedRoles={['autorizante']}>
+              <AutorizarRequisicion user={user} />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/Autorizar"
+          element={
+            <ProtectedRoute user={user} role={role} allowedRoles={['autorizante']}>
+              <Autorizar user={user} />
+            </ProtectedRoute>
+          }
+        />
+        
         
 
         {/* Redireccionar rutas no válidas */}
@@ -238,6 +284,7 @@ function App() {
                   role === 'admin' ? "/adminHome" : 
                   role === 'secretario' ? "/homeOperativos" : 
                   role === 'solicitante' ? "/homeFirmante" : 
+                  role === 'autorizante' ? "/homeAutorizante" : 
                   "/login" // Si el rol no coincide con ninguno, los manda a login
                 ) : "/login"
               } />

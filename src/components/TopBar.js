@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faBell, faEnvelope, faUser } from '@fortawesome/free-solid-svg-icons';
+import { faBell, faEnvelope, faUser, faCog } from '@fortawesome/free-solid-svg-icons';
 import { getFirestore, doc, getDocs, collection, query, where, getDoc, updateDoc, addDoc } from 'firebase/firestore';
-import { getAuth, signOut } from 'firebase/auth';
+import { getAuth, signOut,sendPasswordResetEmail } from 'firebase/auth';
 import Modal from 'react-modal';
 import '../styles/AdminHome.css';
 
@@ -22,6 +22,8 @@ function TopBar() {
   const notificationDropdownRef = useRef(null); // Para el dropdown de notificaciones
   const [messagesVisible, setMessagesVisible] = useState(false);
   const [seenNotifications, setSeenNotifications] = useState([]);
+  const [settingsModalIsOpen, setSettingsModalIsOpen] = useState(false);
+const [topBarColor, setTopBarColor] = useState('#3b5998'); // Color por defecto
 
 
   useEffect(() => {
@@ -105,7 +107,37 @@ function TopBar() {
 
     fetchUserRole();
     fetchPendingSignatures();
+
+    const updateData = async () => {
+      await fetchUserRole();
+      await fetchPendingSignatures();
+    };
+
+    updateData(); // Llamar la función para cargar los datos inicialmente
+
+    // Establecer un intervalo para actualizar los datos cada 30 segundos (30000 ms)
+    const interval = setInterval(() => {
+      updateData();
+    }, 30000);
+
+    return () => clearInterval(interval);
+    
   }, []);
+  const handlePasswordReset = async () => {
+    try {
+      const auth = getAuth();
+      const user = auth.currentUser;
+      if (user) {
+        await sendPasswordResetEmail(auth, user.email);
+        alert('Se ha enviado un correo de restablecimiento de contraseña a tu dirección de correo.');
+      } else {
+        alert('No se encontró el usuario actual.');
+      }
+    } catch (error) {
+      console.error('Error al enviar el correo de restablecimiento de contraseña:', error);
+      alert('Error al intentar enviar el correo de restablecimiento.');
+    }
+  };
 
   const handleLogout = async () => {
     const auth = getAuth();
@@ -137,7 +169,14 @@ function TopBar() {
       localStorage.setItem('seenNotifications', JSON.stringify(updatedSeenNotifications));
     }
   };
+  const toggleSettingsModal = () => {
+    setSettingsModalIsOpen(!settingsModalIsOpen);
+  };
   
+  const handleChangeTopBarColor = (color) => {
+    setTopBarColor(color);
+    document.querySelector('.top-bar').style.backgroundColor = color;
+  };
   
 
   // Maneja clics fuera del dropdown para cerrarlo
@@ -179,6 +218,7 @@ function TopBar() {
     }
   };
 
+
   const openModal = () => {
     setModalIsOpen(true);
   };
@@ -187,10 +227,16 @@ function TopBar() {
     setModalIsOpen(false);
   };
 
+  
   return (
     <header className="top-bar">
       <div className="right-content">
       <div className="icons">
+      <div className="settings-icon">
+  <button onClick={toggleSettingsModal}>
+    <FontAwesomeIcon icon={faCog} />
+  </button>
+</div>
   <button className="notification-icon" onClick={toggleNotifications}>
     <FontAwesomeIcon icon={faBell} />
     {userNotifications.length - seenNotifications.length > 0 && (
@@ -198,6 +244,51 @@ function TopBar() {
     {userNotifications.length - seenNotifications.length}
   </span>
 )}
+<Modal
+  isOpen={settingsModalIsOpen}
+  onRequestClose={toggleSettingsModal}
+  className="modal-config"
+  overlayClassName="modal-overlay-config"
+>
+  <h2>Configuración</h2>
+  <div className="config-options">
+    <button onClick={handlePasswordReset}>
+      Recuperar Contraseña
+    </button>
+    <button onClick={() => alert('Detalles de la aplicación')}>
+      Ver Detalles de la Aplicación
+    </button>
+    <button onClick={() => alert('Contactarnos')}>
+      Contactanos
+    </button>
+
+    <div className="color-options">
+  <h3>Cambiar Color de la Barra</h3>
+  <button 
+    onClick={() => handleChangeTopBarColor('#3b5998')}
+    style={{ backgroundColor: '#3b5998', color: '#fff' }} // Azul
+  >
+    Azul
+  </button>
+  <button 
+    onClick={() => handleChangeTopBarColor('#ff6347')}
+    style={{ backgroundColor: '#ff6347', color: '#fff' }} // Rojo
+  >
+    Rojo
+  </button>
+  <button 
+    onClick={() => handleChangeTopBarColor('#32cd32')}
+    style={{ backgroundColor: '#32cd32', color: '#fff' }} // Verde
+  >
+    Verde
+  </button>
+</div>
+
+  </div>
+  <button className="boton" onClick={toggleSettingsModal}>Cerrar</button>
+</Modal>
+
+
 
 
   </button>

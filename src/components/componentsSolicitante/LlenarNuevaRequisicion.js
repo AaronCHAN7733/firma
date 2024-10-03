@@ -147,24 +147,26 @@ function LlenarRequisiciones() {
   const handleAreaChange = async (selectedOption) => {
     setFormInfo({
       ...formInfo,
-      areaSolicitante: selectedOption.value
+      areaSolicitante: selectedOption.value,
+      areaId: selectedOption.id, // Guardar areaId en formInfo
     });
-
-    // Obtener la dirección asociada usando el direccionId
+  
     const direccionId = selectedOption.direccionId;
     if (direccionId) {
-      const direccionDocRef = doc(db, 'direcciones', direccionId);  // Referencia a la colección 'direccion'
+      const direccionDocRef = doc(db, 'direcciones', direccionId);
       const direccionDoc = await getDoc(direccionDocRef);
       if (direccionDoc.exists()) {
         setFormInfo(prevFormInfo => ({
           ...prevFormInfo,
-          direccionAdscripcion: direccionDoc.data().descripcion  // Establecer la descripción de la dirección
+          direccionAdscripcion: direccionDoc.data().descripcion,
+          direccionId: direccionId  // Guardar direccionId en formInfo
         }));
       } else {
         console.error('No se encontró la dirección asociada');
       }
     }
   };
+  
 
   const handleSubmitItem = (e) => {
     e.preventDefault();
@@ -210,11 +212,10 @@ function LlenarRequisiciones() {
         icon: "warning",
         button: "Entendido"
       });
-  
       return;
     }
   
-    const user = auth.currentUser;  // Asegúrate de tener el usuario autenticado
+    const user = auth.currentUser;
     if (!user) {
       console.error('No se encontró el usuario autenticado');
       return;
@@ -226,7 +227,9 @@ function LlenarRequisiciones() {
       total,
       nombreUsuario: userName,
       userId: user.uid,
-      estatus: "En Firma"
+      estatus: "En Firma",
+      areaId: formInfo.areaId,         // Incluir areaId
+      direccionId: formInfo.direccionId // Incluir direccionId
     };
   
     try {
@@ -237,9 +240,8 @@ function LlenarRequisiciones() {
         icon: "success",
         button: "Aceptar"
       });
-  
     } catch (error) {
-      console.error('Error al enviar requisición:', error.message);  // Agregar mensaje de error detallado
+      console.error('Error al enviar requisición:', error.message);
       Swal({
         title: "Error",
         text: "Ocurrió un error al enviar la requisición. Por favor, intente nuevamente.",

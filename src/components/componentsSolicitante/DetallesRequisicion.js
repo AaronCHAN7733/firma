@@ -63,7 +63,7 @@ function DetallesRequisicion() {
       if (firmaData.estado !== 'autorizado') {
         Swal.fire({
           title: 'Firma no autorizada',
-          text: 'Tu firma aún no ha sido autorizada. No puedes firmar la requisición hasta que otro usuario la autorice.',
+          text: 'Tu firma aún no ha sido autorizada. No puedes firmar la requisición hasta que el administrador la autorice.',
           icon: 'warning',
           confirmButtonText: 'Entendido'
         });
@@ -78,81 +78,86 @@ function DetallesRequisicion() {
 
   const firmarRequisicion = async () => {
     if (firma.length !== 5 || isNaN(firma)) {
-      setMensajeError('La firma debe ser un número de 5 dígitos');
-      return;
+        setMensajeError('La firma debe ser un número de 5 dígitos');
+        return;
     }
-  
+
     const firmaHash = await generarHashFirma(firma);
-  
+
     if (firmaExistente) {
-      if (firmaHash !== firmaExistente.firma) {
-        setMensajeError('La firma no es válida o no coincide');
-        return;
-      }
-      if (estadoFirma !== 'autorizado') {
+        if (firmaHash !== firmaExistente.firma) {
+            setMensajeError('La firma no es válida o no coincide');
+            return;
+        }
+        if (estadoFirma !== 'autorizado') {
+            Swal.fire({
+                title: 'Firma no autorizada',
+                text: 'Tu firma aún no ha sido autorizada. No puedes firmar la requisición hasta que el administrador la autorice.',
+                icon: 'warning',
+                confirmButtonText: 'Entendido'
+            });
+            return;
+        }
+
         Swal.fire({
-          title: 'Firma no autorizada',
-          text: 'Tu firma aún no ha sido autorizada. No puedes firmar la requisición hasta que el administrador la autorice.',
-          icon: 'warning',
-          confirmButtonText: 'Entendido'
+            title: '¡Éxito!',
+            text: 'Firma válida.',
+            icon: 'success',
+            confirmButtonText: 'OK'
         });
-        return;
-      }
-  
-      Swal.fire({
-        title: '¡Éxito!',
-        text: 'Firma válida.',
-        icon: 'success',
-        confirmButtonText: 'OK'
-      });
-      setCodigoFirma(firmaExistente.codigo);
+        setCodigoFirma(firmaExistente.codigo);
     } else {
-      const nuevoCodigoFirma = generarCodigoFirma();
-      await setDoc(doc(db, 'firmas', usuario.uid), {
-        firma: firmaHash,
-        codigo: nuevoCodigoFirma,
-        usuarioId: usuario.uid,
-        estado: 'pendiente' // El estado es 'pendiente' hasta que se autorice
-      });
-      Swal.fire({
-        title: '¡Éxito!',
-        text: 'Firma creada exitosamente. Código de firma: ' + nuevoCodigoFirma,
-        icon: 'success',
-        confirmButtonText: 'OK'
-      });
-      setCodigoFirma(nuevoCodigoFirma);
-      setEstadoFirma('pendiente');
-      
-      // Aquí se debe eliminar la siguiente línea para no cambiar el estatus aún
-      // setModalVisible(false); // Cierra el modal aquí
+        const nuevoCodigoFirma = generarCodigoFirma();
+        await setDoc(doc(db, 'firmas', usuario.uid), {
+            firma: firmaHash,
+            codigo: nuevoCodigoFirma,
+            usuarioId: usuario.uid,
+            estado: 'pendiente' // El estado es 'pendiente' hasta que se autorice
+        });
+        Swal.fire({
+            title: '¡Éxito!',
+            text: 'Firma creada exitosamente. Código de firma: ' + nuevoCodigoFirma,
+            icon: 'success',
+            confirmButtonText: 'OK'
+        });
+        setCodigoFirma(nuevoCodigoFirma);
+        setEstadoFirma('pendiente');
     }
-  
-    // Enviar el código a la colección flujoDeFirmas solo si la firma fue autorizada
-    if (estadoFirma === 'autorizado') {
-      await addDoc(collection(db, 'flujoDeFirmas'), {
-        requisicionId: requisicion.id,
-        codigo: firmaExistente ? firmaExistente.codigo : codigoFirma
-      });
-  
-      // Cambiar el estatus de la requisición a "En autorización"
-      await updateDoc(doc(db, 'requisiciones', requisicion.id), {
+
+    // Obtener el documento existente de flujoDeFirmas para la requisición
+    const flujoRef = doc(db, 'flujoDeFirmas', requisicion.id); // Asegúrate de que el ID sea el correcto
+    const flujoDoc = await getDoc(flujoRef);
+
+    const fechaActual = new Date().toISOString(); // Obtener fecha actual en formato ISO
+    const nuevaFirma = {
+        firmaId: usuario.uid,
+        codigo: firmaExistente ? firmaExistente.codigo : codigoFirma, // Usar el codigo existente
+        fecha: fechaActual
+    };
+
+    if (flujoDoc.exists()) {
+        // Si ya existe el documento, actualiza el arreglo de firmas
+        await updateDoc(flujoRef, {
+            firmas: [...(flujoDoc.data().firmas || []), nuevaFirma] // Agrega la nueva firma al arreglo existente
+        });
+    } else {
+        // Si no existe, crea un nuevo documento con el arreglo
+        await setDoc(flujoRef, {
+            requisicionId: requisicion.id,
+            firmas: [nuevaFirma] // Crea el arreglo con la nueva firma
+        });
+    }
+
+    // Cambiar el estatus de la requisición a "En autorización"
+    await updateDoc(doc(db, 'requisiciones', requisicion.id), {
         estatus: 'En autorización'
-      });
-    } else {
-      Swal.fire({
-        title: 'Firma no autorizada',
-        text: 'Tu firma aún está pendiente de autorización. No se ha cambiado el estatus de la requisición.',
-        icon: 'info',
-        confirmButtonText: 'Entendido'
-      });
-    }
-  
+    });
+
     setFirmaValidada(true);
     setMensajeError('');
     setFirma('');
     setModalVisible(false); // Cierra el modal aquí
-  };
-  
+};
 
   useEffect(() => {
     if (requisicion) {

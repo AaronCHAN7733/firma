@@ -39,7 +39,18 @@ const Login = ({ onLogin }) => {
           navigate('/homeOperativos');
         } else if (role === 'solicitante') {
           navigate('/homeFirmante'); // Redirigir al HomeFirmante si el rol es "firmante"
-        } else {
+        } else if (role === 'autorizante') {
+          navigate('/homeAutorizante');
+        }else if (role === 'bloqueado') {
+          Swal({
+            title: 'Atención',
+            text: 'Actualmente no tienes acceso a la aplicacion contacta al administrador.',
+            icon: 'warning',
+            confirmButtonText: 'Entendido',
+          });
+        }
+         else {
+          
           navigate('/login'); // Redirige a la página de login si el rol no coincide
         }
       } else {

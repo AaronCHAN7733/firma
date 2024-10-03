@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import FirmanteNavbar from './FirmanteNavbar';
+import AutorizanteNavbar from './AutorizanteNavbar'
 import TopBar from '../TopBar';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { db } from '../../firebase';
 import { useNavigate } from 'react-router-dom';
 import '../../styles/FirmarRequisicion.css';
 
-function FirmarRequisicion({ user }) {
+
+function FirmarRequisicionAutorizante({ user }) {
   const [isSidebarVisible, setSidebarVisible] = useState(false);
   const [requisiciones, setRequisiciones] = useState([]);
   const [expandedRows, setExpandedRows] = useState([]); // Estado para filas expandidas
@@ -70,10 +71,10 @@ function FirmarRequisicion({ user }) {
         ☰
       </button>
 
-      <FirmanteNavbar isSidebarVisible={isSidebarVisible} toggleSidebar={toggleSidebar} />
+      <AutorizanteNavbar isSidebarVisible={isSidebarVisible} toggleSidebar={toggleSidebar} />
 
       <main className={`main-content ${isSidebarVisible ? 'shifted' : ''}`}>
-        <TopBar userName="Firmante" />
+        <TopBar userName="autorizante" />
 
         <section className="content">
           <h2>Requisiciones</h2>
@@ -111,8 +112,8 @@ function FirmarRequisicion({ user }) {
                         <button className="firmar-btn" onClick={() => handleFirmarRequisicion(requisicion)}>
                           Ver Detalles
                         </button>
-                        {/* Mostrar botón de rechazar solo si el estatus es "En firma" */}
-                        {requisicion.estatus === 'En firma' && (
+                        {/* Quitar botón de rechazar si el estatus es "En autorización" */}
+                        {requisicion.estatus !== 'En autorización' && (
                           <button className="rechazar-btn">Rechazar</button>
                         )}
                       </td>
@@ -128,4 +129,4 @@ function FirmarRequisicion({ user }) {
   );
 }
 
-export default FirmarRequisicion;
+export default FirmarRequisicionAutorizante;

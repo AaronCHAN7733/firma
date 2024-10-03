@@ -4,6 +4,9 @@ body {
   font-family: Arial, sans-serif;
   background-color: #f0f4ff; /* Fondo suave */
 }
+h1 {
+  text-align: center;
+}
 
 /* Tabla de usuarios */
 .user-table {
@@ -63,6 +66,15 @@ body {
 .ReactModal__Overlay {
   opacity: 0;
   transition: opacity 200ms ease-in-out;
+  position: fixed; /* Asegura que el modal se mantenga en la pantalla aunque haya desplazamiento */
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.5); /* Opcional: agrega un fondo oscuro traslúcido */
 }
 
 .ReactModal__Overlay--after-open {

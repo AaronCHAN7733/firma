@@ -286,6 +286,7 @@ const fetchAreas = async () => {
         <TopBar userName="Administrador" />
 
         <section className="content">
+        <h1>Usuarios</h1>
           <div className="search-container">
             <input
               type="text"
