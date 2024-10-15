@@ -189,67 +189,59 @@
 }
 
 .cards-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 20px;
-    justify-items: center;
-    padding: 20px;
-  }
-  
-  .card-container {
-    display: flex;
-    justify-content: space-around;
-    flex-wrap: wrap;
-    gap: 20px; /* Espacio entre las cartas */
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  padding: 20px;
 }
 
 .card {
-    background-color: #f0f8ff;
-    border: 1px solid #c0d9e8;
-    border-radius: 12px;
-    padding: 25px;
-    text-align: center;
-    font-size: 1.1em;
-    box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.15);
-    cursor: pointer;
-    width: 220px;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    margin: 40px auto;
+  background: linear-gradient(135deg, rgba(58, 123, 213, 0.8), rgba(91, 192, 235, 0.8));
+  border-radius: 12px;
+  padding: 30px;
+  text-align: left;
+  color: white;
+  font-size: 1.2em;
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.15);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  cursor: pointer;
+  border: none;
 }
 
 .card:hover {
-    background-color: #d1eaff;
-    transform: translateY(-10px);
-    box-shadow: 0px 12px 24px rgba(0, 0, 0, 0.2);
+  transform: scale(1.05);
+  box-shadow: 0px 15px 30px rgba(0, 0, 0, 0.2);
 }
 
-.card h3 {
-    color: #357ABD;
-    font-size: 1.3em;
-    margin-bottom: 15px;
+.card-icon {
+  font-size: 2.5em;
+  color: rgba(255, 255, 255, 0.9);
 }
 
-.card p {
-    color: #6C8EA4;
-    font-size: 1em;
-    margin-bottom: 10px;
+.card-text {
+  display: flex;
+  flex-direction: column;
 }
 
-.card:hover h3 {
-    color: #2a5a88;
+.card-text h3 {
+  margin: 0;
+  font-size: 1.5em;
 }
 
-/* Responsividad para pantallas móviles */
+.card-text p {
+  margin: 5px 0 0;
+  font-size: 1em;
+  opacity: 0.8;
+}
+
+/* Responsivo */
 @media (max-width: 768px) {
-    .card-container {
-        flex-direction: column;
-        align-items: center; /* Centrar las cartas en pantallas pequeñas */
-    }
-
-    .card {
-        width: 90%; /* La carta ocupa el 90% del ancho de la pantalla en móviles */
-        margin-bottom: 20px; /* Espacio entre las cartas */
-    }
+  .cards-grid {
+      grid-template-columns: 1fr;
+  }
 }
 
 .user-dropdown {

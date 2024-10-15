@@ -1,19 +1,20 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';  // Importamos useNavigate para redirigir
+import { useNavigate } from 'react-router-dom';
+import { FaBuilding, FaMapSigns, FaClipboardList, FaCogs, FaSitemap, FaHistory } from 'react-icons/fa'; // Importación de íconos
 import Navbar from '../Navbar';
 import TopBar from '../TopBar';
 import '../../styles/AdminHome.css';
 
 function Datos({ user }) {
   const [isSidebarVisible, setSidebarVisible] = useState(false);
-  const navigate = useNavigate();  // Hook para navegación
+  const navigate = useNavigate();
 
   const toggleSidebar = () => {
     setSidebarVisible(!isSidebarVisible);
   };
 
   const handleNavigation = (path) => {
-    navigate(path);  // Función para redirigir a la ruta correspondiente
+    navigate(path);
   };
 
   return (
@@ -30,22 +31,46 @@ function Datos({ user }) {
         <section className="content">
           <div className="cards-grid">
             <button className="card" onClick={() => handleNavigation('/areas')}>
-              Áreas
+              <FaBuilding className="card-icon" />
+              <div className="card-text">
+                <h3>Áreas</h3>
+                <p>Gestión de áreas internas</p>
+              </div>
             </button>
             <button className="card" onClick={() => handleNavigation('/direcciones')}>
-              Direcciones
+              <FaMapSigns className="card-icon" />
+              <div className="card-text">
+                <h3>Direcciones</h3>
+                <p>Administración de direcciones</p>
+              </div>
             </button>
             <button className="card" onClick={() => handleNavigation('/partidas')}>
-              Partidas
+              <FaClipboardList className="card-icon" />
+              <div className="card-text">
+                <h3>Partidas</h3>
+                <p>Listado de partidas presupuestales</p>
+              </div>
             </button>
             <button className="card" onClick={() => handleNavigation('/componentes')}>
-              Componentes
+              <FaCogs className="card-icon" />
+              <div className="card-text">
+                <h3>Componentes</h3>
+                <p>Configuración y componentes</p>
+              </div>
             </button>
             <button className="card" onClick={() => handleNavigation('/organigrama')}>
-              Organigrama
+              <FaSitemap className="card-icon" />
+              <div className="card-text">
+                <h3>Organigrama</h3>
+                <p>Estructura organizativa</p>
+              </div>
             </button>
-            <button className="card" onClick={() => handleNavigation('/organigrama')}>
-              Historial de Requisiciones
+            <button className="card" onClick={() => handleNavigation('/historial')}>
+              <FaHistory className="card-icon" />
+              <div className="card-text">
+                <h3>Historial de Requisiciones</h3>
+                <p>Revisión de requisiciones pasadas</p>
+              </div>
             </button>
           </div>
         </section>
