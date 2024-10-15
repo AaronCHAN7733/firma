@@ -6,7 +6,7 @@ import { doc, getDoc, updateDoc, arrayUnion, } from 'firebase/firestore';
 import { db } from '../../firebase';
 import Swal from 'sweetalert2';
 
-function Autorizar() {
+function  FirmarAutorizarAdmin() {
   const location = useLocation();
   const { requisicion } = location.state || {};
   const [modalVisible, setModalVisible] = useState(false);
@@ -340,4 +340,4 @@ useEffect(() => {
   );
 }
 
-export default Autorizar;
+export default FirmarAutorizarAdmin;

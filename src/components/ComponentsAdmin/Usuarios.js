@@ -346,6 +346,8 @@ const fetchAreas = async () => {
 <Modal
         isOpen={modalIsOpen}
         onRequestClose={closeModal}
+        shouldCloseOnOverlayClick={false} // Evita cerrar el modal al hacer clic fuera del mismo
+        shouldCloseOnEsc={false} // Evita cerrar el modal con la tecla Escape
         contentLabel="Formulario de Usuario"
         className="Modal-user"
         style={{

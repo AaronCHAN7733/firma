@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import FirmanteNavbar from './FirmanteNavbar';
+import Navbar from '../Navbar';
 import TopBar from '../TopBar';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { db } from '../../firebase';
 import { useNavigate } from 'react-router-dom';
 import '../../styles/FirmarRequisicion.css';
 
-function FirmarRequisicion({ user }) {
+function Firmasrequisicion({ user }) {
   const [isSidebarVisible, setSidebarVisible] = useState(false);
   const [requisiciones, setRequisiciones] = useState([]);
   const [expandedRows, setExpandedRows] = useState([]); // Estado para filas expandidas
@@ -50,7 +50,7 @@ function FirmarRequisicion({ user }) {
   }, [user.uid]);
 
   const handleFirmarRequisicion = (requisicion) => {
-    navigate('/firmar', { state: { requisicion } });
+    navigate('/firmar-admin', { state: { requisicion } });
   };
 
   // Función para alternar la visualización completa del folio en móviles
@@ -70,10 +70,10 @@ function FirmarRequisicion({ user }) {
         ☰
       </button>
 
-      <FirmanteNavbar isSidebarVisible={isSidebarVisible} toggleSidebar={toggleSidebar} />
+      <Navbar isSidebarVisible={isSidebarVisible} toggleSidebar={toggleSidebar} />
 
       <main className={`main-content ${isSidebarVisible ? 'shifted' : ''}`}>
-        <TopBar userName="Firmante" />
+        <TopBar userName="Admin" />
 
         <section className="content">
           <h2>Requisiciones</h2>
@@ -128,4 +128,4 @@ function FirmarRequisicion({ user }) {
   );
 }
 
-export default FirmarRequisicion;
+export default Firmasrequisicion;

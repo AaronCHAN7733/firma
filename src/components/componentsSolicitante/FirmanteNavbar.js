@@ -11,7 +11,7 @@ const FirmanteNavbar = ({ isSidebarVisible, toggleSidebar }) => {
       <div className="logo"></div>
       <ul className="menu">
       <li><a href="/llenar-Requisicion"><FontAwesomeIcon icon={faFileAlt} /> Llenar requisición</a></li>
-        <li><a href="/seguimiento-Requisicion"><FontAwesomeIcon icon={faClock} /> Requisiciones</a></li>
+        <li><a href="/llenarRequisicion-solicitante"><FontAwesomeIcon icon={faClock} /> Requisiciones</a></li>
         <li><a href="/documentosFinalizados"><FontAwesomeIcon icon={faFile} /> Documentos Finalizados</a></li>
       </ul>
     </aside>

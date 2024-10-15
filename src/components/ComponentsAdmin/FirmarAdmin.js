@@ -3,11 +3,10 @@ import '../../styles/DetallesRequisicion.css';
 import { useLocation, useNavigate } from 'react-router-dom'; 
 import { getAuth } from 'firebase/auth'; 
 import { doc, getDoc, setDoc, collection, addDoc, getDocs, updateDoc } from 'firebase/firestore';
-
 import { db } from '../../firebase';
 import Swal from 'sweetalert2';
 
-function DetallesRequisicion() {
+function FirmarAdmin() {
   const location = useLocation();
   const { requisicion } = location.state || {};
   const [modalVisible, setModalVisible] = useState(false);
@@ -129,7 +128,7 @@ function DetallesRequisicion() {
     }
   
     // Lógica para agregar la firma a la requisición, solo si la firma ya está autorizada
-    const flujoRef = doc(db, 'flujoDeFirmas', requisicion.id);
+    const flujoRef = doc(db, 'flujoDeFirmas', requisicion.id); // Usar el ID de la requisición directamente
     const flujoDoc = await getDoc(flujoRef);
   
     const fechaActual = new Date().toISOString();
@@ -157,40 +156,38 @@ function DetallesRequisicion() {
     });
   
     // Lógica para enviar la notificación con validaciones
-    const direccionIdRequisicion = requisicion.direccionId || ""; 
-    const usersRef = collection(db, 'users');
-    const usersSnapshot = await getDocs(usersRef);
-    let usuarioAutorizanteId = null;
-  
-    usersSnapshot.forEach((userDoc) => {
-      const userData = userDoc.data();
-      if (userData.role === 'autorizante' && userData.direccionId === direccionIdRequisicion) {
-        usuarioAutorizanteId = userDoc.id;
-      }
-    });
-  
-    console.log('Usuario autorizante ID:', usuarioAutorizanteId); // Agregar log para verificar
-  
-    if (usuarioAutorizanteId) {
-      console.log('Enviando notificación a usuario:', usuarioAutorizanteId);
-      await addDoc(collection(db, 'notificaciones'), {
-        fecha: new Date().toISOString(),
-        mensaje: 'Tienes una nueva requisición por autorizar',
-        requisicionId: requisicion.id,
-        usuarioId: usuarioAutorizanteId
-      });
-      console.log('Notificación enviada con éxito');
-    } else {
-      console.warn('No se encontró un usuario autorizante con la misma dirección que la requisición');
-    }
-  
+const direccionIdRequisicion = requisicion.direccionId; // Usar el ID de la requisición directamente
+console.log('ID de dirección de la requisición:', direccionIdRequisicion); // Agregar log
+
+const usersRef = collection(db, 'users');
+const usersSnapshot = await getDocs(usersRef);
+let usuarioAutorizanteId = null;
+
+usersSnapshot.forEach((userDoc) => {
+  const userData = userDoc.data();
+  console.log('Verificando usuario:', userData); // Agregar log
+
+  // Verificar si el ID de dirección coincide con la requisición
+  if (userData.role === 'autorizante' && userData.direccionId === direccionIdRequisicion) {
+    usuarioAutorizanteId = userDoc.id;
+  }
+});
+
+console.log('Usuario autorizante ID encontrado:', usuarioAutorizanteId); // Log para verificar si se encontró el ID
+
+if (usuarioAutorizanteId) {
+  console.log('Enviando notificación a usuario:', usuarioAutorizanteId);
+  // ... Resto del código para enviar la notificación
+} else {
+  console.warn('No se encontró un usuario autorizante con la misma dirección que la requisición');
+}
+
     setFirmaValidada(true);
     setMensajeError('');
     setFirma('');
     setModalVisible(false);
   };
   
-
   useEffect(() => {
     if (requisicion) {
       obtenerFirmaExistente();
@@ -297,4 +294,4 @@ function DetallesRequisicion() {
   );
 }
 
-export default DetallesRequisicion;
+export default FirmarAdmin;

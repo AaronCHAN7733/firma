@@ -1,6 +1,6 @@
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faHome, faUser, faPen, faClock, faHeadset, faDatabase, faCog,faFileAlt } from '@fortawesome/free-solid-svg-icons';
+import { faHome, faUser, faPen, faClock, faHeadset, faDatabase, faCog,faFileAlt, faCheckCircle } from '@fortawesome/free-solid-svg-icons';
 import '../styles/AdminHome.css';
 
 const Navbar = ({ isSidebarVisible, toggleSidebar }) => {
@@ -16,7 +16,9 @@ const Navbar = ({ isSidebarVisible, toggleSidebar }) => {
         <li><a href="/tiempos"><FontAwesomeIcon icon={faClock} /> Tiempos</a></li>
         <li><a href="/soporte"><FontAwesomeIcon icon={faHeadset} /> Soporte</a></li>
         <li><a href="/datos"><FontAwesomeIcon icon={faDatabase} /> Datos</a></li>
-        <li><a href="/llenarRequisiciones"><FontAwesomeIcon icon={faFileAlt} /> Llenar requisición</a></li>
+        <li><a href="/llenarRequisicion-admin"><FontAwesomeIcon icon={faFileAlt} /> Llenar requisición</a></li>
+        <li><a href="/firmar-requisiciones"><FontAwesomeIcon icon={faFileAlt} /> Requisiciones</a></li>
+        <li><a href="/AutorizarRequisicion-admin"><FontAwesomeIcon icon={faCheckCircle} /> Autorizar Requisicion</a></li>
         <li><a href="/configuracion"><FontAwesomeIcon icon={faCog} /> Configuración</a></li>
       </ul>
     </aside>

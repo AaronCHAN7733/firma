@@ -18,7 +18,7 @@ const customStyles = {
   }),
 };
 
-function LlenarRequisiciones() {
+function LlenarNuevaRequisicion() {
   const [isSidebarVisible, setSidebarVisible] = useState(false);
   const [items, setItems] = useState([]);
   const [componentes, setComponentes] = useState([]); // Estado para almacenar los componentes
@@ -411,4 +411,4 @@ function LlenarRequisiciones() {
   );
 }
 
-export default LlenarRequisiciones;
+export default LlenarNuevaRequisicion;

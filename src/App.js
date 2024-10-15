@@ -4,6 +4,7 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { auth, db } from './firebase'; // Asegúrate de importar `db` desde tu archivo de Firebase
 import { doc, getDoc } from 'firebase/firestore';
 import Login from './components/Login';
+import Spinner from './components/Spinner';
 import AdminHome from './components/ComponentsAdmin/AdminHome';
 import Usuarios from './components/ComponentsAdmin/Usuarios';  // Importamos el componente Usuarios
 import HomeOperativos from './components/HomeOperativos';  // Componente para el rol 'personal'
@@ -25,6 +26,11 @@ import HomeAutorizante from './components/componentsAutorizante/HomeAutorizante'
 import FirmarRequisicionAutorizante from './components/componentsAutorizante/FirmarRequisicionAutorizante';
 import AutorizarRequisicion from './components/componentsAutorizante/AutorizarRequisicion'; 
 import Autorizar from './components/componentsAutorizante/Autorizar';
+import Firmasrequisicion from './components/ComponentsAdmin/Firmasrequisicion';
+import FirmarAdmin from './components/ComponentsAdmin/FirmarAdmin';
+import AutorizarAdmin from './components/ComponentsAdmin/AutorizarAdmin';
+import FirmarAutorizarAdmin from './components/ComponentsAdmin/FirmarAutorizarAdmin';
+import LlenarRequisicionAutorizante from './components/componentsAutorizante/LlenarRequisicionAutorizante';
 
 function ProtectedRoute({ user, role, allowedRoles, children }) {
   if (!user) {
@@ -64,7 +70,7 @@ function App() {
   }, []);
 
   if (loading) {
-    return <div>Cargando...</div>;
+    return <Spinner />;
   }
 
   return (
@@ -124,7 +130,7 @@ function App() {
           />
             {/* Ruta para el componente LlenarRequisiciones, solo para administradores */}
             <Route
-            path="/LlenarRequisiciones"
+            path="/llenarRequisicion-admin"
             element={
               <ProtectedRoute user={user} role={role} allowedRoles={['admin']}>
                 <LlenarRequisiciones />
@@ -171,6 +177,38 @@ function App() {
               </ProtectedRoute>
             }
           />
+           <Route
+            path="/firmar-requisiciones"
+            element={
+              <ProtectedRoute user={user} role={role} allowedRoles={['admin']}>
+                <Firmasrequisicion user={user}/>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/firmar-admin"
+            element={
+              <ProtectedRoute user={user} role={role} allowedRoles={['admin']}>
+                <FirmarAdmin user={user}/>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/AutorizarRequisicion-admin"
+            element={
+              <ProtectedRoute user={user} role={role} allowedRoles={['admin']}>
+                <AutorizarAdmin user={user}/>
+              </ProtectedRoute>
+            }
+          />
+           <Route
+            path="/AutorizarRequisicion-admin-firmar"
+            element={
+              <ProtectedRoute user={user} role={role} allowedRoles={['admin']}>
+                <FirmarAutorizarAdmin user={user}/>
+              </ProtectedRoute>
+            }
+          />
 
 
         {/* Ruta para personal (rol 'personal') */}
@@ -213,7 +251,7 @@ function App() {
           }
         />
         <Route
-          path="/llenar-Requisicion"
+          path="/llenarRequisicion-solicitante"
           element={
             <ProtectedRoute user={user} role={role} allowedRoles={['solicitante']}>
               <LlenarNuevaRequisicion />
@@ -269,6 +307,14 @@ function App() {
           element={
             <ProtectedRoute user={user} role={role} allowedRoles={['autorizante']}>
               <Autorizar user={user} />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/llenarRequisicionAutorizante"
+          element={
+            <ProtectedRoute user={user} role={role} allowedRoles={['autorizante']}>
+              <LlenarRequisicionAutorizante user={user} />
             </ProtectedRoute>
           }
         />

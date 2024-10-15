@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import Navbar from '../Navbar';
+import AutorizanteNavbar from './AutorizanteNavbar'
 import TopBar from '../TopBar';
 import Swal from 'sweetalert';
 import { db } from '../../firebase';  // Importar Firestore
@@ -18,7 +18,7 @@ const customStyles = {
   }),
 };
 
-function LlenarRequisiciones() {
+function LlenarRequisicionAutorizante() {
   const [isSidebarVisible, setSidebarVisible] = useState(false);
   const [items, setItems] = useState([]);
   const [componentes, setComponentes] = useState([]); // Estado para almacenar los componentes
@@ -270,7 +270,7 @@ function LlenarRequisiciones() {
         ☰
       </button>
 
-      <Navbar isSidebarVisible={isSidebarVisible} toggleSidebar={toggleSidebar} />
+      <AutorizanteNavbar isSidebarVisible={isSidebarVisible} toggleSidebar={toggleSidebar} />
 
       <main className={`main-content ${isSidebarVisible ? 'shifted' : ''}`}>
         <TopBar userName={userName || 'Operativo'} />  {/* Mostrar el nombre del usuario si está disponible */}
@@ -411,4 +411,4 @@ function LlenarRequisiciones() {
   );
 }
 
-export default LlenarRequisiciones;
+export default LlenarRequisicionAutorizante;
