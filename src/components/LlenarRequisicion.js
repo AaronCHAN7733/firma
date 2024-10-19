@@ -12,7 +12,7 @@ const customStyles = {
   control: (provided) => ({
     ...provided,
     width: '100%',  // Ancho del Select (puedes ajustarlo según sea necesario)
-    maxWidth: '250px',  // Ancho máximo si deseas limitarlo
+    maxWidth: '100%',  // Ancho máximo si deseas limitarlo
     padding: '5px',  // Espacio interno
     minWidth: '250px',
   }),

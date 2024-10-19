@@ -1,42 +1,49 @@
 /* Estilos generales para el formulario */
 .requisition-form {
-  background-color: #e3f2fd;
-  padding: 20px;
-  border-radius: 10px;
-  max-width: 100%; /* Ancho máximo para pantallas pequeñas */
-  margin: 0 auto; /* Centra el formulario */
+  background-color: #f1f5f9;
+  padding: 30px;
+  border-radius: 15px;
+  max-width: 90%; 
+  margin: 0 auto;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
 }
 
 .requisition-form h2, .requisition-form h3 {
   text-align: center;
   color: #0d47a1;
+  margin-bottom: 20px;
 }
 
 .form-row {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
   margin-bottom: 15px;
-  gap: 10px;
 }
 
 .form-row label {
-  flex: 1;
-  margin-right: 10px;
-  color: #0d47a1;
-  height: 20px;
+  color: #1e3a8a;
+  font-weight: bold;
 }
 
 .form-row input {
-  flex: 1;
-  padding: 5px;
-  border: 1px solid #90caf9;
-  border-radius: 5px;
-  width: 100%;
+  padding: 12px;
+  border: 2px solid #90caf9;
+  border-radius: 8px;
+  font-size: 1rem;
+  background-color: #ffffff;
+  transition: border-color 0.3s;
+  width: 95%;
+}
+
+.form-row input:focus {
+  border-color: #1e88e5;
+  outline: none;
+  box-shadow: 0 0 8px rgba(30, 136, 229, 0.5);
 }
 
 .form-row input[type="date"] {
-  max-width: 100px;
+  max-width: 120px;
 }
 
 .total {
@@ -216,5 +223,38 @@
   
   .modal .form-row input {
     width: 90%; /* Ajustar los inputs a la pantalla móvil */
+  }
+}
+/* Estilo para los checkboxes */
+.form-row input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  accent-color: #1e88e5; /* Cambiar color del checkbox cuando está marcado */
+  margin-right: 10px;
+  cursor: pointer;
+}
+
+/* Alineación de los checkboxes con el texto */
+.form-row .checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Efecto hover para checkbox */
+.form-row input[type="checkbox"]:hover {
+  box-shadow: 0 0 8px rgba(30, 136, 229, 0.5);
+  transition: box-shadow 0.3s;
+}
+
+/* Ajustes responsivos para checkbox */
+@media (max-width: 768px) {
+  .form-row .checkbox-label {
+    justify-content: flex-start;
+  }
+
+  .form-row input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
   }
 }

@@ -31,6 +31,7 @@ import FirmarAdmin from './components/ComponentsAdmin/FirmarAdmin';
 import AutorizarAdmin from './components/ComponentsAdmin/AutorizarAdmin';
 import FirmarAutorizarAdmin from './components/ComponentsAdmin/FirmarAutorizarAdmin';
 import LlenarRequisicionAutorizante from './components/componentsAutorizante/LlenarRequisicionAutorizante';
+import EditarRequisiciones from './components/EditarRequisiciones';
 
 function ProtectedRoute({ user, role, allowedRoles, children }) {
   if (!user) {
@@ -133,7 +134,7 @@ function App() {
             path="/llenarRequisicion-admin"
             element={
               <ProtectedRoute user={user} role={role} allowedRoles={['admin']}>
-                <LlenarRequisiciones />
+                <LlenarRequisiciones user={user} />
               </ProtectedRoute>
             }
           />
@@ -209,6 +210,15 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/editar-requisicion"
+            element={
+              <ProtectedRoute user={user} role={role} allowedRoles={['admin']}>
+                <EditarRequisiciones user={user}/>
+              </ProtectedRoute>
+            }
+          />
+
 
 
         {/* Ruta para personal (rol 'personal') */}

@@ -82,7 +82,7 @@ const fetchAreas = async () => {
   }, []);
 
   const validateEmail = (email) => {
-    const allowedDomains = ['gmail.com', 'outlook.com', 'hotmail.com'];
+    const allowedDomains = ['gmail.com', 'outlook.com', 'hotmail.com','utrivieramaya.edu.mx'];
     const emailParts = email.split('@');
     return emailParts.length === 2 && allowedDomains.includes(emailParts[1]);
   };

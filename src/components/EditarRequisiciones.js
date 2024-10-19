@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import Navbar from '../Navbar';
-import TopBar from '../TopBar';
 import Swal from 'sweetalert';
-import { db } from '../../firebase';  // Importar Firestore
-import { collection, addDoc, doc, getDoc, getDocs } from 'firebase/firestore';  // Funciones necesarias para agregar y leer de Firestore
-import { auth } from '../../firebase';  // Importar la autenticación
-import '../../styles/LlenarRequisicion.css';  // External CSS file for styling
+import { db } from '../firebase';  // Importar Firestore
+import { collection, updateDoc, doc, getDoc, getDocs } from 'firebase/firestore';  // Funciones necesarias para agregar y leer de Firestore
+import { auth } from '../firebase';  // Importar la autenticación
+import '../styles/LlenarRequisicion.css';  // External CSS file for styling
 import Select from 'react-select';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 
 const customStyles = {
@@ -19,10 +18,16 @@ const customStyles = {
   }),
 };
 
-function LlenarRequisiciones() {
+function EditarRequisiciones() {
   const [isSidebarVisible, setSidebarVisible] = useState(false);
   const [items, setItems] = useState([]);
   const [componentes, setComponentes] = useState([]); // Estado para almacenar los componentes
+  const location = useLocation();
+  const { requisicionId } = location.state || {};  // Obtener requisicionId del estado de navegación
+  const navigate = useNavigate();
+
+  
+
 
   const [formValues, setFormValues] = useState({
     cantidad: '',
@@ -43,10 +48,45 @@ function LlenarRequisiciones() {
     fechaEvento: '',
     folio: ''
   });
+  
   const [userName, setUserName] = useState('');  // Estado para almacenar el nombre del usuario
   const [partidas, setPartidas] = useState([]);  // Estado para almacenar las partidas obtenidas de Firebase
   const [areas, setAreas] = useState([]);  // Estado para almacenar las áreas obtenidas de Firebase
   const [isEvento, setIsEvento] = useState(false); // Estado para controlar si es un evento
+  // Obtener la requisición existente
+useEffect(() => {
+  const fetchRequisicion = async () => {
+    if (!requisicionId) return;
+
+    try {
+      const requisicionDocRef = doc(db, 'requisiciones', requisicionId);
+      const requisicionDoc = await getDoc(requisicionDocRef);
+      
+      if (requisicionDoc.exists()) {
+        const data = requisicionDoc.data();
+        setFormInfo({
+          areaSolicitante: data.areaSolicitante,
+          direccionAdscripcion: data.direccionAdscripcion,
+          concepto: data.concepto,
+          fechaElaboracion: data.fechaElaboracion,
+          componente: data.componente,
+          nombreEvento: data.nombreEvento,
+          fechaEvento: data.fechaEvento,
+          folio: data.folio,
+        });
+        setTotal(data.total);
+        setItems(data.items || []);  // Manejar el caso donde no haya items
+      } else {
+        console.error('No se encontró la requisición');
+      }
+    } catch (error) {
+      console.error('Error al obtener la requisición:', error);
+    }
+  };
+
+  fetchRequisicion();
+}, [requisicionId]);  // Ejecutar cuando cambie requisicionId
+
 
   // Obtener el nombre del usuario autenticado desde Firestore
   useEffect(() => {
@@ -200,7 +240,7 @@ function LlenarRequisiciones() {
     setTotal(prevTotal => prevTotal - removedItem.subtotal);
   };
 
-  const handleSubmitRequisicion = async (e) => {
+  const handleEditarRequisicion = async (e) => {
     e.preventDefault();
     const user = auth.currentUser; // Verificar usuario autenticado
     if (!user) {
@@ -208,7 +248,6 @@ function LlenarRequisiciones() {
       return;
     }
   
-    // Verificar qué campos faltan
     const missingFields = [];
     if (!formInfo.areaSolicitante) missingFields.push("Área solicitante");
     if (!formInfo.direccionAdscripcion) missingFields.push("Dirección de adscripción");
@@ -216,16 +255,13 @@ function LlenarRequisiciones() {
     if (!formInfo.fechaElaboracion) missingFields.push("Fecha de elaboración");
     if (!formInfo.componente) missingFields.push("Componente");
   
-    // Si el checkbox de evento está activo, verificar esos campos también
     if (isEvento) {
       if (!formInfo.nombreEvento) missingFields.push("Nombre del evento");
       if (!formInfo.fechaEvento) missingFields.push("Fecha del evento");
     }
   
-    // Verificar si hay al menos un ítem en la tabla
     const missingItems = items.length === 0;
   
-    // Generar mensajes combinados de validación
     if (missingItems && missingFields.length > 0) {
       Swal({
         title: "Campos incompletos y sin ítems",
@@ -233,7 +269,7 @@ function LlenarRequisiciones() {
         icon: "warning",
         button: "Aceptar"
       });
-      return; // Detener la ejecución si faltan ítems y campos
+      return;
     }
   
     if (missingItems) {
@@ -243,7 +279,7 @@ function LlenarRequisiciones() {
         icon: "warning",
         button: "Aceptar"
       });
-      return; // Detener la ejecución si no hay ítems
+      return;
     }
   
     if (missingFields.length > 0) {
@@ -253,71 +289,74 @@ function LlenarRequisiciones() {
         icon: "warning",
         button: "Aceptar"
       });
-      return; // Detener la ejecución si faltan campos
+      return;
     }
   
-    // Crear el objeto de requisición
-    const requisicion = {
-      ...formInfo,
-      items,
-      total,
-      nombreUsuario: userName,
-      userId: user.uid,
-      estatus: "En Firma",
-      areaId: formInfo.areaId,
-      direccionId: formInfo.direccionId,
-      nombreEvento: isEvento ? formInfo.nombreEvento : "No aplica",
-      fechaEvento: isEvento ? formInfo.fechaEvento : "No aplica",
-    };
+    // Crear un objeto con solo los campos que necesitas actualizar
+    const camposActualizados = {};
+  
+    // Actualiza solo los campos que han cambiado o son relevantes
+    if (formInfo.areaSolicitante) camposActualizados.areaSolicitante = formInfo.areaSolicitante;
+    if (formInfo.direccionAdscripcion) camposActualizados.direccionAdscripcion = formInfo.direccionAdscripcion;
+    if (formInfo.concepto) camposActualizados.concepto = formInfo.concepto;
+    if (formInfo.fechaElaboracion) camposActualizados.fechaElaboracion = formInfo.fechaElaboracion;
+    if (formInfo.componente) camposActualizados.componente = formInfo.componente;
+    if (isEvento) {
+      if (formInfo.nombreEvento) camposActualizados.nombreEvento = formInfo.nombreEvento;
+      if (formInfo.fechaEvento) camposActualizados.fechaEvento = formInfo.fechaEvento;
+    }
+  
+    // Agregar los items si hay nuevos
+    if (items.length > 0) {
+      camposActualizados.items = items;
+    }
+  
+    // Agregar el total si ha cambiado
+    if (total) {
+      camposActualizados.total = total;
+    }
+  
+    // Actualizar el estado de la requisición a 'En autorización'
+    camposActualizados.estatus = "En autorización";
   
     try {
-      await addDoc(collection(db, 'requisiciones'), requisicion);
+      const requisicionRef = doc(db, 'requisiciones', requisicionId); // Asume que tienes requisicionId disponible
+      await updateDoc(requisicionRef, camposActualizados);
+  
       Swal({
         title: "¡Éxito!",
-        text: "Requisición enviada correctamente.",
+        text: "Requisición actualizada correctamente.",
         icon: "success",
         button: "Aceptar"
+      }).then(() => {
+        navigate(-1); // Regresar a la ruta anterior
       });
+  
     } catch (error) {
-      console.error('Error al enviar requisición:', error.message);
+      console.error('Error al actualizar requisición:', error.message);
       Swal({
         title: "Error",
-        text: "Ocurrió un error al enviar la requisición. Por favor, intente nuevamente.",
+        text: "Ocurrió un error al actualizar la requisición. Por favor, intente nuevamente.",
         icon: "error",
         button: "Aceptar"
       });
     }
-  
-    // Reiniciar el formulario y los estados
-    setFormInfo({
-      areaSolicitante: '',
-      direccionAdscripcion: '',
-      concepto: '',
-      fechaElaboracion: '',
-      componente: '',
-      nombreEvento: '',
-      fechaEvento: '',
-      folio: ''
-    });
-    setItems([]);
-    setTotal(0);
   };
+  
   
   
   
   return (
     <div className={`admin-container ${isSidebarVisible ? 'shifted' : ''}`}>
-      <button className={`hamburger-btn ${isSidebarVisible ? 'shifted' : ''}`} onClick={toggleSidebar}>
-        ☰
-      </button>
+      
 
-      <Navbar isSidebarVisible={isSidebarVisible} toggleSidebar={toggleSidebar} />
+      
 
       <main className={`main-content ${isSidebarVisible ? 'shifted' : ''}`}>
-        <TopBar userName={userName || 'Operativo'} />  {/* Mostrar el nombre del usuario si está disponible */}
+       
 
         <section className="content">
-          <form className="requisition-form" onSubmit={handleSubmitRequisicion}>
+          <form className="requisition-form" onSubmit={handleEditarRequisicion}>
             <h2>Requisición de material y/o servicio</h2>
 
             <div className="form-row">
@@ -399,25 +438,26 @@ function LlenarRequisiciones() {
                 </tr>
               </thead>
               <tbody>
-                {items.map((item, index) => (
-                  <tr key={index}>
-                    <td>{item.cantidad}</td>
-                    <td>{item.unidad}</td>
-                    <td>{item.precioUnitario}</td>
-                    <td>{item.concepto}</td>
-                    <td>{item.partida}</td>
-                    <td>{item.subtotal.toFixed(2)}</td>
-                    <td><button type="button" className="delete-btn" onClick={() => handleDelete(index)}>Eliminar</button></td>
-                  </tr>
-                ))}
-              </tbody>
+  {items.map((item, index) => (
+    <tr key={index}>
+      <td>{item.cantidad}</td>
+      <td>{item.unidad}</td>
+      <td>{item.precioUnitario}</td>
+      <td>{item.concepto}</td>
+      <td>{item.partida}</td>
+      <td>{item.subtotal.toFixed(2)}</td>
+      <td><button type="button" className="delete-btn" onClick={() => handleDelete(index)}>Eliminar</button></td>
+    </tr>
+  ))}
+</tbody>
+
             </table>
 
             <div className="total">
               <strong>Total:</strong> {total.toFixed(2)}
             </div>
 
-            <button type="submit" className="submit-btn">Enviar Requisición</button>
+            <button type="submit" className="submit-btn">Actualizar Requisición</button>
           </form>
         </section>
       </main>
@@ -477,4 +517,4 @@ function LlenarRequisiciones() {
   );
 }
 
-export default LlenarRequisiciones;
+export default EditarRequisiciones;
