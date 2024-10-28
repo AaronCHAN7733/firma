@@ -12,6 +12,7 @@ html, body {
   height: 100vh; /* Ocupa toda la altura de la pantalla */
   width: 100vw; /* Ocupa todo el ancho de la pantalla */
   background-color: #DCEDFB;
+  text-align: center;
 }
 
 /* Estilos para la parte izquierda del login */
@@ -36,8 +37,8 @@ html, body {
   height: 90%;
   background-color: white;
   padding: 50px 20px; /* Ajusta el padding para que haya más espacio */
-  border-radius: 8px;
-  box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.1); /* Añade sombra */
+  border-radius: 1rem !important;
+  box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .15) !important;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -45,7 +46,7 @@ html, body {
 }
 
 .logo {
-  width: 80%;
+  width: 95%;
   height: 80px;
   background-image: url('/src/img/BannerLogos.png');
   background-repeat: no-repeat;
@@ -63,6 +64,7 @@ h2 {
 .form-group-login {
   width: 100%;
   margin-bottom: 15px;
+  text-align: left;
 }
 
 .form-group-login label {
@@ -72,7 +74,7 @@ h2 {
 }
 
 .form-group-login input {
-  width: 250px;
+  width: 300px;
   padding: 10px;
   font-size: 14px;
   border: 1px solid #C3E3FD;
@@ -81,7 +83,7 @@ h2 {
 }
 
 .login-btn {
-  width: 100%;
+  width: 60%;
   padding: 10px;
   background-color: #9acef8;
   color: black;
@@ -90,6 +92,7 @@ h2 {
   cursor: pointer;
   font-size: 16px;
   margin-top: 15px;
+
 }
 
 .login-btn:hover {
@@ -148,6 +151,7 @@ h2 {
     text-align: center;
     margin-bottom: 20px;
     color: #333;
+    
   }
 
   /* Asegurar que la parte izquierda ocupe todo el ancho en dispositivos móviles */

@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
-import { onAuthStateChanged } from 'firebase/auth';
+import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { auth, db } from './firebase'; // Asegúrate de importar `db` desde tu archivo de Firebase
 import { doc, getDoc } from 'firebase/firestore';
+import Swal from 'sweetalert2';
 import Login from './components/Login';
 import Spinner from './components/Spinner';
 import AdminHome from './components/ComponentsAdmin/AdminHome';
@@ -50,6 +51,7 @@ function App() {
   const [user, setUser] = useState(null);
   const [role, setRole] = useState(null); // Estado para almacenar el rol
   const [loading, setLoading] = useState(true);
+  const [lastActivityTime, setLastActivityTime] = useState(Date.now()); // Estado para rastrear el último tiempo de actividad
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -69,6 +71,63 @@ function App() {
 
     return () => unsubscribe();
   }, []);
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+      if (currentUser) {
+        const userDocRef = doc(db, 'users', currentUser.uid);
+        const userDoc = await getDoc(userDocRef);
+
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          setRole(userData.role);
+        }
+      }
+      setUser(currentUser);
+      setLoading(false);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  useEffect(() => {
+    if (user) {
+      // Solo ejecuta la lógica si hay un usuario autenticado
+
+      const checkForInactivity = () => {
+        const currentTime = Date.now();
+        const fiveMinutes = 5 * 60 * 1000; 
+        if (currentTime - lastActivityTime > fiveMinutes) {
+          signOut(auth);  
+          Swal.fire({
+            title: 'Sesión cerrada',
+            text: 'Tu sesión ha sido cerrada por inactividad.',
+            icon: 'warning',
+            confirmButtonText: 'Aceptar',
+          });
+        }
+      };
+
+      const interval = setInterval(checkForInactivity, 60 * 1000);
+
+      return () => clearInterval(interval);
+    }
+  }, [lastActivityTime, user]);
+
+  useEffect(() => {
+    if (user) {
+      const updateLastActivity = () => setLastActivityTime(Date.now());
+
+      window.addEventListener('mousemove', updateLastActivity);
+      window.addEventListener('keydown', updateLastActivity);
+      window.addEventListener('click', updateLastActivity);
+
+      return () => {
+        window.removeEventListener('mousemove', updateLastActivity);
+        window.removeEventListener('keydown', updateLastActivity);
+        window.removeEventListener('click', updateLastActivity);
+      };
+    }
+  }, [user]);
 
   if (loading) {
     return <Spinner />;
@@ -213,7 +272,7 @@ function App() {
           <Route
             path="/editar-requisicion"
             element={
-              <ProtectedRoute user={user} role={role} allowedRoles={['admin']}>
+              <ProtectedRoute user={user} role={role} allowedRoles={['admin','solicitante']}>
                 <EditarRequisiciones user={user}/>
               </ProtectedRoute>
             }
@@ -271,7 +330,7 @@ function App() {
 
         {/* Ruta para firmar requisiciones, solo para firmantes */}
         <Route
-          path="/Seguimiento-Requisicion"
+          path="/Requisiciones-Solicitante"
           element={
             <ProtectedRoute user={user} role={role} allowedRoles={['solicitante']}>
               <FirmarRequisicion user={user} />
@@ -281,7 +340,7 @@ function App() {
 
         {/* Ruta para ver detalles y firmar una requisición, solo para firmantes */}
         <Route
-          path="/firmar"
+          path="/firmar-solicitante"
           element={
             <ProtectedRoute user={user} role={role} allowedRoles={['solicitante']}>
               <DetallesRequisicion />

@@ -4,27 +4,86 @@
     height: 100vh;
 }
 
-/* Estilo para el botón de hamburguesa */
-/* Barra lateral (sidebar) */
+/* AdminHome.css */
+
 .sidebar {
-    position: fixed;
-    top: 0;
-    left: -220px; /* Se inicia fuera de la pantalla */
-    width: 170px;
-    height: 100%;
-    background-color: #C3E3FD;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    justify-content: start;
-    transition: left 0.2s ease; /* Transición suave al mostrar/ocultar */
-    z-index: 999;
-    box-shadow: 0px 0px 15px rgba(0, 0, 0, 1)
+  position: fixed;
+  top: 0;
+  left: -240px; /* Fuera de pantalla inicialmente */
+  width: 220px;
+  height: 100%;
+  background-color: #fff; /* Azul grisáceo oscuro */
+  color: #F1F5F9;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 25px 10px;
+  transition: left 0.3s ease-in-out;
+  z-index: 999;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5);
+  overflow-y: auto;
 }
-  
+
 .sidebar.visible {
-    left: 0;
+  left: 0;
 }
+
+
+/* Menu */
+.menu {
+  width: 100%;
+  list-style: none;
+  padding: 0;
+}
+
+.menu li {
+  margin: 10px 0;
+}
+
+.menu a {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 10px 15px;
+  border-radius: 8px;
+  text-decoration: none;
+  color: inherit;
+  font-size: 16px;
+  transition: background-color 0.3s;
+}
+
+/* Iconos */
+.menu a svg {
+  font-size: 20px;
+  color: #A0AEC0; /* Icono gris claro */
+}
+
+.menu a:hover {
+  background-color: #a3d6ff;
+  
+}
+
+.menu a.active {
+  background-color: #0EA5E9; /* Azul claro */
+  color: #F1F5F9;
+}
+
+.menu a.active svg {
+  color: #F1F5F9;
+}
+
+/* Scroll personalizado */
+.sidebar::-webkit-scrollbar {
+  width: 8px;
+}
+.sidebar::-webkit-scrollbar-thumb {
+  background-color: #4B5563;
+  border-radius: 10px;
+}
+.sidebar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
 
 /* Contenido principal que se desplazará con el sidebar */
 .main-content {
@@ -33,33 +92,61 @@
 }
 
 .main-content.shifted {
-    margin-left: 200px; /* Ajusta este valor según el ancho de la barra lateral */
+    margin-left: 230px; /* Ajusta este valor según el ancho de la barra lateral */
 }
 
 /* Botón del menú (hamburguesa) */
 .hamburger-btn {
-    position: absolute;
-    top: 55px;
-    left: 20px;
-    font-size: 30px;
-    background: none;
-    border: none;
-    cursor: pointer;
-    z-index: 1000;
-    width: 45px;
-    height: 45px;
-    background-color: #2196F3;
-    color: white;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    transition: left 0.3s ease; /* Animación para mover el botón */
+  position: absolute;
+  top: 55px;
+  left: 20px;
+  font-size: 30px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  z-index: 1000;
+  width: 45px;
+  height: 45px;
+  background-color: #2196F3;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: left 0.3s ease, transform 0.3s ease, background-color 0.3s ease; /* Transiciones suaves */
+}
+
+.hamburger-btn:hover {
+  background-color: #1976D2; /* Cambia el color del fondo al pasar el cursor */
+  transform: rotate(90deg); /* Rota el botón al pasar el cursor */
+}
+
+.hamburger-btn:active {
+  transform: scale(0.9); /* Reduce el tamaño cuando se presiona */
 }
 
 .hamburger-btn.shifted {
-    left: 220px; /* Mueve el botón hacia la derecha cuando el sidebar está abierto */
+  left: 220px; /* Mueve el botón cuando el sidebar está abierto */
+  transform: rotate(180deg); /* Rota 180 grados cuando está activo */
 }
+
+/* Agrega una animación de rebote cuando el botón vuelve a su posición original */
+.hamburger-btn.shifted:not(.shifted) {
+  animation: bounceBack 0.3s ease-out;
+}
+
+@keyframes bounceBack {
+  0% {
+      transform: translateX(0);
+  }
+  50% {
+      transform: translateX(-10px);
+  }
+  100% {
+      transform: translateX(0);
+  }
+}
+
 
 /* Estilos adicionales para el contenido */
 .content {
@@ -69,21 +156,16 @@
 
   
 /* Estilo para la sección de logo */
-.logo {
-    text-align: center;
-    margin-bottom: 30px;
-    margin-top: 30px;
+.logo-nav {
+  width: 95%;
+  height: 80px;
+  background-image: url('/src/img/BannerLogos.png');
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+  margin-bottom: 20px;
 }
 
-.logo img {
-    max-width: 100%;
-    height: auto;
-}
-
-.logo h2 {
-    font-size: 18px;
-    margin-top: 10px;
-}
 
 /* Menú de navegación */
 .menu {
@@ -254,12 +336,34 @@
   .dropdown-icon {
     margin-left: 5px;
   }
+  .dropdown-menu-detalles-usuario{
+  position: absolute;
+  top: 60px; /* Ajustar según el diseño */
+  background-color: white;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  width: 12%;
+  }
+
+  .dropdown-menu-detalles-usuario ul{
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+
+  }
+  .dropdown-menu-detalles-usuario li{
+  padding: 10px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  }
+  
   
  /* Menú desplegable */
 .dropdown-menu {
   position: absolute;
   top: 60px; /* Ajustar según el diseño */
-  right: 10px; /* Espaciado predeterminado */
   background-color: white;
   border: 1px solid #ddd;
   border-radius: 5px;
@@ -305,11 +409,10 @@
 
   /* Responsivo para dispositivos móviles */
   @media (max-width: 768px) {
-    /* Asegurar que el dropdown siempre esté alineado a la derecha */
 .dropdown-menu {
   position: absolute; /* Asegura que el dropdown pueda posicionarse relativo a su contenedor */
-  right: 0; /* Siempre alinear a la derecha */
   width: auto; /* Mantener el contenido visible */
+
 }
 
 /* Ajustes adicionales para pantallas más pequeñas */
@@ -317,6 +420,13 @@
   .dropdown-menu li {
     padding: 15px; /* Más espacio para facilidad en dispositivos táctiles */
   }
+  .dropdown-menu-detalles-usuario{
+    width: 50%;
+    }
+    .logo-nav{
+      height: 40px;
+      width: 95%;
+    }
 }
 
 @media (max-width: 480px) {
@@ -324,6 +434,7 @@
     width: auto; /* Mantener el ancho adaptativo */
     box-shadow: none; /* Eliminar la sombra en pantallas pequeñas */
     border-radius: 0; /* Quitar el borde redondeado en pantallas más pequeñas */
+    
   }
 }
 
@@ -331,11 +442,6 @@
   
   /* Ajustes adicionales para pantallas más pequeñas */
   @media (max-width: 480px) {
-    .dropdown-menu {
-      width: 30%; /* Ocupa toda la pantalla si es necesario */
-      box-shadow: none; /* Eliminar la sombra en pantallas pequeñas */
-      border-radius: 0; /* Quitar el borde redondeado en pantallas más pequeñas */
-    }
     .solicitudes-dropdown{
       left: 100px;
     }
@@ -526,3 +632,246 @@
     background-color: #ff4500;
   }
   
+/* Estilos para el contenedor del modal */
+.modal-detallesUsuario {
+  background-color: #fff;
+  padding: 20px;
+  width: 90%;
+  max-width: 500px;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  position: relative;
+  max-height: 80vh;
+  overflow-y: auto;
+  margin: auto; /* Centra horizontalmente */
+  transition: transform 0.3s ease-in-out;
+  transform: translateY(-50px);
+  text-align: center;
+}
+
+/* Efecto de entrada */
+.modal-detallesUsuario.open {
+  transform: translateY(0);
+}
+
+/* Estilos para la superposición del modal */
+.modal-overlay-detallesUsuario {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5); /* Fondo oscuro semi-transparente */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+/* Estilos del contenido del perfil */
+.profile-details {
+  margin-top: 20px;
+  font-size: 16px;
+  line-height: 1.6;
+  color: #333;
+  text-align: left;
+}
+
+.profile-details p {
+  margin-bottom: 10px;
+}
+
+.profile-details strong {
+  color: #1976D2; /* Azul fuerte para los títulos */
+}
+
+/* Estilos para el botón */
+.boton {
+  background-color: #2196F3;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-top: 20px;
+  width: 50%;
+  text-align: center;
+  transition: background-color 0.3s ease;
+
+}
+
+/* Efectos de hover para el botón */
+.boton:hover {
+  background-color: #1976D2;
+}
+
+/* Estilos para dispositivos móviles */
+@media (max-width: 768px) {
+  .modal-detallesUsuario {
+    width: 95%;
+    max-height: 90vh;
+  }
+
+  .boton {
+    font-size: 14px;
+    padding: 10px;
+  }
+}
+
+
+/* Configuración de grid para las cards */
+.cards-container-home {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Distribución responsiva */
+  gap: 20px;
+  max-width: 1200px;
+  width: 100%; 
+  text-align: center;
+  justify-items: center; /* Centrar las cards en cada columna */
+}
+
+/* Estilo del título de las cards */
+.cards-container-home h2 {
+  grid-column: 1 / -1;
+  text-align: center;
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: #444;
+}
+
+/* Estilo de las cards */
+.card-home {
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  width: 100%; 
+  max-width: 350px; /* Limitar el ancho máximo de las cards */
+}
+.content-card {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: calc(100vh - 150px); /* Altura completa menos TopBar y Navbar */
+  padding: 20px;
+  box-sizing: border-box;
+}
+.card-home:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* Caja del icono circular */
+.icon-box {
+  background-color: #f0f0f0;
+  border-radius: 50%;
+  padding: 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+/* Estilo del título dentro de la card */
+.text h3 {
+  font-size: 32px;
+  margin: 5px 0;
+  color: #333;
+}
+
+/* Descripción de la card */
+.text p {
+  font-size: 16px;
+  color: #666;
+}
+
+/* Botón de navegación */
+.navigate-btn {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+  margin-top: 10px;
+}
+
+.navigate-btn:hover {
+  background-color: #0056b3;
+}
+.tituloHome {
+  text-align: center;
+  margin: 20px 0;
+  font-size: 32px;
+  color: #333;
+  font-weight: bold;
+}
+
+/* Responsividad: Una Card por Columna en Dispositivos Móviles */
+@media (max-width: 768px) {
+  .cards-container-home {
+      flex-direction: column;
+      align-items: center;
+      
+      grid-template-columns: 1fr;
+  }
+  .tituloHome {
+    text-align: center;
+    font-size: 20px;
+    margin-bottom: 90px;
+  }
+
+  .card-home {
+      width: 90%; /* Ocupa casi todo el ancho del contenedor */
+      max-width: 400px;
+  }
+  .cards-container-home{
+    margin-top: 200px;
+  }
+}
+
+/* En Pantallas Muy Pequeñas */
+@media (max-width: 480px) {
+  .card-home {
+      width: 100%; /* Ocupa todo el ancho disponible */
+      margin: 0 10px;
+  }
+}
+
+.organigrama-section {
+  margin-top: 40px;
+  text-align: center;
+}
+
+.organigrama-section h2 {
+  font-size: 24px;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+/* Imagen del organigrama como fondo */
+.organigramaimg {
+  width: 90%; /* La imagen ocupa un 90% del ancho del contenedor */
+  max-width: 690px; /* Límite máximo para evitar que se agrande demasiado */
+  height: 550px; /* Altura fija */
+  margin: 0 auto;
+  background-image: url("/src/img/organigrama.jpg");
+  background-size: cover; /* Ajusta la imagen para cubrir el área del div */
+  background-position: center; /* Centra la imagen */
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.organigramaimg:hover {
+  transform: scale(1.05); /* Aumenta ligeramente el tamaño al pasar el cursor */
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}

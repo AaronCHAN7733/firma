@@ -396,7 +396,7 @@ function TopBar() {
                 <span className="dropdown-icon">▼</span>
               </div>
               {dropdownVisible && (
-                <div className="dropdown-menu">
+                <div className="dropdown-menu-detalles-usuario">
                   <ul>
                     <li onClick={openModal}>Ver Perfil</li>
                     <li onClick={handleLogout}>Cerrar Sesión</li>
@@ -412,8 +412,8 @@ function TopBar() {
       <Modal
         isOpen={modalIsOpen}
         onRequestClose={closeModal}
-        className="modal"
-        overlayClassName="modal-overlay"
+        className="modal-detallesUsuario"
+        overlayClassName="modal-overlay-detallesUsuario"
       >
         <h2>Perfil de Usuario</h2>
         <div className="profile-details">

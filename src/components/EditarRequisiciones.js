@@ -179,35 +179,42 @@ useEffect(() => {
   };
 
   const handleFormInfoChange = (e) => {
-    setFormInfo({
-      ...formInfo,
-      [e.target.name]: e.target.value
-    });
+    const { name, value } = e.target;
+    setFormInfo((prevFormInfo) => ({
+      ...prevFormInfo,
+      [name]: value,
+    }));
   };
-
-  // Función para manejar la selección de área y obtener la dirección asociada
-  const handleAreaChange = async (selectedOption) => {
-    setFormInfo({
-      ...formInfo,
-      areaSolicitante: selectedOption.value,
-      areaId: selectedOption.id, // Guardar areaId en formInfo
-    });
   
-    const direccionId = selectedOption.direccionId;
+
+  const handleAreaChange = async (selectedOption) => {
+    // Actualizar el estado con el área seleccionada
+    setFormInfo(prevFormInfo => ({
+        ...prevFormInfo,
+        areaSolicitante: selectedOption.value, // Nombre del área
+        areaId: selectedOption.id, // Guardar areaId en formInfo
+        direccionAdscripcion: '', // Reiniciar dirección de adscripción
+        direccionId: '' // Reiniciar direccionId al cambiar de área
+    }));
+
+    // Obtener el direccionId de la opción seleccionada
+    const direccionId = selectedOption.direccionId; 
     if (direccionId) {
-      const direccionDocRef = doc(db, 'direcciones', direccionId);
-      const direccionDoc = await getDoc(direccionDocRef);
-      if (direccionDoc.exists()) {
-        setFormInfo(prevFormInfo => ({
-          ...prevFormInfo,
-          direccionAdscripcion: direccionDoc.data().descripcion,
-          direccionId: direccionId  // Guardar direccionId en formInfo
-        }));
-      } else {
-        console.error('No se encontró la dirección asociada');
-      }
+        const direccionDocRef = doc(db, 'direcciones', direccionId);
+        const direccionDoc = await getDoc(direccionDocRef);
+        if (direccionDoc.exists()) {
+            // Si la dirección existe, actualizar el estado con la dirección y su ID
+            setFormInfo(prevFormInfo => ({
+                ...prevFormInfo,
+                direccionAdscripcion: direccionDoc.data().descripcion,
+                direccionId: direccionId  // Guardar direccionId en formInfo
+            }));
+        } else {
+            console.error('No se encontró la dirección asociada');
+        }
     }
-  };
+};
+
   
 
   const handleSubmitItem = (e) => {
@@ -242,24 +249,27 @@ useEffect(() => {
 
   const handleEditarRequisicion = async (e) => {
     e.preventDefault();
+    
     const user = auth.currentUser; // Verificar usuario autenticado
     if (!user) {
       console.error('No se encontró el usuario autenticado');
       return;
     }
   
+    // Verificar campos faltantes
     const missingFields = [];
     if (!formInfo.areaSolicitante) missingFields.push("Área solicitante");
     if (!formInfo.direccionAdscripcion) missingFields.push("Dirección de adscripción");
     if (!formInfo.concepto) missingFields.push("Concepto");
     if (!formInfo.fechaElaboracion) missingFields.push("Fecha de elaboración");
     if (!formInfo.componente) missingFields.push("Componente");
-  
+    
     if (isEvento) {
       if (!formInfo.nombreEvento) missingFields.push("Nombre del evento");
       if (!formInfo.fechaEvento) missingFields.push("Fecha del evento");
     }
   
+    // Verificar que haya al menos un ítem
     const missingItems = items.length === 0;
   
     if (missingItems && missingFields.length > 0) {
@@ -297,16 +307,23 @@ useEffect(() => {
   
     // Actualiza solo los campos que han cambiado o son relevantes
     if (formInfo.areaSolicitante) camposActualizados.areaSolicitante = formInfo.areaSolicitante;
-    if (formInfo.direccionAdscripcion) camposActualizados.direccionAdscripcion = formInfo.direccionAdscripcion;
-    if (formInfo.concepto) camposActualizados.concepto = formInfo.concepto;
-    if (formInfo.fechaElaboracion) camposActualizados.fechaElaboracion = formInfo.fechaElaboracion;
-    if (formInfo.componente) camposActualizados.componente = formInfo.componente;
-    if (isEvento) {
-      if (formInfo.nombreEvento) camposActualizados.nombreEvento = formInfo.nombreEvento;
-      if (formInfo.fechaEvento) camposActualizados.fechaEvento = formInfo.fechaEvento;
+  if (formInfo.areaId) camposActualizados.areaId = formInfo.areaId;  // Agregar areaId
+  if (formInfo.direccionAdscripcion) camposActualizados.direccionAdscripcion = formInfo.direccionAdscripcion;
+  if (formInfo.direccionId) camposActualizados.direccionId = formInfo.direccionId;  // Agregar direccionId
+  if (formInfo.concepto) camposActualizados.concepto = formInfo.concepto;
+  if (formInfo.fechaElaboracion) camposActualizados.fechaElaboracion = formInfo.fechaElaboracion;
+  if (formInfo.componente) camposActualizados.componente = formInfo.componente;
+  if (isEvento) {
+    if (formInfo.nombreEvento) camposActualizados.nombreEvento = formInfo.nombreEvento;
+    if (formInfo.fechaEvento) camposActualizados.fechaEvento = formInfo.fechaEvento;
     }
   
-    // Agregar los items si hay nuevos
+    // Asegurarse de que el folio esté siendo actualizado
+    if (formInfo.folio) {
+      camposActualizados.folio = formInfo.folio.toString();  // Forzar a string si es necesario
+    }
+  
+    // Agregar los items si hay nuevos o actualizados
     if (items.length > 0) {
       camposActualizados.items = items;
     }
@@ -321,6 +338,8 @@ useEffect(() => {
   
     try {
       const requisicionRef = doc(db, 'requisiciones', requisicionId); // Asume que tienes requisicionId disponible
+      
+      // Actualizar solo los campos modificados
       await updateDoc(requisicionRef, camposActualizados);
   
       Swal({
@@ -342,6 +361,7 @@ useEffect(() => {
       });
     }
   };
+  
   
   
   
@@ -438,18 +458,18 @@ useEffect(() => {
                 </tr>
               </thead>
               <tbody>
-  {items.map((item, index) => (
-    <tr key={index}>
-      <td>{item.cantidad}</td>
-      <td>{item.unidad}</td>
-      <td>{item.precioUnitario}</td>
-      <td>{item.concepto}</td>
-      <td>{item.partida}</td>
-      <td>{item.subtotal.toFixed(2)}</td>
-      <td><button type="button" className="delete-btn" onClick={() => handleDelete(index)}>Eliminar</button></td>
-    </tr>
-  ))}
-</tbody>
+                {items.map((item, index) => (
+                  <tr key={index}>
+                    <td>{item.cantidad}</td>
+                    <td>{item.unidad}</td>
+                    <td>{item.precioUnitario}</td>
+                    <td>{item.concepto}</td>
+                    <td>{item.partida}</td>
+                    <td>{item.subtotal.toFixed(2)}</td>
+                    <td><button type="button" className="delete-btn" onClick={() => handleDelete(index)}>Eliminar</button></td>
+                  </tr>
+                ))}
+              </tbody>
 
             </table>
 

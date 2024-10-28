@@ -12,7 +12,7 @@ const customStyles = {
   control: (provided) => ({
     ...provided,
     width: '100%',  // Ancho del Select (puedes ajustarlo según sea necesario)
-    maxWidth: '250px',  // Ancho máximo si deseas limitarlo
+    maxWidth: '100%',  // Ancho máximo si deseas limitarlo
     padding: '5px',  // Espacio interno
     minWidth: '250px',
   }),
@@ -45,6 +45,7 @@ function LlenarNuevaRequisicion() {
   const [userName, setUserName] = useState('');  // Estado para almacenar el nombre del usuario
   const [partidas, setPartidas] = useState([]);  // Estado para almacenar las partidas obtenidas de Firebase
   const [areas, setAreas] = useState([]);  // Estado para almacenar las áreas obtenidas de Firebase
+  const [isEvento, setIsEvento] = useState(false); // Estado para controlar si es un evento
 
   // Obtener el nombre del usuario autenticado desde Firestore
   useEffect(() => {
@@ -200,27 +201,61 @@ function LlenarNuevaRequisicion() {
 
   const handleSubmitRequisicion = async (e) => {
     e.preventDefault();
-  
-    if (
-      !formInfo.areaSolicitante || !formInfo.direccionAdscripcion || !formInfo.concepto || 
-      !formInfo.fechaElaboracion || !formInfo.componente || !formInfo.nombreEvento || 
-      !formInfo.fechaEvento || !formInfo.folio || items.length === 0
-    ) {
-      Swal({
-        title: "Campos incompletos",
-        text: "Por favor, completa todos los campos y agrega al menos un material o servicio.",
-        icon: "warning",
-        button: "Entendido"
-      });
-      return;
-    }
-  
-    const user = auth.currentUser;
+    const user = auth.currentUser; // Verificar usuario autenticado
     if (!user) {
       console.error('No se encontró el usuario autenticado');
       return;
     }
   
+    // Verificar qué campos faltan
+    const missingFields = [];
+    if (!formInfo.areaSolicitante) missingFields.push("Área solicitante");
+    if (!formInfo.direccionAdscripcion) missingFields.push("Dirección de adscripción");
+    if (!formInfo.concepto) missingFields.push("Concepto");
+    if (!formInfo.fechaElaboracion) missingFields.push("Fecha de elaboración");
+    if (!formInfo.componente) missingFields.push("Componente");
+  
+    // Si el checkbox de evento está activo, verificar esos campos también
+    if (isEvento) {
+      if (!formInfo.nombreEvento) missingFields.push("Nombre del evento");
+      if (!formInfo.fechaEvento) missingFields.push("Fecha del evento");
+    }
+  
+    // Verificar si hay al menos un ítem en la tabla
+    const missingItems = items.length === 0;
+  
+    // Generar mensajes combinados de validación
+    if (missingItems && missingFields.length > 0) {
+      Swal({
+        title: "Campos incompletos y sin ítems",
+        text: `Debe agregar al menos un ítem a la tabla y llenar los siguientes campos: ${missingFields.join(", ")}`,
+        icon: "warning",
+        button: "Aceptar"
+      });
+      return; // Detener la ejecución si faltan ítems y campos
+    }
+  
+    if (missingItems) {
+      Swal({
+        title: "Sin ítems",
+        text: "Debe agregar al menos un ítem a la tabla.",
+        icon: "warning",
+        button: "Aceptar"
+      });
+      return; // Detener la ejecución si no hay ítems
+    }
+  
+    if (missingFields.length > 0) {
+      Swal({
+        title: "Campos incompletos",
+        text: `Los siguientes campos son obligatorios: ${missingFields.join(", ")}`,
+        icon: "warning",
+        button: "Aceptar"
+      });
+      return; // Detener la ejecución si faltan campos
+    }
+  
+    // Crear el objeto de requisición
     const requisicion = {
       ...formInfo,
       items,
@@ -228,8 +263,10 @@ function LlenarNuevaRequisicion() {
       nombreUsuario: userName,
       userId: user.uid,
       estatus: "En Firma",
-      areaId: formInfo.areaId,         // Incluir areaId
-      direccionId: formInfo.direccionId // Incluir direccionId
+      areaId: formInfo.areaId,
+      direccionId: formInfo.direccionId,
+      nombreEvento: isEvento ? formInfo.nombreEvento : "No aplica",
+      fechaEvento: isEvento ? formInfo.fechaEvento : "No aplica",
     };
   
     try {
@@ -250,6 +287,7 @@ function LlenarNuevaRequisicion() {
       });
     }
   
+    // Reiniciar el formulario y los estados
     setFormInfo({
       areaSolicitante: '',
       direccionAdscripcion: '',
@@ -263,6 +301,8 @@ function LlenarNuevaRequisicion() {
     setItems([]);
     setTotal(0);
   };
+  
+  
   
   return (
     <div className={`admin-container ${isSidebarVisible ? 'shifted' : ''}`}>
@@ -308,12 +348,37 @@ function LlenarNuevaRequisicion() {
                 value={componentes.find(option => option.value === formInfo.componente) || null} // Establecer el valor seleccionado
                 styles={customStyles}
               />
-              <label>Nombre de evento:</label>
-              <input type="text" name="nombreEvento" value={formInfo.nombreEvento} onChange={handleFormInfoChange} />
-              <label>Fecha del evento:</label>
-              <input type="text" name="fechaEvento" value={formInfo.fechaEvento} onChange={handleFormInfoChange} />
+
               <label>Folio:</label>
               <input type="text" name="folio" value={formInfo.folio} onChange={handleFormInfoChange} />
+              <label>
+                <input
+                  type="checkbox"
+                  checked={isEvento}
+                  onChange={(e) => setIsEvento(e.target.checked)}
+                />
+                ¿Es un evento?
+              </label>
+
+              {isEvento && (
+                <div className="form-row">
+                  <label>Nombre de evento:</label>
+                  <input 
+                    type="text" 
+                    name="nombreEvento" 
+                    value={formInfo.nombreEvento} 
+                    onChange={handleFormInfoChange} 
+                  />
+                  
+                  <label>Fecha del evento:</label>
+                  <input 
+                    type="text" 
+                    name="fechaEvento" 
+                    value={formInfo.fechaEvento} 
+                    onChange={handleFormInfoChange} 
+                  />
+                </div>
+              )}
             </div>
 
             <h3>Agregar material y/o servicio</h3>

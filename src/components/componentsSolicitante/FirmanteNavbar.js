@@ -10,8 +10,8 @@ const FirmanteNavbar = ({ isSidebarVisible, toggleSidebar }) => {
     <aside className={`sidebar ${isSidebarVisible ? 'visible' : ''}`}>
       <div className="logo"></div>
       <ul className="menu">
-      <li><a href="/llenar-Requisicion"><FontAwesomeIcon icon={faFileAlt} /> Llenar requisición</a></li>
-        <li><a href="/llenarRequisicion-solicitante"><FontAwesomeIcon icon={faClock} /> Requisiciones</a></li>
+      <li><a href="/llenarRequisicion-solicitante"><FontAwesomeIcon icon={faFileAlt} /> Llenar requisición</a></li>
+        <li><a href="/requisiciones-solicitante"><FontAwesomeIcon icon={faClock} /> Requisiciones</a></li>
         <li><a href="/documentosFinalizados"><FontAwesomeIcon icon={faFile} /> Documentos Finalizados</a></li>
       </ul>
     </aside>

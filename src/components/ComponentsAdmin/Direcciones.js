@@ -74,6 +74,7 @@ function Direcciones() {
       setCurrentDireccionId(null); // Limpiar la dirección actual en edición
     }
   };
+  
 
   // Función para eliminar una dirección
   const handleDeleteDireccion = async (id, descripcion) => {
@@ -123,7 +124,7 @@ function Direcciones() {
           <FontAwesomeIcon icon={faSearch} className="search-icon" />
           <input
             type="text"
-            placeholder="Buscar partida..."
+            placeholder="Buscar direccion..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="search-input"
@@ -137,6 +138,7 @@ function Direcciones() {
         setNewDireccion(''); // Limpiar el campo de entrada
         setNewClaveUR(''); // Limpiar el campo de entrada
       }}>Agregar Dirección</button>
+      
 
       {/* Modal para agregar o editar dirección */}
       {isModalOpen && (

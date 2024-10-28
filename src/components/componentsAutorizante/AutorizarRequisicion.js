@@ -1,19 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import AutorizanteNavbar from './AutorizanteNavbar';
 import TopBar from '../TopBar';
-import { collection, getDocs, doc, getDoc, query, where } from 'firebase/firestore';
+import { collection, getDocs, doc, getDoc, query, where,updateDoc,addDoc } from 'firebase/firestore';
 import { db } from '../../firebase';
 import { useNavigate } from 'react-router-dom'; // Importar useNavigate
+import Swal from 'sweetalert2';
 
 function AutorizarRequisicion({ user }) {
   const [isSidebarVisible, setSidebarVisible] = useState(false);
   const [requisiciones, setRequisiciones] = useState([]);
   const [direccionId, setDireccionId] = useState(null);
-  const navigate = useNavigate(); // Crear instancia de useNavigate
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [requisicionRechazada, setRequisicionRechazada] = useState(null);
+  const [motivoRechazo, setMotivoRechazo] = useState('');
+  const navigate = useNavigate();
 
-  const toggleSidebar = () => {
-    setSidebarVisible(!isSidebarVisible);
-  };
+  const toggleSidebar = () => setSidebarVisible(!isSidebarVisible);
 
   const fetchDireccionId = async () => {
     try {
@@ -21,8 +23,7 @@ function AutorizarRequisicion({ user }) {
       const userDoc = await getDoc(userDocRef);
 
       if (userDoc.exists()) {
-        const userData = userDoc.data();
-        setDireccionId(userData.direccionId);
+        setDireccionId(userDoc.data().direccionId);
       } else {
         console.error('No se encontró el documento del usuario.');
       }
@@ -60,10 +61,53 @@ function AutorizarRequisicion({ user }) {
     }
   }, [direccionId]);
 
-  // Función para manejar la navegación a la página de detalles de la requisición
   const irADetallesRequisicion = (requisicion) => {
-    // Navegar a la ruta detallesRequisicion con el ID de la requisición
     navigate(`/Autorizar`, { state: { requisicion } });
+  };
+
+  // Abrir modal de rechazo
+  const abrirModalRechazo = (requisicion) => {
+    setRequisicionRechazada(requisicion);
+    setModalOpen(true);
+  };
+
+  // Cerrar modal
+  const cerrarModal = () => {
+    setModalOpen(false);
+    setMotivoRechazo('');
+  };
+
+  // Manejar rechazo y actualización en Firebase
+  const manejarRechazo = async () => {
+    if (!motivoRechazo) {
+      alert('Debe proporcionar un motivo de rechazo.');
+      return;
+    }
+
+    try {
+      // Actualizar el estatus de la requisición y agregar motivo de rechazo
+      await updateDoc(doc(db, 'requisiciones', requisicionRechazada.id), {
+        estatus: 'Rechazado',
+        motivoRechazo: motivoRechazo, // Guardar motivo de rechazo
+      });
+
+      // Agregar notificación
+      await addDoc(collection(db, 'notificaciones'), {
+        fecha: new Date().toISOString(),
+        mensaje: `Tu requisición con folio ${requisicionRechazada.folio} ha sido rechazada.`,
+        usuarioId: requisicionRechazada.userId,
+      });
+
+      Swal.fire({
+        title: "Requisicion rechaza y notificacion enviada",
+        icon: "success",
+        button: "Aceptar"
+      });
+      cerrarModal(); // Cerrar modal
+      fetchRequisiciones(direccionId); // Refrescar la lista de requisiciones
+    } catch (error) {
+      console.error('Error al rechazar la requisición:', error);
+    }
   };
 
   return (
@@ -101,12 +145,18 @@ function AutorizarRequisicion({ user }) {
                       <td>{requisicion.fechaElaboracion}</td>
                       <td>{requisicion.estatus}</td>
                       <td>
-                        <button
-                          className="firmar-btn"
-                          onClick={() => irADetallesRequisicion(requisicion)} // Redirigir al hacer clic en el botón
-                        >
-                          Detalles
-                        </button>
+                        {requisicion.estatus !== 'Rechazado' ? (
+                          <>
+                            <button className="firmar-btn" onClick={() => irADetallesRequisicion(requisicion)}>
+                              Detalles
+                            </button>
+                            <button className="rechazar-btn" onClick={() => abrirModalRechazo(requisicion)}>
+                              Rechazar
+                            </button>
+                          </>
+                        ) : (
+                          <span>Requisición Rechazada</span>
+                        )}
                       </td>
                     </tr>
                   ))
@@ -116,6 +166,23 @@ function AutorizarRequisicion({ user }) {
           </div>
         </section>
       </main>
+
+      {isModalOpen && (
+        <div className="modal-Auto">
+          <div className="modal-content-Auto">
+            <h3>Rechazar Requisición</h3>
+            <textarea
+              placeholder="Motivo del rechazo"
+              value={motivoRechazo}
+              onChange={(e) => setMotivoRechazo(e.target.value)}
+            />
+            <div className="modal-actions-Auto">
+              <button onClick={manejarRechazo}>Confirmar</button>
+              <button onClick={cerrarModal}>Cancelar</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

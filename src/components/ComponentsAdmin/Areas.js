@@ -1,61 +1,56 @@
 import React, { useState, useEffect } from 'react';
 import '../../styles/Areas.css';
-import { db } from '../../firebase'; // Importa tu configuración de Firebase
+import { db } from '../../firebase';
 import { collection, addDoc, getDocs, updateDoc, deleteDoc, doc } from 'firebase/firestore';
-import Swal from 'sweetalert2'; // Importa SweetAlert2
+import Swal from 'sweetalert2';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faTrash, faSearch } from '@fortawesome/free-solid-svg-icons';
 
 function Areas() {
   const [areas, setAreas] = useState([]);
-  const [direcciones, setDirecciones] = useState([]); // Estado para almacenar direcciones
+  const [direcciones, setDirecciones] = useState([]);
   const [newArea, setNewArea] = useState('');
-  const [selectedDireccion, setSelectedDireccion] = useState(''); // ID de la dirección seleccionada
-  const [isModalOpen, setIsModalOpen] = useState(false); // Estado para controlar el modal
-  const [isEditing, setIsEditing] = useState(false); // Estado para saber si estamos editando
-  const [currentAreaId, setCurrentAreaId] = useState(null); // Guardar el área actual en edición
-  const [searchTerm, setSearchTerm] = useState(''); // Estado para el término de búsqueda
+  const [selectedDireccion, setSelectedDireccion] = useState('');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [currentAreaId, setCurrentAreaId] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [itemsPerPage, setItemsPerPage] = useState(10); // Estado para manejar las áreas por página
+  const [currentPage, setCurrentPage] = useState(1); // Estado para manejar la página actual
 
-  // Función para cargar las áreas desde Firestore
   const fetchAreas = async () => {
-    const querySnapshot = await getDocs(collection(db, 'areas')); // Asume que tienes una colección llamada 'areas'
+    const querySnapshot = await getDocs(collection(db, 'areas'));
     const areasList = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
     setAreas(areasList);
   };
 
-  // Función para cargar las direcciones desde Firestore
   const fetchDirecciones = async () => {
-    const querySnapshot = await getDocs(collection(db, 'direcciones')); // Asume que tienes una colección llamada 'direcciones'
+    const querySnapshot = await getDocs(collection(db, 'direcciones'));
     const direccionesList = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
     setDirecciones(direccionesList);
   };
 
   useEffect(() => {
-    fetchAreas(); // Carga las áreas al montar el componente
-    fetchDirecciones(); // Carga las direcciones al montar el componente
+    fetchAreas();
+    fetchDirecciones();
   }, []);
 
-  // Función para agregar o editar un área
   const handleSaveArea = async () => {
     if (newArea && selectedDireccion) {
       if (isEditing) {
-        // Si estamos en modo edición, actualizamos el área
         const areaDoc = doc(db, 'areas', currentAreaId);
         await updateDoc(areaDoc, { descripcion: newArea, direccionId: selectedDireccion });
         const updatedAreas = areas.map((area) =>
           area.id === currentAreaId ? { ...area, descripcion: newArea, direccionId: selectedDireccion } : area
         );
         setAreas(updatedAreas);
-        Swal.fire('¡Éxito!', 'El área ha sido actualizada correctamente.', 'success'); // Confirmación de edición
+        Swal.fire('¡Éxito!', 'El área ha sido actualizada correctamente.', 'success');
       } else {
-        // Si estamos agregando una nueva área
         const docRef = await addDoc(collection(db, 'areas'), {
           descripcion: newArea,
           direccionId: selectedDireccion,
         });
         setAreas([...areas, { id: docRef.id, descripcion: newArea, direccionId: selectedDireccion }]);
-
-        // SweetAlert2 de confirmación
         Swal.fire({
           title: '¡Área Agregada!',
           text: 'La nueva área ha sido agregada correctamente.',
@@ -64,15 +59,14 @@ function Areas() {
         });
       }
 
-      setNewArea(''); // Limpiar el input
-      setSelectedDireccion(''); // Limpiar el campo de selección
-      setIsModalOpen(false); // Cerrar modal después de guardar
-      setIsEditing(false); // Reiniciar el modo de edición
-      setCurrentAreaId(null); // Limpiar el área actual en edición
+      setNewArea('');
+      setSelectedDireccion('');
+      setIsModalOpen(false);
+      setIsEditing(false);
+      setCurrentAreaId(null);
     }
   };
 
-  // Función para eliminar un área
   const handleDeleteArea = async (id, descripcion) => {
     const result = await Swal.fire({
       title: '¿Estás seguro?',
@@ -92,25 +86,27 @@ function Areas() {
     }
   };
 
-  // Función para abrir el modal en modo de edición
   const handleEditArea = (id, descripcion, direccionId) => {
-    setNewArea(descripcion); // Llenar el campo de entrada con la descripción existente
-    setSelectedDireccion(direccionId); // Seleccionar la dirección actual
-    setCurrentAreaId(id); // Establecer el ID del área que estamos editando
-    setIsEditing(true); // Cambiar a modo de edición
-    setIsModalOpen(true); // Abrir el modal
+    setNewArea(descripcion);
+    setSelectedDireccion(direccionId);
+    setCurrentAreaId(id);
+    setIsEditing(true);
+    setIsModalOpen(true);
   };
 
-  // Filtrar las áreas según el término de búsqueda
   const filteredAreas = areas.filter((area) =>
     area.descripcion.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const paginatedAreas = filteredAreas.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
   );
 
   return (
     <div className="areas-container">
       <div className="header-areas">
         <h1 className="areas-title">Áreas</h1>
-        {/* Buscador con ícono */}
         <div className="search-container">
           <FontAwesomeIcon icon={faSearch} className="search-icon" />
           <input
@@ -123,15 +119,35 @@ function Areas() {
         </div>
       </div>
 
-      {/* Botón para abrir el modal en modo agregar */}
-      <button className="add-area-btn" onClick={() => {
-        setIsModalOpen(true);
-        setIsEditing(false); // Modo agregar
-        setNewArea(''); // Limpiar el campo de entrada
-        setSelectedDireccion(''); // Limpiar la selección de dirección
-      }}>Agregar Área</button>
+      <button
+        className="add-area-btn"
+        onClick={() => {
+          setIsModalOpen(true);
+          setIsEditing(false);
+          setNewArea('');
+          setSelectedDireccion('');
+        }}
+      >
+        Agregar Área
+      </button>
 
-      {/* Modal para agregar o editar área */}
+      {/* Selector para áreas por página */}
+      <div className="items-per-page-container">
+        <label htmlFor="itemsPerPage">Mostrar: </label>
+        <select
+          id="itemsPerPage"
+          className='select-mostrar-datos'
+          value={itemsPerPage}
+          onChange={(e) => setItemsPerPage(parseInt(e.target.value))}
+        >
+          <option value={10}>10</option>
+          <option value={20}>20</option>
+          <option value={30}>30</option>
+          <option value={50}>50</option>
+          <option value={filteredAreas.length}>Todos</option>
+        </select>
+      </div>
+
       {isModalOpen && (
         <div className="modal-area">
           <div className="modal-content-area">
@@ -174,12 +190,11 @@ function Areas() {
           </tr>
         </thead>
         <tbody>
-          {filteredAreas.map((area) => {
+          {paginatedAreas.map((area) => {
             const direccion = direcciones.find(direccion => direccion.id === area.direccionId);
             return (
               <tr key={area.id}>
                 <td>{area.descripcion}</td>
-                {/* Mostrar clave UR junto con la descripción */}
                 <td>{direccion ? `${direccion.claveUR} ${direccion.descripcion}` : 'Sin dirección'}</td>
                 <td className="details-cell">
                   <button

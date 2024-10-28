@@ -356,3 +356,41 @@
         padding: 6px;
     }
 }
+.select-mostrar-datos {
+    padding: 8px 12px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: #f9f9f9;
+    color: #333;
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+    margin-bottom: 15px;
+  }
+  
+  .select-mostrar-datos:hover {
+    border-color: #007bff; /* Color del borde al pasar el mouse */
+  }
+  
+  .select-mostrar-datos:focus {
+    border-color: #007bff; /* Color del borde al enfocar el select */
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); /* Efecto de sombra */
+  }
+  
+  .select-mostrar-datos option {
+    padding: 8px;
+    background-color: #fff;
+    color: #333;
+  }
+  
+  .select-mostrar-datos option:hover {
+    background-color: #f1f1f1; /* Fondo de las opciones al pasar el mouse */
+  }
+  
+  .select-mostrar-datos:disabled {
+    background-color: #e9ecef;
+    color: #6c757d;
+    cursor: not-allowed;
+  }
+  

@@ -13,6 +13,7 @@ function Partidas() {
   const [isModalOpen, setIsModalOpen] = useState(false); // Estado para controlar el modal
   const [isEditing, setIsEditing] = useState(false); // Estado para saber si estamos editando
   const [currentPartidaId, setCurrentPartidaId] = useState(null); // Guardar la partida actual en edición
+  const [itemsPerPage, setItemsPerPage] = useState(10); // Estado para controlar cuántas partidas mostrar
 
   // Función para cargar las partidas desde Firestore
   const fetchPartidas = async () => {
@@ -108,21 +109,26 @@ function Partidas() {
     partida.descripcion.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  // Controlar la paginación
+  const paginatedPartidas = filteredPartidas.slice(0, itemsPerPage);
+
   return (
     <div className="areas-container">
       <h1 className="areas-title">Partidas</h1>
 
       {/* Campo de búsqueda */}
       <div className="search-container">
-          <FontAwesomeIcon icon={faSearch} className="search-icon" />
-          <input
-            type="text"
-            placeholder="Buscar partida..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="search-input"
-          />
-        </div>
+        <FontAwesomeIcon icon={faSearch} className="search-icon" />
+        <input
+          type="text"
+          placeholder="Buscar partida..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="search-input"
+        />
+      </div>
+
+      
 
       {/* Botón para abrir el modal en modo agregar */}
       <button className="add-area-btn" onClick={() => {
@@ -130,6 +136,17 @@ function Partidas() {
         setIsEditing(false); // Modo agregar
         setNewPartida(''); // Limpiar el campo de entrada
       }}>Agregar Partida</button>
+      {/* Select para controlar cuántas partidas mostrar */}
+      <div className="select-mostrar-datos">
+        <label>Mostrar: </label>
+        <select onChange={(e) => setItemsPerPage(Number(e.target.value))} value={itemsPerPage}>
+          <option value={10}>10</option>
+          <option value={20}>20</option>
+          <option value={30}>30</option>
+          <option value={50}>50</option>
+          <option value={partidas.length}>Todos</option>
+        </select>
+      </div>
 
       {/* Modal para agregar o editar partida */}
       {isModalOpen && (
@@ -161,24 +178,22 @@ function Partidas() {
           </tr>
         </thead>
         <tbody>
-          {filteredPartidas.map((partida) => (
+          {paginatedPartidas.map((partida) => (
             <tr key={partida.id}>
               <td>{partida.descripcion}</td>
               <td className="details-cell">
-              <button
-                className="edit-btn-area"
-                onClick={() => handleEditPartida(partida.id, partida.descripcion)}
-              >
-                <FontAwesomeIcon icon={faEdit} /> 
-              </button>
-
-              <button
-                className="delete-btn-area"
-                onClick={() => handleDeletePartida(partida.id, partida.descripcion)}
-              >
-                <FontAwesomeIcon icon={faTrash} /> 
-              </button>
-
+                <button
+                  className="edit-btn-area"
+                  onClick={() => handleEditPartida(partida.id, partida.descripcion)}
+                >
+                  <FontAwesomeIcon icon={faEdit} /> 
+                </button>
+                <button
+                  className="delete-btn-area"
+                  onClick={() => handleDeletePartida(partida.id, partida.descripcion)}
+                >
+                  <FontAwesomeIcon icon={faTrash} /> 
+                </button>
               </td>
             </tr>
           ))}

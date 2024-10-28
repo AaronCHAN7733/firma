@@ -9,8 +9,11 @@ import '../../styles/FirmarRequisicion.css';
 function FirmarRequisicion({ user }) {
   const [isSidebarVisible, setSidebarVisible] = useState(false);
   const [requisiciones, setRequisiciones] = useState([]);
-  const [expandedRows, setExpandedRows] = useState([]); // Estado para filas expandidas
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 768); // Estado para detectar si es móvil
+  const [expandedRows, setExpandedRows] = useState([]);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [motivoRechazo, setMotivoRechazo] = useState('');
+  const [selectedRequisicionId, setSelectedRequisicionId] = useState(null); // Estado para almacenar el ID de la requisición seleccionada
   const navigate = useNavigate();
 
   // Detectar tamaño de pantalla
@@ -50,19 +53,35 @@ function FirmarRequisicion({ user }) {
   }, [user.uid]);
 
   const handleFirmarRequisicion = (requisicion) => {
-    navigate('/firmar', { state: { requisicion } });
+    navigate('/firmar-solicitante', { state: { requisicion } });
   };
 
-  // Función para alternar la visualización completa del folio en móviles
   const toggleFolioExpansion = (requisicionId) => {
     if (expandedRows.includes(requisicionId)) {
-      setExpandedRows(expandedRows.filter((id) => id !== requisicionId)); // Ocultar
+      setExpandedRows(expandedRows.filter((id) => id !== requisicionId));
     } else {
-      setExpandedRows([...expandedRows, requisicionId]); // Mostrar completo
+      setExpandedRows([...expandedRows, requisicionId]);
     }
   };
 
   const requisicionesPendientes = requisiciones;
+
+  const abrirModalMotivo = (motivo, requisicionId) => {
+    setMotivoRechazo(motivo);
+    setSelectedRequisicionId(requisicionId); // Almacenar el ID de la requisición
+    setModalOpen(true);
+  };
+
+  const cerrarModal = () => {
+    setModalOpen(false);
+    setMotivoRechazo('');
+    setSelectedRequisicionId(null); // Limpiar el ID de la requisición al cerrar el modal
+  };
+
+  const handleEditRequisicion = () => {
+    navigate('/editar-requisicion', { state: { requisicionId: selectedRequisicionId } });
+    cerrarModal(); // Cerrar el modal al redirigir
+  };
 
   return (
     <div className={`admin-container ${isSidebarVisible ? 'shifted' : ''}`}>
@@ -73,7 +92,7 @@ function FirmarRequisicion({ user }) {
       <FirmanteNavbar isSidebarVisible={isSidebarVisible} toggleSidebar={toggleSidebar} />
 
       <main className={`main-content ${isSidebarVisible ? 'shifted' : ''}`}>
-        <TopBar userName="Firmante" />
+        <TopBar userName="Admin" />
 
         <section className="content">
           <h2>Requisiciones</h2>
@@ -94,13 +113,12 @@ function FirmarRequisicion({ user }) {
                     <td colSpan="4">No tienes requisiciones realizadas.</td>
                   </tr>
                 ) : (
-                  requisicionesPendientes.map((requisicion, index) => (
+                  requisicionesPendientes.map((requisicion) => (
                     <tr key={requisicion.id}>
                       <td
-                        onClick={() => isMobile && toggleFolioExpansion(requisicion.id)} // Solo expandir en móvil
-                        style={{ cursor: isMobile ? 'pointer' : 'default' }} // Mostrar puntero solo en móviles
+                        onClick={() => isMobile && toggleFolioExpansion(requisicion.id)}
+                        style={{ cursor: isMobile ? 'pointer' : 'default' }}
                       >
-                        {/* Mostrar solo los primeros 8 caracteres en móvil */}
                         {isMobile && !expandedRows.includes(requisicion.id)
                           ? `${requisicion.folio.substring(0, 8)}...`
                           : requisicion.folio}
@@ -111,9 +129,16 @@ function FirmarRequisicion({ user }) {
                         <button className="firmar-btn" onClick={() => handleFirmarRequisicion(requisicion)}>
                           Ver Detalles
                         </button>
-                        {/* Mostrar botón de rechazar solo si el estatus es "En firma" */}
                         {requisicion.estatus === 'En Firma' && (
                           <button className="rechazar-btn">Rechazar</button>
+                        )}
+                        {requisicion.estatus === 'Rechazado' && (
+                          <button
+                            className="rechazar-btn"
+                            onClick={() => abrirModalMotivo(requisicion.motivoRechazo, requisicion.id)} // Pasar el ID al modal
+                          >
+                            Ver Motivo
+                          </button>
                         )}
                       </td>
                     </tr>
@@ -124,6 +149,17 @@ function FirmarRequisicion({ user }) {
           </div>
         </section>
       </main>
+
+      {isModalOpen && (
+        <div className="modal-Auto">
+          <div className="modal-content-Auto">
+            <h3>Motivo de Rechazo</h3>
+            <p>{motivoRechazo}</p>
+            <button className="firmar-btn" onClick={cerrarModal}>Cerrar</button>
+            <button className="firmar-btn" onClick={handleEditRequisicion}>Editar</button> {/* Botón de editar */}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
