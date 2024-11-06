@@ -114,6 +114,7 @@
   justify-content: center;
   align-items: center;
   transition: left 0.3s ease, transform 0.3s ease, background-color 0.3s ease; /* Transiciones suaves */
+  position: fixed;
 }
 
 .hamburger-btn:hover {

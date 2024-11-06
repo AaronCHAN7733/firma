@@ -1,15 +1,22 @@
-import React, { useState, useEffect } from 'react';
-import '../../styles/Areas.css'; // Reutilizamos el mismo archivo de estilos
-import { db } from '../../firebase'; // Importa tu configuración de Firebase
-import { collection, addDoc, getDocs, updateDoc, deleteDoc, doc } from 'firebase/firestore';
-import Swal from 'sweetalert2'; // Importa SweetAlert2
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faEdit, faTrash, faSearch } from '@fortawesome/free-solid-svg-icons';
+import React, { useState, useEffect } from "react";
+import "../../styles/Areas.css"; // Reutilizamos el mismo archivo de estilos
+import { db } from "../../firebase"; // Importa tu configuración de Firebase
+import {
+  collection,
+  addDoc,
+  getDocs,
+  updateDoc,
+  deleteDoc,
+  doc,
+} from "firebase/firestore";
+import Swal from "sweetalert2"; // Importa SweetAlert2
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEdit, faTrash, faSearch } from "@fortawesome/free-solid-svg-icons";
 
 function Partidas() {
   const [partidas, setPartidas] = useState([]);
-  const [newPartida, setNewPartida] = useState('');
-  const [searchTerm, setSearchTerm] = useState(''); // Estado para el término de búsqueda
+  const [newPartida, setNewPartida] = useState("");
+  const [searchTerm, setSearchTerm] = useState(""); // Estado para el término de búsqueda
   const [isModalOpen, setIsModalOpen] = useState(false); // Estado para controlar el modal
   const [isEditing, setIsEditing] = useState(false); // Estado para saber si estamos editando
   const [currentPartidaId, setCurrentPartidaId] = useState(null); // Guardar la partida actual en edición
@@ -17,12 +24,17 @@ function Partidas() {
 
   // Función para cargar las partidas desde Firestore
   const fetchPartidas = async () => {
-    const querySnapshot = await getDocs(collection(db, 'partidas')); // Asume que tienes una colección llamada 'partidas'
-    const partidasList = querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+    const querySnapshot = await getDocs(collection(db, "partidas")); // Asume que tienes una colección llamada 'partidas'
+    const partidasList = querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
 
     // Ordenar las partidas por descripción de menor a mayor
-    const sortedPartidas = partidasList.sort((a, b) => a.descripcion.localeCompare(b.descripcion));
-    
+    const sortedPartidas = partidasList.sort((a, b) =>
+      a.descripcion.localeCompare(b.descripcion)
+    );
+
     setPartidas(sortedPartidas);
   };
 
@@ -35,36 +47,48 @@ function Partidas() {
     if (newPartida) {
       if (isEditing) {
         // Si estamos en modo edición, actualizamos la partida
-        const partidaDoc = doc(db, 'partidas', currentPartidaId);
+        const partidaDoc = doc(db, "partidas", currentPartidaId);
         await updateDoc(partidaDoc, { descripcion: newPartida });
 
         // Actualizar la lista de partidas y ordenar
-        const updatedPartidas = partidas.map((partida) =>
-          partida.id === currentPartidaId ? { ...partida, descripcion: newPartida } : partida
-        ).sort((a, b) => a.descripcion.localeCompare(b.descripcion));
-        
+        const updatedPartidas = partidas
+          .map((partida) =>
+            partida.id === currentPartidaId
+              ? { ...partida, descripcion: newPartida }
+              : partida
+          )
+          .sort((a, b) => a.descripcion.localeCompare(b.descripcion));
+
         setPartidas(updatedPartidas);
-        Swal.fire('¡Éxito!', 'La partida ha sido actualizada correctamente.', 'success'); // Confirmación de edición
+        Swal.fire(
+          "¡Éxito!",
+          "La partida ha sido actualizada correctamente.",
+          "success"
+        ); // Confirmación de edición
       } else {
         // Si estamos agregando una nueva partida
-        const docRef = await addDoc(collection(db, 'partidas'), { descripcion: newPartida });
+        const docRef = await addDoc(collection(db, "partidas"), {
+          descripcion: newPartida,
+        });
 
         // Añadir la nueva partida y ordenar
-        const newPartidas = [...partidas, { id: docRef.id, descripcion: newPartida }]
-          .sort((a, b) => a.descripcion.localeCompare(b.descripcion));
+        const newPartidas = [
+          ...partidas,
+          { id: docRef.id, descripcion: newPartida },
+        ].sort((a, b) => a.descripcion.localeCompare(b.descripcion));
 
         setPartidas(newPartidas);
 
         // SweetAlert2 de confirmación
         Swal.fire({
-          title: '¡Partida Agregada!',
-          text: 'La nueva partida ha sido agregada correctamente.',
-          icon: 'success',
-          confirmButtonText: 'OK',
+          title: "¡Partida Agregada!",
+          text: "La nueva partida ha sido agregada correctamente.",
+          icon: "success",
+          confirmButtonText: "OK",
         });
       }
 
-      setNewPartida(''); // Limpiar el input
+      setNewPartida(""); // Limpiar el input
       setIsModalOpen(false); // Cerrar modal después de guardar
       setIsEditing(false); // Reiniciar el modo de edición
       setCurrentPartidaId(null); // Limpiar la partida actual en edición
@@ -74,25 +98,30 @@ function Partidas() {
   // Función para eliminar una partida
   const handleDeletePartida = async (id, descripcion) => {
     const result = await Swal.fire({
-      title: '¿Estás seguro?',
+      title: "¿Estás seguro?",
       text: `Vas a eliminar la partida: ${descripcion}`,
-      icon: 'warning',
+      icon: "warning",
       showCancelButton: true,
-      confirmButtonText: 'Sí, eliminar',
-      cancelButtonText: 'Cancelar',
-      confirmButtonColor: '#d9534f',
-      cancelButtonColor: '#6c757d',
+      confirmButtonText: "Sí, eliminar",
+      cancelButtonText: "Cancelar",
+      confirmButtonColor: "#d9534f",
+      cancelButtonColor: "#6c757d",
     });
 
     if (result.isConfirmed) {
-      await deleteDoc(doc(db, 'partidas', id));
+      await deleteDoc(doc(db, "partidas", id));
 
       // Eliminar la partida y ordenar
-      const updatedPartidas = partidas.filter((partida) => partida.id !== id)
+      const updatedPartidas = partidas
+        .filter((partida) => partida.id !== id)
         .sort((a, b) => a.descripcion.localeCompare(b.descripcion));
-        
+
       setPartidas(updatedPartidas);
-      Swal.fire('¡Eliminado!', 'La partida ha sido eliminada correctamente.', 'success');
+      Swal.fire(
+        "¡Eliminado!",
+        "La partida ha sido eliminada correctamente.",
+        "success"
+      );
     }
   };
 
@@ -128,18 +157,26 @@ function Partidas() {
         />
       </div>
 
-      
-
       {/* Botón para abrir el modal en modo agregar */}
-      <button className="add-area-btn" onClick={() => {
-        setIsModalOpen(true);
-        setIsEditing(false); // Modo agregar
-        setNewPartida(''); // Limpiar el campo de entrada
-      }}>Agregar Partida</button>
-      {/* Select para controlar cuántas partidas mostrar */}
-      <div className="select-mostrar-datos">
-        <label>Mostrar: </label>
-        <select onChange={(e) => setItemsPerPage(Number(e.target.value))} value={itemsPerPage}>
+      <button
+        className="add-area-btn"
+        onClick={() => {
+          setIsModalOpen(true);
+          setIsEditing(false); // Modo agregar
+          setNewPartida(""); // Limpiar el campo de entrada
+        }}
+      >
+        Agregar Partida
+      </button>
+      {/* Selector para áreas por página */}
+      <div className="items-per-page-container">
+        <label htmlFor="itemsPerPage">Mostrar: </label>
+        <select
+          id="itemsPerPage"
+          className='select-mostrar-datos'
+          value={itemsPerPage}
+          onChange={(e) => setItemsPerPage(parseInt(e.target.value))}
+        >
           <option value={10}>10</option>
           <option value={20}>20</option>
           <option value={30}>30</option>
@@ -152,7 +189,7 @@ function Partidas() {
       {isModalOpen && (
         <div className="modal-area">
           <div className="modal-content-area">
-            <h2>{isEditing ? 'Editar Partida' : 'Agregar Nueva Partida'}</h2>
+            <h2>{isEditing ? "Editar Partida" : "Agregar Nueva Partida"}</h2>
             <input
               type="text"
               value={newPartida}
@@ -162,15 +199,20 @@ function Partidas() {
             />
             <div className="modal-buttons">
               <button className="modal-add-btn" onClick={handleSavePartida}>
-                {isEditing ? 'Guardar Cambios' : 'Agregar'}
+                {isEditing ? "Guardar Cambios" : "Agregar"}
               </button>
-              <button className="modal-close-btn" onClick={() => setIsModalOpen(false)}>Cerrar</button>
+              <button
+                className="modal-close-btn"
+                onClick={() => setIsModalOpen(false)}
+              >
+                Cerrar
+              </button>
             </div>
           </div>
         </div>
       )}
-
-      <table className="areas-table">
+    <div class="table-scroll-container">
+    <table className="areas-table">
         <thead>
           <tr>
             <th>Descripción de la Partida</th>
@@ -184,21 +226,28 @@ function Partidas() {
               <td className="details-cell">
                 <button
                   className="edit-btn-area"
-                  onClick={() => handleEditPartida(partida.id, partida.descripcion)}
+                  onClick={() =>
+                    handleEditPartida(partida.id, partida.descripcion)
+                  }
                 >
-                  <FontAwesomeIcon icon={faEdit} /> 
+                  <FontAwesomeIcon icon={faEdit} />
                 </button>
                 <button
                   className="delete-btn-area"
-                  onClick={() => handleDeletePartida(partida.id, partida.descripcion)}
+                  onClick={() =>
+                    handleDeletePartida(partida.id, partida.descripcion)
+                  }
                 >
-                  <FontAwesomeIcon icon={faTrash} /> 
+                  <FontAwesomeIcon icon={faTrash} />
                 </button>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
+
+    </div>
+      
     </div>
   );
 }

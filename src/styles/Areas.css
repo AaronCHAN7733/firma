@@ -56,24 +56,43 @@
     transform: translateY(-2px);
 }
 
+/* Contenedor de tabla con scroll */
+.table-scroll-container {
+    max-height: 450px; /* Ajusta la altura máxima según tus necesidades */
+    overflow-y: auto; /* Scroll vertical cuando exceda la altura */
+    overflow-x: auto; /* Scroll horizontal para tablas anchas */
+    width: 100%;
+    margin: 20px 0;
+    border: 1px solid #ddd; /* Opcional, para un borde alrededor del contenedor */
+    border-radius: 8px;
+    background-color: #f9f9fb; /* Fondo opcional */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombras para resaltar */
+}
+
 /* Tabla */
 .areas-table {
     width: 100%;
+    min-width: 600px; /* Ajusta este valor según el contenido mínimo de la tabla */
     border-collapse: collapse;
     background-color: #f9f9fb;
     transition: background-color 0.3s ease;
 }
 
+/* Encabezados de columna fijos */
 .areas-table th {
-    background-color: #1a73e8;
+    position: sticky;
+    top: 0; /* Los encabezados se mantendrán fijos en la parte superior al hacer scroll */
+    z-index: 1; /* Para asegurarte de que los encabezados estén sobre el resto del contenido */
+    background-color: #1a73e8; /* Color de fondo de los encabezados */
     color: white;
     padding: 15px;
     font-size: 18px;
     text-align: left;
     font-family: 'Arial', sans-serif;
-    position: relative;
-    overflow: hidden;
 }
+
+
+
 
 .areas-table th::after {
     content: '';

@@ -79,6 +79,7 @@ function AdminHome({ user }) {
       <Navbar
         isSidebarVisible={isSidebarVisible}
         toggleSidebar={toggleSidebar}
+      
       />
 
       <main className={`main-content ${isSidebarVisible ? "shifted" : ""}`}>

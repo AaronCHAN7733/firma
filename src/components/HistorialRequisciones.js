@@ -121,7 +121,7 @@ function HistorialRequisiciones({ user }) {
             </table>
           </div>
         </section>
-
+        
         {modalVisible && (
           <div className="modal-overlay">
             <div className="modal-content">
