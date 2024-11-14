@@ -145,12 +145,12 @@ h2 {
 
   /* Mostrar el título en la parte superior de la izquierda */
   .login-left:before {
-    content: "Sistema de requisiciones de materiales y/o servicios";
+    content: "Sistema de Requisiciones de Materiales y/o Servicios";
     display: block;
     font-size: 18px;
     text-align: center;
     margin-bottom: 20px;
-    color: #333;
+    color: black;
     
   }
 
@@ -163,8 +163,10 @@ h2 {
 
   /* Ajustes para la imagen del logo en móviles */
   .logo {
-    width: 150px;
+    width: 350px;
     height: 60px;
+    margin: 0 auto;
+    margin-bottom: 50px;
   }
 
   /* Aumentar el ancho del formulario para adaptarse a pantallas más pequeñas */

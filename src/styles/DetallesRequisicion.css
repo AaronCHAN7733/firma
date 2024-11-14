@@ -1,30 +1,40 @@
 .detalles-requisicion-container {
-  background-color: #f0f8ff; /* Azul claro */
+  background-color: white; /* Azul claro */
   border-radius: 10px;
   padding: 20px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   margin-top: 20px;
-  width: 100%;
+  width: 97%;
+}
+.tituloMateriales{
+  text-align: center;
+  margin-top: 50px;
 }
 
 .detalles-requisicion-header {
   font-size: 24px;
   font-weight: bold;
   color: #1e3a8a; /* Azul oscuro */
-  margin-bottom: 20px;
+  margin-bottom: 40px;
+  text-align: center;
 }
 
 .detalles-requisicion-content {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 15px;
+  column-gap: 50px; /* Espacio entre columnas */
+  row-gap: 15px;    /* Espacio entre filas, si deseas especificarlo por separado */
+  margin-bottom: 40px;
+  width: 90%;
+  margin: 0 auto;
 }
 
 .detalles-requisicion-content div {
   background-color: #e0f2fe; /* Fondo azul suave */
   padding: 10px;
-  border-radius: 5px;
+  border-radius: 10px;
 }
+
 
 .detalles-requisicion-content strong {
   color: #1d4ed8; /* Azul intenso */
@@ -34,10 +44,16 @@
   margin: 5px 0;
   color: #1e3a8a;
 }
+.table-container-detalles{
+  width: 90%;
+  border-radius: 20px; /* Ajusta el radio según lo que prefieras */
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  overflow: hidden; /* Asegura que los bordes de la tabla también sean redondeados */
+  margin: 0 auto;
+}
 
 .detalles-requisicion-table {
   width: 100%;
-  margin-top: 20px;
   border-collapse: collapse;
 }
 
@@ -48,12 +64,12 @@
 }
 
 .detalles-requisicion-table th {
-  background-color: #1e40af; /* Azul intenso */
+  background-color: #007BFF;
   color: white;
 }
 
 .detalles-requisicion-table td {
-  background-color: #e0f2fe; /* Azul claro */
+  background-color: #fff;
 }
 
 .total-section-firmante {
@@ -196,6 +212,7 @@
 @media (max-width: 480px) {
   .detalles-requisicion-container {
       padding: 10px;
+      
   }
 
   .detalles-requisicion-header {
@@ -237,9 +254,53 @@
       font-size: 12px; /* Ajustar el tamaño de la fuente para dispositivos muy pequeños */
       padding: 6px; /* Ajustar el padding */
       width: 95%;
+    
   }
   .firmar-button {
     margin-top: 10px;
     padding: 6px 12px; /* Ajustar más el tamaño en dispositivos muy pequeños */
 }
+}
+
+
+
+
+.detalles-firmas-solicitadas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  width: 100%;
+  justify-content: center;
+  
+}
+
+.firma-card {
+  background-color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  width: 80%; /* Anchura cuando solo hay una tarjeta */
+  max-width: 300px;
+  margin: 0 auto;
+}
+
+/* Estilos para dispositivos de escritorio */
+@media (min-width: 768px) {
+  .detalles-firmas-solicitadas {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+  
+  .firma-card {
+    flex: 1 1 300px; /* Tamaño de las tarjetas en pantalla grande */
+  }
+  
+}
+
+/* Estilos para dispositivos móviles */
+@media (max-width: 767px) {
+  .detalles-firmas-solicitadas {
+    flex-direction: column;
+  }
 }

@@ -22,12 +22,12 @@ const Login = ({ onLogin }) => {
       const user = userCredential.user;
 
       // Obtener el rol del usuario desde Firestore
-      const userDocRef = doc(db, 'users', user.uid); // Asumiendo que tienes una colección 'users' donde almacenas los roles
+      const userDocRef = doc(db, 'users', user.uid); 
       const userDoc = await getDoc(userDocRef);
 
       if (userDoc.exists()) {
         const userData = userDoc.data();
-        const role = userData.role; // Asegúrate de que 'role' sea el campo correcto en Firestore
+        const role = userData.role; 
 
         // Llamar al callback onLogin y pasar el rol del usuario
         onLogin(user, role);
@@ -38,10 +38,12 @@ const Login = ({ onLogin }) => {
         } else if (role === 'secretario') {
           navigate('/homeOperativos');
         } else if (role === 'solicitante') {
-          navigate('/homeFirmante'); // Redirigir al HomeFirmante si el rol es "firmante"
+          navigate('/homeFirmante'); 
         } else if (role === 'autorizante') {
           navigate('/homeAutorizante');
-        }else if (role === 'bloqueado') {
+        }else if (role=== 'receptor'){
+          navigate('/homeReceptor')
+        } else if (role === 'bloqueado') {
           Swal({
             title: 'Atención',
             text: 'Actualmente no tienes acceso a la aplicacion contacta al administrador.',

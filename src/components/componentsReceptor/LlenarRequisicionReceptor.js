@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Navbar from "../Navbar";
+import ReceptorNavbar from "./ReceptorNavnbar";
 import TopBar from "../TopBar";
 import Swal from "sweetalert";
 import { db } from "../../firebase"; // Importar Firestore
@@ -17,7 +17,7 @@ const customStyles = {
   }),
 };
 
-function LlenarRequisiciones() {
+function LlenarRequisicionReceptor() {
   const [isSidebarVisible, setSidebarVisible] = useState(true);
   const [items, setItems] = useState([]);
   const [componentes, setComponentes] = useState([]); // Estado para almacenar los componentes
@@ -315,7 +315,7 @@ function LlenarRequisiciones() {
         ☰
       </button>
 
-      <Navbar
+      <ReceptorNavbar
         isSidebarVisible={isSidebarVisible}
         toggleSidebar={toggleSidebar}
       />
@@ -550,5 +550,5 @@ function LlenarRequisiciones() {
     </div>
   );
 }
+export default LlenarRequisicionReceptor;
 
-export default LlenarRequisiciones;

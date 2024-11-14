@@ -33,6 +33,15 @@ import AutorizarAdmin from './components/ComponentsAdmin/AutorizarAdmin';
 import FirmarAutorizarAdmin from './components/ComponentsAdmin/FirmarAutorizarAdmin';
 import LlenarRequisicionAutorizante from './components/componentsAutorizante/LlenarRequisicionAutorizante';
 import EditarRequisiciones from './components/EditarRequisiciones';
+import HomeReceptor from './components/componentsReceptor/HomeReceptor';
+import RevisarRequisiciones from './components/componentsReceptor/RevisarRequisiciones';
+import RevisarRequisicion from './components/componentsReceptor/RevisarRequisicion';
+import LlenarRequisicionReceptor from './components/componentsReceptor/LlenarRequisicionReceptor';
+import RequisicionesReceptor from './components/componentsReceptor/Requisiciones-Receptor';
+import FirmarReceptor from './components/componentsReceptor/FirmarReceptor';
+import ClavesPresupuestales from './components/ComponentsAdmin/ClavesPresuestales';
+import AsignarClaves from './components/ComponentsAdmin/AsignarClaves';
+
 
 function ProtectedRoute({ user, role, allowedRoles, children }) {
   if (!user) {
@@ -270,6 +279,22 @@ function App() {
             }
           />
           <Route
+            path="/claves-presupuestales"
+            element={
+              <ProtectedRoute user={user} role={role} allowedRoles={['admin']}>
+                <ClavesPresupuestales user={user}/>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/asignar-clave"
+            element={
+              <ProtectedRoute user={user} role={role} allowedRoles={['admin']}>
+                <AsignarClaves user={user}/>
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/editar-requisicion"
             element={
               <ProtectedRoute user={user} role={role} allowedRoles={['admin','solicitante']}>
@@ -386,6 +411,55 @@ function App() {
               <LlenarRequisicionAutorizante user={user} />
             </ProtectedRoute>
           }
+        />
+
+        <Route
+        path="/homeReceptor"
+        element={
+          <ProtectedRoute user={user} role={role} allowedRoles={['receptor']}>
+            <HomeReceptor user={user}/>
+          </ProtectedRoute>
+        }
+        />
+        <Route
+        path="/Requisiones-sin-revisar"
+        element={
+          <ProtectedRoute user={user} role={role} allowedRoles={['receptor']}>
+            <RevisarRequisiciones user={user}/>
+          </ProtectedRoute>
+        }
+        />
+        <Route
+        path="/Revisar-requisicion"
+        element={
+          <ProtectedRoute user={user} role={role} allowedRoles={['receptor']}>
+            <RevisarRequisicion user={user}/>
+          </ProtectedRoute>
+        }
+        />
+        <Route
+        path="/LlenarRequisicionReceptor"
+        element={
+          <ProtectedRoute user={user} role={role} allowedRoles={['receptor']}>
+            <LlenarRequisicionReceptor user={user}/>
+          </ProtectedRoute>
+        }
+        />
+        <Route
+        path="/Requisiciones-Receptor"
+        element={
+          <ProtectedRoute user={user} role={role} allowedRoles={['receptor']}>
+            <RequisicionesReceptor user={user}/>
+          </ProtectedRoute>
+        }
+        />
+        <Route
+        path="/Firmar-receptor"
+        element={
+          <ProtectedRoute user={user} role={role} allowedRoles={['receptor']}>
+            <FirmarReceptor user={user}/>
+          </ProtectedRoute>
+        }
         />
         
         

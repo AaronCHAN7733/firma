@@ -137,7 +137,7 @@ function Areas() {
   );
 
   return (
-    <div className="areas-container">
+    <div className="content-container">
       <div className="header-areas">
         <h1 className="areas-title">Áreas</h1>
         <div className="search-container">

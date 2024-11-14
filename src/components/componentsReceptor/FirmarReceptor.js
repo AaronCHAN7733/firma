@@ -13,10 +13,10 @@ import {
 } from "firebase/firestore";
 import { db } from "../../firebase";
 import Swal from "sweetalert2";
-import Navbar from "../Navbar";
+import ReceptorNavbar from "./ReceptorNavnbar";
 import TopBar from "../TopBar";
 
-function FirmarAdmin() {
+function FirmarReceptor() {
   const [isSidebarVisible, setSidebarVisible] = useState(true);
   const location = useLocation();
   const { requisicion } = location.state || {};
@@ -221,161 +221,153 @@ function FirmarAdmin() {
   }
   const toggleSidebar = () => setSidebarVisible(!isSidebarVisible);
   return (
-    <div className={`admin-container ${isSidebarVisible ? "shifted" : ""}`}>
-      <button
-        className={`hamburger-btn ${isSidebarVisible ? "shifted" : ""}`}
-        onClick={toggleSidebar}
-      >
-        ☰
-      </button>
+<div className={`admin-container ${isSidebarVisible ? "shifted" : ""}`}>
+  <button
+    className={`hamburger-btn ${isSidebarVisible ? "shifted" : ""}`}
+    onClick={toggleSidebar}
+  >
+    ☰
+  </button>
 
-      <Navbar
-        isSidebarVisible={isSidebarVisible}
-        toggleSidebar={toggleSidebar}
-      />
+  <ReceptorNavbar
+    isSidebarVisible={isSidebarVisible}
+    toggleSidebar={toggleSidebar}
+  />
 
-      <main className={`main-content ${isSidebarVisible ? "shifted" : ""}`}>
-        <TopBar userName="Administrador" />
+  <main className={`main-content ${isSidebarVisible ? "shifted" : ""}`}>
+    <TopBar userName="Administrador" />
 
-        <section className="content">
-          <div className="detalles-requisicion-container">
-            <div className="content-container">
-              <h3 className="detalles-requisicion-header">
-                Detalles de la Requisición
-              </h3>
-              <div className="detalles-requisicion-content">
-                <div>
-                  <strong>Usuario que realizó la Requisición:</strong>{" "}
-                  {requisicion.nombreUsuario}
-                </div>
-                <div>
-                  <strong>Área solicitante:</strong>{" "}
-                  {requisicion.areaSolicitante}
-                </div>
-                <div>
-                  <strong>Componente:</strong> {requisicion.componente}
-                </div>
-                <div>
-                  <strong>Concepto:</strong> {requisicion.concepto}
-                </div>
-                <div>
-                  <strong>Dirección de Adscripción:</strong>{" "}
-                  {requisicion.direccionAdscripcion}
-                </div>
-                <div>
-                  <strong>Estatus:</strong> {requisicion.estatus}
-                </div>
-                <div>
-                  <strong>Fecha de Elaboración:</strong>{" "}
-                  {requisicion.fechaElaboracion}
-                </div>
-                <div>
-                  <strong>Fecha del Evento:</strong> {requisicion.fechaEvento}
-                </div>
-                <div>
-                  <strong>Folio:</strong> {requisicion.folio}
-                </div>
-                <div>
-                  <strong>Nombre del Evento:</strong> {requisicion.nombreEvento}
-                </div>
-              </div>
+    <section className="content">
+      <div className="detalles-requisicion-container">
+        <div className="content-container">
+          <h3 className="detalles-requisicion-header">
+            Detalles de la Requisición
+          </h3>
+          <div className="detalles-requisicion-content">
+            <div>
+              <strong>Usuario que realizó la Requisición:</strong> {requisicion.nombreUsuario}
+            </div>
+            <div>
+              <strong>Área solicitante:</strong> {requisicion.areaSolicitante}
+            </div>
+            <div>
+              <strong>Componente:</strong> {requisicion.componente}
+            </div>
+            <div>
+              <strong>Concepto:</strong> {requisicion.concepto}
+            </div>
+            <div>
+              <strong>Dirección de Adscripción:</strong> {requisicion.direccionAdscripcion}
+            </div>
+            <div>
+              <strong>Estatus:</strong> {requisicion.estatus}
+            </div>
+            <div>
+              <strong>Fecha de Elaboración:</strong> {requisicion.fechaElaboracion}
+            </div>
+            <div>
+              <strong>Fecha del Evento:</strong> {requisicion.fechaEvento}
+            </div>
+            <div>
+              <strong>Folio:</strong> {requisicion.folio}
+            </div>
+            <div>
+              <strong>Nombre del Evento:</strong> {requisicion.nombreEvento}
+            </div>
+          </div>
 
-              <h4 className="tituloMateriales">Materiales/Servicios</h4>
-              <div className="table-container-detalles">
-                <table className="detalles-requisicion-table">
-                  <thead>
-                    <tr>
-                      <th>No.</th>
-                      <th>Cantidad</th>
-                      <th>Unidad</th>
-                      <th>Precio Unitario</th>
-                      <th>Concepto</th>
-                      <th>Partida</th>
-                      <th>Subtotal</th>
+          <h4 className="tituloMateriales">Materiales/Servicios</h4>
+          <div className="table-container-detalles">
+            <table className="detalles-requisicion-table">
+              <thead>
+                <tr>
+                  <th>No.</th>
+                  <th>Cantidad</th>
+                  <th>Unidad</th>
+                  <th>Precio Unitario</th>
+                  <th>Concepto</th>
+                  <th>Partida</th>
+                  <th>Subtotal</th>
+                </tr>
+              </thead>
+              <tbody>
+                {requisicion.items &&
+                  requisicion.items.map((item, index) => (
+                    <tr key={index}>
+                      <td>{index + 1}</td>
+                      <td>{item.cantidad}</td>
+                      <td>{item.unidad}</td>
+                      <td>{item.precioUnitario}</td>
+                      <td>{item.concepto}</td>
+                      <td>{item.partida}</td>
+                      <td>{item.subtotal}</td>
                     </tr>
-                  </thead>
-                  <tbody>
-                    {requisicion.items &&
-                      requisicion.items.map((item, index) => (
-                        <tr key={index}>
-                          <td>{index + 1}</td>
-                          <td>{item.cantidad}</td>
-                          <td>{item.unidad}</td>
-                          <td>{item.precioUnitario}</td>
-                          <td>{item.concepto}</td>
-                          <td>{item.partida}</td>
-                          <td>{item.subtotal}</td>
-                        </tr>
-                      ))}
-                  </tbody>
-                </table>
-              </div>
+                  ))}
+              </tbody>
+            </table>
+          </div>
 
-              <div className="total-section-firmante">
-                <strong>Total: </strong> {calcularTotal().toFixed(2)}
-              </div>
+          <div className="total-section-firmante">
+            <strong>Total: </strong> {calcularTotal().toFixed(2)}
+          </div>
 
-              {firmaValidada ? (
-                <div className="firma-validada">
-                  <p>Código de Firma: {codigoFirma}</p>
-                </div>
-              ) : cargandoRequisicion ? (
-                <div className="cargando">
-                  <p>Cargando...</p>
-                </div>
-              ) : requisicionFirmada ? (
-                <div className="requisicion-firmada">
-                  <p>Esta requisición ya ha sido firmada.</p>
-                </div>
+          {firmaValidada ? (
+            <div className="firma-validada">
+              <p>Código de Firma: {codigoFirma}</p>
+            </div>
+          ) : cargandoRequisicion ? (
+            <div className="cargando">
+              <p>Cargando...</p>
+            </div>
+          ) : requisicionFirmada ? (
+            <div className="requisicion-firmada">
+              <p>Esta requisición ya ha sido firmada.</p>
+            </div>
+          ) : (
+            <div>
+              {firmaExistente ? (
+                <button className="firmar-button" onClick={abrirModal}>
+                  Firmar Requisición
+                </button>
               ) : (
-                <div>
-                  {firmaExistente ? (
-                    <button className="firmar-button" onClick={abrirModal}>
-                      Firmar Requisición
-                    </button>
-                  ) : (
-                    <button className="firmar-button" onClick={abrirModal}>
-                      Crear Firma
-                    </button>
-                  )}
+                <button className="firmar-button" onClick={abrirModal}>
+                  Crear Firma
+                </button>
+              )}
 
-                  {modalVisible && (
-                    <div className="firma-modal">
-                      <div className="modal-content-firma">
-                        <h4>Firma</h4>
-                        <input
-                          type="text"
-                          maxLength={5}
-                          value={firma}
-                          onChange={(e) => setFirma(e.target.value)}
-                          placeholder="Ingrese su firma de 5 dígitos"
-                        />
-                        {mensajeError && (
-                          <p className="error-firma">{mensajeError}</p>
-                        )}
-                        <button
-                          className="boton-firmar"
-                          onClick={firmarRequisicion}
-                        >
-                          Validar Firma
-                        </button>
-                        <button
-                          className="boton-cancelar"
-                          onClick={() => setModalVisible(false)}
-                        >
-                          Cancelar
-                        </button>
-                      </div>
-                    </div>
-                  )}
+              {modalVisible && (
+                <div className="firma-modal">
+                  <div className="modal-content-firma">
+                    <h4>Firma</h4>
+                    <input
+                      type="text"
+                      maxLength={5}
+                      value={firma}
+                      onChange={(e) => setFirma(e.target.value)}
+                      placeholder="Ingrese su firma de 5 dígitos"
+                    />
+                    {mensajeError && <p className="error-firma">{mensajeError}</p>}
+                    <button className="boton-firmar" onClick={firmarRequisicion}>
+                      Validar Firma
+                    </button>
+                    <button
+                      className="boton-cancelar"
+                      onClick={() => setModalVisible(false)}
+                    >
+                      Cancelar
+                    </button>
+                  </div>
                 </div>
               )}
             </div>
-          </div>
-        </section>
-      </main>
-    </div>
+          )}
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
   );
 }
 
-export default FirmarAdmin;
+export default FirmarReceptor;

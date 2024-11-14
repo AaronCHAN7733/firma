@@ -5,10 +5,11 @@ import { getAuth } from "firebase/auth";
 import { doc, getDoc, updateDoc, arrayUnion } from "firebase/firestore";
 import { db } from "../../firebase";
 import Swal from "sweetalert2";
+import RevisarRequisiciones from "./RevisarRequisiciones";
+import ReceptorNavbar from "./ReceptorNavnbar";
 import TopBar from "../TopBar";
-import Navbar from "../Navbar";
 
-function FirmarAutorizarAdmin() {
+function RevisarRequisicion() {
   const location = useLocation();
   const { requisicion } = location.state || {};
   const [modalVisible, setModalVisible] = useState(false);
@@ -104,7 +105,7 @@ function FirmarAutorizarAdmin() {
           firmaId: usuario.uid,
           codigo: firmaExistente.codigo,
           fecha: new Date().toISOString(),
-          accion: "autorizó",
+          accion: "revisó",
         };
 
         try {
@@ -116,7 +117,7 @@ function FirmarAutorizarAdmin() {
 
           // Actualizar estatus de la requisición
           await updateDoc(doc(db, "requisiciones", requisicion.id), {
-            estatus: "En revisión",
+            estatus: "En asignacion de clave",
           });
 
           Swal.fire({
@@ -239,8 +240,6 @@ function FirmarAutorizarAdmin() {
       console.error("Error al obtener detalles de las firmas:", error);
     }
   };
- 
-
   const toggleSidebar = () => setSidebarVisible(!isSidebarVisible);
 
   return (
@@ -249,7 +248,7 @@ function FirmarAutorizarAdmin() {
         ☰
       </button>
 
-      <Navbar isSidebarVisible={isSidebarVisible} toggleSidebar={toggleSidebar} />
+      <ReceptorNavbar isSidebarVisible={isSidebarVisible} toggleSidebar={toggleSidebar} />
 
       <main className={`main-content ${isSidebarVisible ? "shifted" : ""}`}>
         <TopBar userName="Administrador" />
@@ -367,4 +366,4 @@ function FirmarAutorizarAdmin() {
   );
 }
 
-export default FirmarAutorizarAdmin;
+export default RevisarRequisicion;

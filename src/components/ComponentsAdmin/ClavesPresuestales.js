@@ -16,7 +16,7 @@ import { useNavigate } from "react-router-dom";
 import "../../styles/Autorizar.css";
 import Swal from "sweetalert2";
 
-function AutorizarAdmin({ user }) {
+function ClavesPresuestales({ user }) {
   const [isSidebarVisible, setSidebarVisible] = useState(true);
   const [requisiciones, setRequisiciones] = useState([]);
   const [direccionId, setDireccionId] = useState(null);
@@ -47,7 +47,7 @@ function AutorizarAdmin({ user }) {
       const requisicionesCollection = collection(db, "requisiciones");
       const q = query(
         requisicionesCollection,
-        where("estatus", "==", "En autorización"),
+        where("estatus", "==", "En asignacion de clave"),
         where("direccionId", "==", direccionId)
       );
       const requisicionesSnapshot = await getDocs(q);
@@ -72,7 +72,7 @@ function AutorizarAdmin({ user }) {
   }, [direccionId]);
 
   const irADetallesRequisicion = (requisicion) => {
-    navigate(`/AutorizarRequisicion-admin-firmar`, { state: { requisicion } });
+    navigate(`/asignar-clave`, { state: { requisicion } });
   };
 
   // Abrir modal de rechazo
@@ -213,4 +213,4 @@ function AutorizarAdmin({ user }) {
   );
 }
 
-export default AutorizarAdmin;
+export default ClavesPresuestales;

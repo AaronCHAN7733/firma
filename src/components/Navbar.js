@@ -1,10 +1,17 @@
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { 
-  faHome, faUser, faPen, faClock, faHeadset, 
-  faDatabase, faCog, faFileAlt, faCheckCircle 
-} from '@fortawesome/free-solid-svg-icons';
-import { useLocation, Link } from 'react-router-dom'; // Importamos hooks necesarios
-import '../styles/AdminHome.css';
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faHome,
+  faUser,
+  faPen,
+  faClock,
+  faHeadset,
+  faDatabase,
+  faKey,
+  faFileAlt,
+  faCheckCircle,
+} from "@fortawesome/free-solid-svg-icons";
+import { useLocation, Link } from "react-router-dom"; // Importamos hooks necesarios
+import "../styles/AdminHome.css";
 
 const Navbar = ({ isSidebarVisible }) => {
   const location = useLocation(); // Hook para obtener la ruta actual
@@ -13,57 +20,75 @@ const Navbar = ({ isSidebarVisible }) => {
   const isActive = (path) => location.pathname === path;
 
   return (
-    <aside className={`sidebar ${isSidebarVisible ? 'visible' : ''}`}>
+    <aside className={`sidebar ${isSidebarVisible ? "visible" : ""}`}>
       <div className="logo-nav"></div>
       <ul className="menu">
         <li>
-          <Link to="/adminHome" className={isActive('/adminHome') ? 'active' : ''}>
+          <Link
+            to="/adminHome"
+            className={isActive("/adminHome") ? "active" : ""}
+          >
             <FontAwesomeIcon icon={faHome} /> Inicio
           </Link>
         </li>
         <li>
-          <Link to="/usuarios" className={isActive('/usuarios') ? 'active' : ''}>
+          <Link
+            to="/usuarios"
+            className={isActive("/usuarios") ? "active" : ""}
+          >
             <FontAwesomeIcon icon={faUser} /> Usuarios
           </Link>
         </li>
         <li>
-          <Link to="/firmas" className={isActive('/firmas') ? 'active' : ''}>
-            <FontAwesomeIcon icon={faPen} /> Firmas
+          <Link to="/firmas" className={isActive("/firmas") ? "active" : ""}>
+            <FontAwesomeIcon icon={faPen} /> Validaciones
           </Link>
         </li>
         <li>
-          <Link to="/tiempos" className={isActive('/tiempos') ? 'active' : ''}>
+          <Link to="/tiempos" className={isActive("/tiempos") ? "active" : ""}>
             <FontAwesomeIcon icon={faClock} /> Tiempos
           </Link>
         </li>
         <li>
-          <Link to="/soporte" className={isActive('/soporte') ? 'active' : ''}>
+          <Link to="/soporte" className={isActive("/soporte") ? "active" : ""}>
             <FontAwesomeIcon icon={faHeadset} /> Soporte
           </Link>
         </li>
         <li>
-          <Link to="/datos" className={isActive('/datos') ? 'active' : ''}>
+          <Link to="/datos" className={isActive("/datos") ? "active" : ""}>
             <FontAwesomeIcon icon={faDatabase} /> Datos
           </Link>
         </li>
         <li>
-          <Link to="/llenarRequisicion-admin" className={isActive('/llenarRequisicion-admin') ? 'active' : ''}>
+          <Link
+            to="/llenarRequisicion-admin"
+            className={isActive("/llenarRequisicion-admin") ? "active" : ""}
+          >
             <FontAwesomeIcon icon={faFileAlt} /> Llenar requisición
           </Link>
         </li>
         <li>
-          <Link to="/firmar-requisiciones" className={isActive('/firmar-requisiciones') ? 'active' : ''}>
+          <Link
+            to="/firmar-requisiciones"
+            className={isActive("/firmar-requisiciones") ? "active" : ""}
+          >
             <FontAwesomeIcon icon={faFileAlt} /> Requisiciones
           </Link>
         </li>
         <li>
-          <Link to="/AutorizarRequisicion-admin" className={isActive('/AutorizarRequisicion-admin') ? 'active' : ''}>
+          <Link
+            to="/AutorizarRequisicion-admin"
+            className={isActive("/AutorizarRequisicion-admin") ? "active" : ""}
+          >
             <FontAwesomeIcon icon={faCheckCircle} /> Autorizar Requisición
           </Link>
         </li>
         <li>
-          <Link to="/configuracion" className={isActive('/configuracion') ? 'active' : ''}>
-            <FontAwesomeIcon icon={faCog} /> Configuración
+          <Link
+            to="/claves-presupuestales"
+            className={isActive("/claves-presupuestales") ? "active" : ""}
+          >
+            <FontAwesomeIcon icon={faKey} /> Asignar Clave
           </Link>
         </li>
       </ul>

@@ -7,7 +7,7 @@ import { getFirestore, collection, getDocs } from 'firebase/firestore'; // Impor
 import '../../styles/AdminHome.css';
 
 function Datos({ user }) {
-  const [isSidebarVisible, setSidebarVisible] = useState(false);
+  const [isSidebarVisible, setSidebarVisible] = useState(true);
   const [dataCounts, setDataCounts] = useState({
     areas: 0,
     direcciones: 0,
@@ -60,6 +60,7 @@ function Datos({ user }) {
         <TopBar userName="Administrador" />
 
         <section className="content">
+          <div className='content-container'>
           <h1>Resgistros de datos</h1>
           <div className="cards-grid">
             <button className="card" onClick={() => handleNavigation('/areas')}>
@@ -109,6 +110,9 @@ function Datos({ user }) {
               </div>
             </button>
           </div>
+
+          </div>
+          
         </section>
       </main>
     </div>

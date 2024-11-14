@@ -138,7 +138,7 @@ function Componentes() {
   );
 
   return (
-    <div className="areas-container">
+    <div className="content-container">
       <h1 className="areas-title">Componentes</h1>
 
       {/* Campo de búsqueda */}

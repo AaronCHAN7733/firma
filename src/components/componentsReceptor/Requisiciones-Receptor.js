@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
-import Navbar from "../Navbar";
+import ReceptorNavbar from "./ReceptorNavnbar";
 import TopBar from "../TopBar";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../../firebase";
 import { useNavigate } from "react-router-dom";
 import "../../styles/FirmarRequisicion.css";
 
-function Firmasrequisicion({ user }) {
+function RequisicionesReceptor({ user }) {
   const [isSidebarVisible, setSidebarVisible] = useState(true);
   const [requisiciones, setRequisiciones] = useState([]);
   const [expandedRows, setExpandedRows] = useState([]);
@@ -53,7 +53,7 @@ function Firmasrequisicion({ user }) {
   }, [user.uid]);
 
   const handleFirmarRequisicion = (requisicion) => {
-    navigate("/firmar-admin", { state: { requisicion } });
+    navigate("/firmar-receptor", { state: { requisicion } });
   };
 
   const toggleFolioExpansion = (requisicionId) => {
@@ -94,7 +94,7 @@ function Firmasrequisicion({ user }) {
         ☰
       </button>
 
-      <Navbar
+      <ReceptorNavbar
         isSidebarVisible={isSidebarVisible}
         toggleSidebar={toggleSidebar}
       />
@@ -188,4 +188,4 @@ function Firmasrequisicion({ user }) {
   );
 }
 
-export default Firmasrequisicion;
+export default RequisicionesReceptor;

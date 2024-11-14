@@ -142,7 +142,7 @@ function Partidas() {
   const paginatedPartidas = filteredPartidas.slice(0, itemsPerPage);
 
   return (
-    <div className="areas-container">
+    <div className="content-container">
       <h1 className="areas-title">Partidas</h1>
 
       {/* Campo de búsqueda */}

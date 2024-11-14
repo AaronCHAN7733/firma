@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from "react";
-import Navbar from "../Navbar";
+import ReceptorNavbar from "./ReceptorNavnbar";
 import TopBar from "../TopBar";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import { db } from "../../firebase";
 import { useNavigate } from "react-router-dom";
-import "../../styles/FirmarRequisicion.css";
 
-function Firmasrequisicion({ user }) {
+function RevisarRequisiciones({ user }) {
   const [isSidebarVisible, setSidebarVisible] = useState(true);
   const [requisiciones, setRequisiciones] = useState([]);
   const [expandedRows, setExpandedRows] = useState([]);
@@ -36,7 +35,10 @@ function Firmasrequisicion({ user }) {
   const fetchRequisiciones = async () => {
     try {
       const requisicionesCollection = collection(db, "requisiciones");
-      const q = query(requisicionesCollection, where("userId", "==", user.uid));
+      const q = query(
+        requisicionesCollection,
+        where("estatus", "==", "En revisión")
+      );
       const requisicionesSnapshot = await getDocs(q);
       const requisicionesList = requisicionesSnapshot.docs.map((doc) => ({
         id: doc.id,
@@ -53,7 +55,7 @@ function Firmasrequisicion({ user }) {
   }, [user.uid]);
 
   const handleFirmarRequisicion = (requisicion) => {
-    navigate("/firmar-admin", { state: { requisicion } });
+    navigate("/Revisar-requisicion", { state: { requisicion } });
   };
 
   const toggleFolioExpansion = (requisicionId) => {
@@ -94,16 +96,17 @@ function Firmasrequisicion({ user }) {
         ☰
       </button>
 
-      <Navbar
+      <ReceptorNavbar
         isSidebarVisible={isSidebarVisible}
         toggleSidebar={toggleSidebar}
       />
 
       <main className={`main-content ${isSidebarVisible ? "shifted" : ""}`}>
         <TopBar userName="Admin" />
+
         <section className="content">
           <div className="content-container">
-            <h2>Requisiciones</h2>
+            <h2>Requisiciones en Revisión</h2>
 
             <div className="table-container">
               <table className="custom-table">
@@ -118,7 +121,7 @@ function Firmasrequisicion({ user }) {
                 <tbody>
                   {requisicionesPendientes.length === 0 ? (
                     <tr>
-                      <td colSpan="4">No tienes requisiciones realizadas.</td>
+                      <td colSpan="4">No tienes requisiciones en revisión.</td>
                     </tr>
                   ) : (
                     requisicionesPendientes.map((requisicion) => (
@@ -188,4 +191,4 @@ function Firmasrequisicion({ user }) {
   );
 }
 
-export default Firmasrequisicion;
+export default RevisarRequisiciones;

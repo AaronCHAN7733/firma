@@ -1,48 +1,62 @@
-import React, { useEffect, useState } from 'react';
-import { collection, getDocs, doc, getDoc, updateDoc, deleteDoc } from 'firebase/firestore'; // Importar métodos adicionales
-import { db } from '../../firebase'; // Instancia de Firebase
-import Modal from 'react-modal'; // Importar React Modal
-import Swal from 'sweetalert2'; // Importar SweetAlert2
-import Navbar from '../Navbar';
-import TopBar from '../TopBar';
-import '../../styles/Usuarios.css'; // Estilos proporcionados
+import React, { useEffect, useState } from "react";
+import {
+  collection,
+  getDocs,
+  doc,
+  getDoc,
+  updateDoc,
+  deleteDoc,
+} from "firebase/firestore";
+import { db } from "../../firebase";
+import Modal from "react-modal";
+import Swal from "sweetalert2";
+import Navbar from "../Navbar";
+import TopBar from "../TopBar";
+import "../../styles/Usuarios.css";
+import { faEdit, faTrash, faSearch } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-// Establece el elemento root para el modal
-Modal.setAppElement('#root');
+Modal.setAppElement("#root");
 
 function Firmas({ user }) {
-  const [isSidebarVisible, setSidebarVisible] = useState(false);
+  const [isSidebarVisible, setSidebarVisible] = useState(true);
   const [firmasData, setFirmasData] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedFirma, setSelectedFirma] = useState(null);
-  const [newEstado, setNewEstado] = useState('');
+  const [newEstado, setNewEstado] = useState("");
+  const [visibleInfo, setVisibleInfo] = useState({}); // Estado para manejar la visibilidad de los detalles
 
   const toggleSidebar = () => {
     setSidebarVisible(!isSidebarVisible);
   };
 
+  const toggleMoreInfo = (firmaId) => {
+    setVisibleInfo((prev) => ({
+      ...prev,
+      [firmaId]: !prev[firmaId],
+    }));
+  };
+
   useEffect(() => {
     const fetchFirmasData = async () => {
       try {
-        const firmasSnapshot = await getDocs(collection(db, 'firmas'));
+        const firmasSnapshot = await getDocs(collection(db, "firmas"));
         const firmasPromises = firmasSnapshot.docs.map(async (firmaDoc) => {
           const firmaData = firmaDoc.data();
 
-          // Obtener datos del usuario relacionado
-          const userDoc = await getDoc(doc(db, 'users', firmaData.usuarioId));
+          const userDoc = await getDoc(doc(db, "users", firmaData.usuarioId));
           const userData = userDoc.data();
 
-          // Obtener el área relacionada
-          const areaDoc = await getDoc(doc(db, 'areas', userData.areaId));
+          const areaDoc = await getDoc(doc(db, "areas", userData.areaId));
           const areaData = areaDoc.data();
 
-          // Obtener la dirección relacionada
-          const direccionDoc = await getDoc(doc(db, 'direcciones', userData.direccionId));
+          const direccionDoc = await getDoc(
+            doc(db, "direcciones", userData.direccionId)
+          );
           const direccionData = direccionDoc.data();
 
-          // Devolver todos los datos necesarios
           return {
-            id: firmaDoc.id, // ID del documento de firma
+            id: firmaDoc.id,
             nombre: userData.nombre,
             role: userData.role,
             direccion: direccionData.descripcion,
@@ -55,137 +69,181 @@ function Firmas({ user }) {
         const resolvedFirmasData = await Promise.all(firmasPromises);
         setFirmasData(resolvedFirmasData);
       } catch (error) {
-        console.error('Error fetching firmas data:', error);
+        console.error("Error fetching firmas data:", error);
       }
     };
 
     fetchFirmasData();
   }, []);
 
-  // Función para abrir el modal y establecer la firma seleccionada
   const openModal = (firma) => {
     setSelectedFirma(firma);
-    setNewEstado(firma.estado); // Inicializa el valor con el estado actual
+    setNewEstado(firma.estado);
     setIsModalOpen(true);
   };
 
-  // Función para cerrar el modal
   const closeModal = () => {
     setIsModalOpen(false);
     setSelectedFirma(null);
   };
 
-  // Función para manejar el cambio de estado
   const handleEstadoChange = (e) => {
     setNewEstado(e.target.value);
   };
 
-  // Función para actualizar el estado de la firma en Firebase
   const handleSave = async () => {
     if (selectedFirma) {
       try {
-        const firmaRef = doc(db, 'firmas', selectedFirma.id);
+        const firmaRef = doc(db, "firmas", selectedFirma.id);
         await updateDoc(firmaRef, { estado: newEstado });
 
-        // Actualizar el estado localmente después de guardar
         setFirmasData((prevFirmas) =>
           prevFirmas.map((firma) =>
-            firma.id === selectedFirma.id ? { ...firma, estado: newEstado } : firma
+            firma.id === selectedFirma.id
+              ? { ...firma, estado: newEstado }
+              : firma
           )
         );
 
-        // Alerta de éxito usando SweetAlert2
         Swal.fire({
-          icon: 'success',
-          title: 'Actualizado',
-          text: 'El estado de la firma ha sido actualizado.',
+          icon: "success",
+          title: "Actualizado",
+          text: "El estado de la firma ha sido actualizado.",
           timer: 2000,
           showConfirmButton: false,
         });
 
-        closeModal(); // Cerrar el modal después de guardar
+        closeModal();
       } catch (error) {
-        console.error('Error updating firma:', error);
+        console.error("Error updating firma:", error);
       }
     }
   };
 
-  // Función para eliminar la firma
   const handleDelete = async (firmaId) => {
     Swal.fire({
-      title: '¿Estás seguro?',
-      text: '¡No podrás revertir esta acción!',
-      icon: 'warning',
+      title: "¿Estás seguro?",
+      text: "¡No podrás revertir esta acción!",
+      icon: "warning",
       showCancelButton: true,
-      confirmButtonText: 'Sí, eliminar',
-      cancelButtonText: 'Cancelar',
+      confirmButtonText: "Sí, eliminar",
+      cancelButtonText: "Cancelar",
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          // Eliminar de Firebase
-          await deleteDoc(doc(db, 'firmas', firmaId));
+          await deleteDoc(doc(db, "firmas", firmaId));
 
-          // Actualizar el estado local para eliminar la firma de la tabla
-          setFirmasData((prevFirmas) => prevFirmas.filter((firma) => firma.id !== firmaId));
+          setFirmasData((prevFirmas) =>
+            prevFirmas.filter((firma) => firma.id !== firmaId)
+          );
 
-          // Mostrar mensaje de éxito
           Swal.fire({
-            icon: 'success',
-            title: 'Eliminado',
-            text: 'La firma ha sido eliminada.',
+            icon: "success",
+            title: "Eliminado",
+            text: "La firma ha sido eliminada.",
             timer: 2000,
             showConfirmButton: false,
           });
         } catch (error) {
-          console.error('Error deleting firma:', error);
+          console.error("Error deleting firma:", error);
         }
       }
     });
   };
 
   return (
-    <div className={`admin-container ${isSidebarVisible ? 'shifted' : ''}`}>
-      <button className={`hamburger-btn ${isSidebarVisible ? 'shifted' : ''}`} onClick={toggleSidebar}>
+    <div className={`admin-container ${isSidebarVisible ? "shifted" : ""}`}>
+      <button
+        className={`hamburger-btn ${isSidebarVisible ? "shifted" : ""}`}
+        onClick={toggleSidebar}
+      >
         ☰
       </button>
 
-      <Navbar isSidebarVisible={isSidebarVisible} toggleSidebar={toggleSidebar} />
+      <Navbar
+        isSidebarVisible={isSidebarVisible}
+        toggleSidebar={toggleSidebar}
+      />
 
-      <main className={`main-content ${isSidebarVisible ? 'shifted' : ''}`}>
+      <main className={`main-content ${isSidebarVisible ? "shifted" : ""}`}>
         <TopBar userName="Administrador" />
 
         <section className="content">
-          <h1>Firmas</h1>
-
-          <table className="user-table">
-            <thead>
-              <tr>
-                <th>Nombre</th>
-                <th>Rol</th>
-                <th>Dirección</th>
-                <th>Área</th>
-                <th>Código de Firma</th>
-                <th>Estado</th>
-                <th>Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              {firmasData.map((firma, index) => (
-                <tr key={index}>
-                  <td>{firma.nombre}</td>
-                  <td>{firma.role}</td>
-                  <td>{firma.direccion}</td>
-                  <td>{firma.area}</td>
-                  <td>{firma.codigoDeFirma}</td>
-                  <td>{firma.estado}</td>
-                  <td>
-                    <button onClick={() => openModal(firma)}>Editar</button>
-                    <button onClick={() => handleDelete(firma.id)}>Eliminar</button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <div className="content-container">
+            <h1>Validaciones</h1>
+            <div className="table-container">
+              <table className="user-table">
+                <thead>
+                  <tr>
+                    <th>Nombre</th>
+                    <th>Rol</th>
+                    <th>Dirección</th>
+                    <th>Área</th>
+                    <th>Código de Firma</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {firmasData.map((firma, index) => (
+                    <React.Fragment key={firma.id}>
+                      <tr>
+                        <td>
+                          {firma.nombre}
+                          <span
+                            className="more-info"
+                            onClick={() => toggleMoreInfo(firma.id)}
+                          >
+                            ➕
+                          </span>
+                        </td>
+                        <td>{firma.role}</td>
+                        <td>{firma.direccion}</td>
+                        <td>{firma.area}</td>
+                        <td>{firma.codigoDeFirma}</td>
+                        <td>{firma.estado}</td>
+                        <td>
+                          <button onClick={() => openModal(firma)}>
+                            <FontAwesomeIcon icon={faEdit} />
+                          </button>
+                          <button onClick={() => handleDelete(firma.id)}>
+                            <FontAwesomeIcon icon={faTrash} />
+                          </button>
+                        </td>
+                      </tr>
+                      {visibleInfo[firma.id] && (
+                        <tr className="extra-info-row">
+                          <td colSpan="7">
+                            <div className="extra-info">
+                              <p>
+                                <strong>Nombre:</strong> {firma.nombre}
+                              </p>
+                              <p>
+                                <strong>Rol:</strong> {firma.role}
+                              </p>
+                              <p>
+                                <strong>Dirección:</strong> {firma.direccion}
+                              </p>
+                              <p>
+                                <strong>Área:</strong> {firma.area}
+                              </p>
+                              <p>
+                                <strong>Código de Firma:</strong>{" "}
+                                {firma.codigoDeFirma}
+                              </p>
+                              <p>
+                                <strong>Estado:</strong> {firma.estado}
+                              </p>
+                            </div>
+                          </td>
+                        </tr>
+                      )}
+                    </React.Fragment>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
         </section>
       </main>
 
@@ -205,8 +263,10 @@ function Firmas({ user }) {
               <option value="denegado">Denegar</option>
             </select>
           </form>
-          <button onClick={handleSave}>Guardar</button>
-          <button onClick={closeModal}>Cancelar</button>
+          <div className="modal-buttons">
+            <button onClick={handleSave}>Guardar</button>
+            <button onClick={closeModal}>Cancelar</button>
+          </div>
         </Modal>
       )}
     </div>

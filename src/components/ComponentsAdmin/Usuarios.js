@@ -12,17 +12,36 @@ import {
 import Modal from "react-modal";
 import Swal from "sweetalert2";
 import { FaSearch } from "react-icons/fa"; // Importa el ícono de lupa
+import { faEdit, faTrash, faSearch } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Select from "react-select";
 
 Modal.setAppElement("#root");
 
 function Usuarios({ user }) {
-  const [isSidebarVisible, setSidebarVisible] = useState(false);
+  const [isSidebarVisible, setSidebarVisible] = useState(true);
   const [usuarios, setUsuarios] = useState([]);
   const [direcciones, setDirecciones] = useState([]); // Estado para direcciones
   const [areas, setAreas] = useState([]); // Estado para áreas
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
+  const [expandedRows, setExpandedRows] = useState({});
+
+  const toggleRow = (userId) => {
+    setExpandedRows((prevExpandedRows) => ({
+      ...prevExpandedRows,
+      [userId]: !prevExpandedRows[userId],
+    }));
+  };
+  const [visibleInfo, setVisibleInfo] = useState({});
+
+  const toggleMoreInfo = (userId) => {
+    setVisibleInfo((prev) => ({
+      ...prev,
+      [userId]: !prev[userId], // Alterna la visibilidad
+    }));
+  };
+
   const [newUser, setNewUser] = useState({
     correo: "",
     nombre: "",
@@ -350,88 +369,109 @@ function Usuarios({ user }) {
         <TopBar userName="Administrador" />
 
         <section className="content">
-          <h1>Usuarios</h1>
-          <div className="search-container">
-            <input
-              type="text"
-              className="search-input"
-              placeholder="Buscar usuario..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-            <FaSearch className="search-icon" />
+          <div className="content-container">
+            <h1 className="tituloUsuario">Usuarios</h1>
+            <div className="search-container">
+              <input
+                type="text"
+                className="search-input"
+                placeholder="Buscar usuario..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+              <FaSearch className="search-icon" />
+            </div>
+
+            <button className="add-user-btn" onClick={openModal}>
+              Agregar Usuario
+            </button>
+            <div className="table-container">
+              <table className="user-table">
+                <thead>
+                  <tr>
+                    <th>Correo</th>
+                    <th>Nombre</th>
+                    <th>Rol</th>
+                    <th>Teléfono</th>
+                    <th>Dirección</th>
+                    <th>Área</th>
+                    <th className="actions-column">Acciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {sortedUsuarios.map((user) => {
+                    const userArea = areas.find(
+                      (area) => area.id === user.areaId
+                    );
+                    return (
+                      <>
+                        <tr key={user.id}>
+                          <td>
+                            {user.correo}
+                            <span
+                              className="more-info"
+                              onClick={() => toggleMoreInfo(user.id)}
+                            >
+                              ➕ {/* Ícono de "más" */}
+                            </span>
+                          </td>
+                          <td>{user.nombre}</td>
+                          <td>{user.role}</td>
+                          <td>{user.telefono}</td>
+                          <td>
+                            {direcciones.find((d) => d.id === user.direccionId)
+                              ?.descripcion || "No disponible"}
+                          </td>
+                          <td>
+                            {userArea ? userArea.descripcion : "No disponible"}
+                          </td>
+                          <td>
+                            <button onClick={() => handleEditUser(user)}>
+                              <FontAwesomeIcon icon={faEdit} />
+                            </button>
+                          </td>
+                        </tr>
+                        {/* Fila adicional para mostrar detalles cuando el ícono se hace clic */}
+                        {visibleInfo[user.id] && (
+                          <tr className="extra-info-row">
+                            <td colSpan="7">
+                              <div className="extra-info">
+                                <p>
+                                  <strong>Nombre:</strong> {user.nombre}
+                                </p>
+                                <p>
+                                  <strong>Rol:</strong> {user.role}
+                                </p>
+                                <p>
+                                  <strong>Teléfono:</strong> {user.telefono}
+                                </p>
+                                <p>
+                                  <strong>Dirección:</strong>{" "}
+                                  {direcciones.find(
+                                    (d) => d.id === user.direccionId
+                                  )?.descripcion || "No disponible"}
+                                </p>
+                                <p>
+                                  <strong>Área:</strong>{" "}
+                                  {userArea
+                                    ? userArea.descripcion
+                                    : "No disponible"}
+                                </p>
+                                <button onClick={() => handleEditUser(user)}>
+                                  <FontAwesomeIcon icon={faEdit} />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        )}
+                      </>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
           </div>
 
-          <button className="add-user-btn" onClick={openModal}>
-            Agregar Usuario
-          </button>
-          <div class="table-container">
-            <table className="user-table">
-              <thead>
-                <tr>
-                  <th onClick={() => sortUsuarios("correo")}>
-                    Correo{" "}
-                    {sortConfig.key === "correo" &&
-                      (sortConfig.direction === "asc" ? "▲" : "▼")}
-                  </th>
-                  <th onClick={() => sortUsuarios("nombre")}>
-                    Nombre{" "}
-                    {sortConfig.key === "nombre" &&
-                      (sortConfig.direction === "asc" ? "▲" : "▼")}
-                  </th>
-                  <th onClick={() => sortUsuarios("role")}>
-                    Rol{" "}
-                    {sortConfig.key === "role" &&
-                      (sortConfig.direction === "asc" ? "▲" : "▼")}
-                  </th>
-                  <th onClick={() => sortUsuarios("telefono")}>
-                    Teléfono{" "}
-                    {sortConfig.key === "telefono" &&
-                      (sortConfig.direction === "asc" ? "▲" : "▼")}
-                  </th>
-                  <th onClick={() => sortUsuarios("direccionId")}>
-                    Dirección{" "}
-                    {sortConfig.key === "direccionId" &&
-                      (sortConfig.direction === "asc" ? "▲" : "▼")}
-                  </th>
-                  <th onClick={() => sortUsuarios("areaId")}>
-                    Área{" "}
-                    {sortConfig.key === "areaId" &&
-                      (sortConfig.direction === "asc" ? "▲" : "▼")}
-                  </th>
-                  <th>Acciones</th>
-                </tr>
-              </thead>
-              <tbody>
-                {sortedUsuarios.map((user) => {
-                  const userArea = areas.find(
-                    (area) => area.id === user.areaId
-                  );
-                  return (
-                    <tr key={user.id}>
-                      <td>{user.correo}</td>
-                      <td>{user.nombre}</td>
-                      <td>{user.role}</td>
-                      <td>{user.telefono}</td>
-                      <td>
-                        {direcciones.find((d) => d.id === user.direccionId)
-                          ?.descripcion || "No disponible"}
-                      </td>
-                      <td>
-                        {userArea ? userArea.descripcion : "No disponible"}
-                      </td>{" "}
-                      {/* Mostrar el área */}
-                      <td>
-                        <button onClick={() => handleEditUser(user)}>
-                          Editar
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
           <Modal
             isOpen={modalIsOpen}
             onRequestClose={closeModal}
@@ -439,141 +479,132 @@ function Usuarios({ user }) {
             shouldCloseOnEsc={false} // Evita cerrar el modal con la tecla Escape
             contentLabel="Formulario de Usuario"
             className="Modal-user"
-            style={{
-              overlay: {
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                backgroundColor: "rgba(0, 0, 0, 0.5)",
-              },
-              content: {
-                position: "relative",
-                maxWidth: "400px",
-                width: "100%",
-                padding: "20px",
-                borderRadius: "10px",
-                backgroundColor: "#e1f0fb",
-              },
-            }}
           >
             <h2>{editingUser ? "Editar Usuario" : "Agregar Usuario"}</h2>
-            <form>
-              <label>
-                Correo:
-                <input
-                  type="email"
-                  value={newUser.correo}
-                  onChange={(e) =>
-                    setNewUser({ ...newUser, correo: e.target.value })
-                  }
-                  disabled={!!editingUser}
-                />
-              </label>
-              {error && <p style={{ color: "red" }}>{error}</p>}
-              <label>
-                Nombre:
-                <input
-                  type="text"
-                  value={newUser.nombre}
-                  onChange={(e) =>
-                    setNewUser({ ...newUser, nombre: e.target.value })
-                  }
-                />
-              </label>
-              <label>
-                Rol:
-                <Select
-                  options={[
-                    { value: "secretario", label: "Secretario" },
-                    { value: "solicitante", label: "Solicitante" },
-                    { value: "autorizante", label: "Autorizante" },
-                    { value: "bloqueado", label: "Bloqueado" },
-                    { value: "receptor", label: "Receptor" },
-                    { value: "admin", label: "Admin" },
-                  ]}
-                  value={
-                    newUser.role
-                      ? {
-                          value: newUser.role,
-                          label:
-                            newUser.role.charAt(0).toUpperCase() +
-                            newUser.role.slice(1),
-                        }
-                      : null
-                  }
-                  onChange={(selected) =>
-                    setNewUser({ ...newUser, role: selected.value })
-                  }
-                  placeholder="Seleccionar rol"
-                />
-              </label>
-
-              <label>
-                Área:
-                <Select
-                  options={areas.map((area) => ({
-                    value: area.id,
-                    label: area.descripcion,
-                  }))}
-                  value={
-                    newUser.areaId
-                      ? {
-                          value: newUser.areaId,
-                          label: areas.find(
-                            (area) => area.id === newUser.areaId
-                          )?.descripcion,
-                        }
-                      : null
-                  }
-                  onChange={(selected) => handleAreaChange(selected.value)}
-                  placeholder="Seleccionar área"
-                />
-              </label>
-              <label>
-                Dirección:
-                <Select
-                  options={direcciones.map((direccion) => ({
-                    value: direccion.id,
-                    label: direccion.descripcion,
-                  }))}
-                  value={
-                    newUser.direccionId
-                      ? {
-                          value: newUser.direccionId,
-                          label: direcciones.find(
-                            (d) => d.id === newUser.direccionId
-                          )?.descripcion,
-                        }
-                      : null
-                  }
-                  onChange={(selected) =>
-                    setNewUser({ ...newUser, direccionId: selected.value })
-                  }
-                  placeholder="Seleccionar dirección"
-                />
-              </label>
-              <label>
-                Teléfono:
-                <input
-                  type="text"
-                  value={newUser.telefono}
-                  onChange={(e) =>
-                    setNewUser({ ...newUser, telefono: e.target.value })
-                  }
-                />
-              </label>
-              {!editingUser && (
+            <form className="form-columns">
+              <div className="column">
                 <label>
-                  Contraseña:
+                  Correo:
                   <input
-                    type="password"
-                    value={newUser.password}
+                    type="email"
+                    value={newUser.correo}
                     onChange={(e) =>
-                      setNewUser({ ...newUser, password: e.target.value })
+                      setNewUser({ ...newUser, correo: e.target.value })
+                    }
+                    disabled={!!editingUser}
+                  />
+                </label>
+                {error && <p style={{ color: "red" }}>{error}</p>}
+                <label>
+                  Nombre:
+                  <input
+                    type="text"
+                    value={newUser.nombre}
+                    onChange={(e) =>
+                      setNewUser({ ...newUser, nombre: e.target.value })
                     }
                   />
                 </label>
-              )}
+                <div className="contenedor-inputs">
+                  <label>
+                    Teléfono:
+                    <input
+                      type="text"
+                      value={newUser.telefono}
+                      onChange={(e) =>
+                        setNewUser({ ...newUser, telefono: e.target.value })
+                      }
+                    />
+                  </label>
+                  {!editingUser && (
+                    <label>
+                      Contraseña:
+                      <input
+                        type="password"
+                        value={newUser.password}
+                        onChange={(e) =>
+                          setNewUser({ ...newUser, password: e.target.value })
+                        }
+                      />
+                    </label>
+                  )}
+                </div>
+              </div>
+
+              <div className="column">
+                <label>
+                  Rol:
+                  <Select
+                    options={[
+                      { value: "secretario", label: "Secretario" },
+                      { value: "solicitante", label: "Solicitante" },
+                      { value: "autorizante", label: "Autorizante" },
+                      { value: "bloqueado", label: "Bloqueado" },
+                      { value: "receptor", label: "Receptor" },
+                      { value: "admin", label: "Admin" },
+                    ]}
+                    value={
+                      newUser.role
+                        ? {
+                            value: newUser.role,
+                            label:
+                              newUser.role.charAt(0).toUpperCase() +
+                              newUser.role.slice(1),
+                          }
+                        : null
+                    }
+                    onChange={(selected) =>
+                      setNewUser({ ...newUser, role: selected.value })
+                    }
+                    placeholder="Seleccionar rol"
+                  />
+                </label>
+
+                <label>
+                  Área:
+                  <Select
+                    options={areas.map((area) => ({
+                      value: area.id,
+                      label: area.descripcion,
+                    }))}
+                    value={
+                      newUser.areaId
+                        ? {
+                            value: newUser.areaId,
+                            label: areas.find(
+                              (area) => area.id === newUser.areaId
+                            )?.descripcion,
+                          }
+                        : null
+                    }
+                    onChange={(selected) => handleAreaChange(selected.value)}
+                    placeholder="Seleccionar área"
+                  />
+                </label>
+                <label>
+                  Dirección:
+                  <Select
+                    options={direcciones.map((direccion) => ({
+                      value: direccion.id,
+                      label: direccion.descripcion,
+                    }))}
+                    value={
+                      newUser.direccionId
+                        ? {
+                            value: newUser.direccionId,
+                            label: direcciones.find(
+                              (d) => d.id === newUser.direccionId
+                            )?.descripcion,
+                          }
+                        : null
+                    }
+                    onChange={(selected) =>
+                      setNewUser({ ...newUser, direccionId: selected.value })
+                    }
+                    placeholder="Seleccionar dirección"
+                  />
+                </label>
+              </div>
             </form>
             <div className="modal-buttons">
               <button onClick={editingUser ? handleUpdateUser : handleAddUser}>

@@ -252,11 +252,7 @@ function TopBar() {
     <header className="top-bar">
       <div className="right-content">
         <div className="icons">
-          <div className="settings-icon">
-            <button onClick={toggleSettingsModal}>
-              <FontAwesomeIcon icon={faCog} />
-            </button>
-          </div>
+          
           <button className="notification-icon" onClick={toggleNotifications}>
             <FontAwesomeIcon icon={faBell} />
             {userNotifications.length - seenNotifications.length > 0 && (
@@ -328,6 +324,7 @@ function TopBar() {
                 )}
               </ul>
             </div>
+            
           )}
           {role === "admin" && (
             <div className="message-dropdown">
@@ -384,7 +381,13 @@ function TopBar() {
               )}
             </div>
           )}
+          <div className="settings-icon">
+            <button onClick={toggleSettingsModal}>
+              <FontAwesomeIcon icon={faCog} />
+            </button>
+          </div>
         </div>
+        
 
         <div className="user-info">
           {loading ? (

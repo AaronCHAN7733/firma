@@ -8,7 +8,7 @@ import Swal from "sweetalert2";
 import TopBar from "../TopBar";
 import Navbar from "../Navbar";
 
-function FirmarAutorizarAdmin() {
+function AsignarClaves() {
   const location = useLocation();
   const { requisicion } = location.state || {};
   const [modalVisible, setModalVisible] = useState(false);
@@ -22,6 +22,9 @@ function FirmarAutorizarAdmin() {
   const [requisicionFirmada, setRequisicionFirmada] = useState(false);
   const [detallesFirmas, setDetallesFirmas] = useState([]);
   const [isSidebarVisible, setSidebarVisible] = useState(true);
+  const [modalClaveVisible, setModalClaveVisible] = useState(false);
+  const [clavePresupuestal, setClavePresupuestal] = useState("");
+  const [claveAsignada, setClaveAsignada] = useState(false);
 
   const auth = getAuth();
   const usuario = auth.currentUser;
@@ -35,6 +38,40 @@ function FirmarAutorizarAdmin() {
       0
     );
   };
+  useEffect(() => {
+    if (requisicion) {
+      obtenerFirmaExistente();
+      verificarRequisicionFirmada();
+
+      // Verificar si la requisición tiene clave asignada
+      if (requisicion.clavePresupuestal) {
+        setClaveAsignada(true);
+      }
+    }
+  }, [requisicion]);
+
+  const asignarClave = async () => {
+    try {
+      await updateDoc(doc(db, "requisiciones", requisicion.id), {
+        clavePresupuestal: clavePresupuestal,
+      });
+      Swal.fire(
+        "¡Clave Asignada!",
+        "Clave presupuestal asignada con éxito.",
+        "success"
+      );
+      setModalClaveVisible(false);
+      setClaveAsignada(true); // Actualiza el estado a true después de asignar la clave
+    } catch (error) {
+      console.error("Error al asignar clave presupuestal:", error);
+      Swal.fire("Error", "No se pudo asignar la clave presupuestal.", "error");
+    }
+  };
+
+  const abrirModalClave = () => {
+    setModalClaveVisible(true);
+  };
+
   const generarCodigoFirma = () => {
     return Math.floor(1000000000 + Math.random() * 9000000000).toString();
   };
@@ -104,7 +141,7 @@ function FirmarAutorizarAdmin() {
           firmaId: usuario.uid,
           codigo: firmaExistente.codigo,
           fecha: new Date().toISOString(),
-          accion: "autorizó",
+          accion: "Asignó clave presupuestal",
         };
 
         try {
@@ -116,7 +153,7 @@ function FirmarAutorizarAdmin() {
 
           // Actualizar estatus de la requisición
           await updateDoc(doc(db, "requisiciones", requisicion.id), {
-            estatus: "En revisión",
+            estatus: "Recibido por el rector",
           });
 
           Swal.fire({
@@ -239,132 +276,200 @@ function FirmarAutorizarAdmin() {
       console.error("Error al obtener detalles de las firmas:", error);
     }
   };
- 
 
   const toggleSidebar = () => setSidebarVisible(!isSidebarVisible);
 
   return (
     <div className={`admin-container ${isSidebarVisible ? "shifted" : ""}`}>
-      <button className={`hamburger-btn ${isSidebarVisible ? 'shifted' : ''}`} onClick={toggleSidebar}>
+      <button
+        className={`hamburger-btn ${isSidebarVisible ? "shifted" : ""}`}
+        onClick={toggleSidebar}
+      >
         ☰
       </button>
 
-      <Navbar isSidebarVisible={isSidebarVisible} toggleSidebar={toggleSidebar} />
+      <Navbar
+        isSidebarVisible={isSidebarVisible}
+        toggleSidebar={toggleSidebar}
+      />
 
       <main className={`main-content ${isSidebarVisible ? "shifted" : ""}`}>
         <TopBar userName="Administrador" />
         <section className="content">
-        <div className="content-container">
-          <h3 className="detalles-requisicion-header">Detalles de la Requisición</h3>
+          <div className="content-container">
+            <h3 className="detalles-requisicion-header">
+              Detalles de la Requisición
+            </h3>
 
-          <div className="detalles-requisicion-content">
-            <div><strong>Usuario que realizó la Requisición:</strong> {requisicion.nombreUsuario}</div>
-            <div><strong>Área solicitante:</strong> {requisicion.areaSolicitante}</div>
-            <div><strong>Componente:</strong> {requisicion.componente}</div>
-            <div><strong>Concepto:</strong> {requisicion.concepto}</div>
-            <div><strong>Dirección de Adscripción:</strong> {requisicion.direccionAdscripcion}</div>
-            <div><strong>Estatus:</strong> {requisicion.estatus}</div>
-            <div><strong>Fecha de Elaboración:</strong> {requisicion.fechaElaboracion}</div>
-            <div><strong>Fecha del Evento:</strong> {requisicion.fechaEvento}</div>
-            <div><strong>Folio:</strong> {requisicion.folio}</div>
-            <div><strong>Nombre del Evento:</strong> {requisicion.nombreEvento}</div>
-          </div>
-
-          <h4 className="tituloMateriales">Materiales/Servicios</h4>
-          <div className="table-container-detalles">
-            <table className="detalles-requisicion-table">
-              <thead>
-                <tr>
-                  <th>No.</th>
-                  <th>Cantidad</th>
-                  <th>Unidad</th>
-                  <th>Precio Unitario</th>
-                  <th>Concepto</th>
-                  <th>Partida</th>
-                  <th>Subtotal</th>
-                </tr>
-              </thead>
-              <tbody>
-                {requisicion.items &&
-                  requisicion.items.map((item, index) => (
-                    <tr key={index}>
-                      <td>{index + 1}</td>
-                      <td>{item.cantidad}</td>
-                      <td>{item.unidad}</td>
-                      <td>{item.precioUnitario}</td>
-                      <td>{item.concepto}</td>
-                      <td>{item.partida}</td>
-                      <td>{item.subtotal}</td>
-                    </tr>
-                  ))}
-              </tbody>
-            </table>
-          </div>
-
-          <div className="total-section-firmante">
-            <strong>Total: </strong> {calcularTotal().toFixed(2)}
-          </div>
-
-          <h4>Firma del responsable</h4>
-          <div className="detalles-firmas-solicitadas">
-            {detallesFirmas.length > 0 ? (
-              detallesFirmas.map((detalle, index) => (
-                <div key={index} className="firma-card">
-                  <p><strong>Acción:</strong> {detalle.accion}</p>
-                  <p><strong>Código de Firma:</strong> {detalle.codigo}</p>
-                  <p><strong>Fecha:</strong> {new Date(detalle.fechaFirma).toLocaleString()}</p>
-                  <p><strong>Usuario:</strong> {detalle.nombreUsuario}</p>
-                </div>
-              ))
-            ) : (
-              <p>No hay firmas solicitadas para mostrar.</p>
-            )}
-          </div>
-
-          {firmaValidada ? (
-            <div className="firma-validada">
-              <p>Código de Firma: {codigoFirma}</p>
-            </div>
-          ) : cargandoRequisicion ? (
-            <div className="cargando">
-              <p>Cargando...</p>
-            </div>
-          ) : requisicionFirmada ? (
-            <div className="requisicion-firmada">
-              <p>Esta requisición ya ha sido autorizada.</p>
-            </div>
-          ) : (
-            <button className="firmar-button" onClick={abrirModal}>
-              {firmaExistente ? "Firmar Requisición" : "Crear Firma"}
-            </button>
-          )}
-
-          {modalVisible && (
-            <div className="firma-modal">
-              <div className="modal-content-firma">
-                <h4>Introduzca su firma (5 dígitos)</h4>
-                <input
-                  type="text"
-                  value={firma}
-                  onChange={(e) => setFirma(e.target.value)}
-                  maxLength={5}
-                  placeholder="Ingrese su firma"
-                />
-                {mensajeError && <p className="error-message">{mensajeError}</p>}
-                <button onClick={firmarRequisicion} className="confirmar-firma-button">
-                  Confirmar Firma
-                </button>
+            <div className="detalles-requisicion-content">
+              <div>
+                <strong>Usuario que realizó la Requisición:</strong>{" "}
+                {requisicion.nombreUsuario}
+              </div>
+              <div>
+                <strong>Área solicitante:</strong> {requisicion.areaSolicitante}
+              </div>
+              <div>
+                <strong>Componente:</strong> {requisicion.componente}
+              </div>
+              <div>
+                <strong>Concepto:</strong> {requisicion.concepto}
+              </div>
+              <div>
+                <strong>Dirección de Adscripción:</strong>{" "}
+                {requisicion.direccionAdscripcion}
+              </div>
+              <div>
+                <strong>Estatus:</strong> {requisicion.estatus}
+              </div>
+              <div>
+                <strong>Fecha de Elaboración:</strong>{" "}
+                {requisicion.fechaElaboracion}
+              </div>
+              <div>
+                <strong>Fecha del Evento:</strong> {requisicion.fechaEvento}
+              </div>
+              <div>
+                <strong>Folio:</strong> {requisicion.folio}
+              </div>
+              <div>
+                <strong>Nombre del Evento:</strong> {requisicion.nombreEvento}
               </div>
             </div>
-          )}
-        </div>
-          
-        </section>
 
-       
+            <h4 className="tituloMateriales">Materiales/Servicios</h4>
+            <div className="table-container-detalles">
+              <table className="detalles-requisicion-table">
+                <thead>
+                  <tr>
+                    <th>No.</th>
+                    <th>Cantidad</th>
+                    <th>Unidad</th>
+                    <th>Precio Unitario</th>
+                    <th>Concepto</th>
+                    <th>Partida</th>
+                    <th>Subtotal</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {requisicion.items &&
+                    requisicion.items.map((item, index) => (
+                      <tr key={index}>
+                        <td>{index + 1}</td>
+                        <td>{item.cantidad}</td>
+                        <td>{item.unidad}</td>
+                        <td>{item.precioUnitario}</td>
+                        <td>{item.concepto}</td>
+                        <td>{item.partida}</td>
+                        <td>{item.subtotal}</td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="total-section-firmante">
+              <strong>Total: </strong> {calcularTotal().toFixed(2)}
+            </div>
+
+            <h4>Firmas de los responsables</h4>
+            <div className="detalles-firmas-solicitadas">
+              {detallesFirmas.length > 0 ? (
+                detallesFirmas.map((detalle, index) => (
+                  <div key={index} className="firma-card">
+                    <p>
+                      <strong>Acción:</strong> {detalle.accion}
+                    </p>
+                    <p>
+                      <strong>Código de Firma:</strong> {detalle.codigo}
+                    </p>
+                    <p>
+                      <strong>Fecha:</strong>{" "}
+                      {new Date(detalle.fechaFirma).toLocaleString()}
+                    </p>
+                    <p>
+                      <strong>Usuario:</strong> {detalle.nombreUsuario}
+                    </p>
+                  </div>
+                ))
+              ) : (
+                <p>No hay firmas solicitadas para mostrar.</p>
+              )}
+            </div>
+
+            {firmaValidada ? (
+              <div className="firma-validada">
+                <p>Código de Firma: {codigoFirma}</p>
+              </div>
+            ) : cargandoRequisicion ? (
+              <div className="cargando">
+                <p>Cargando...</p>
+              </div>
+            ) : requisicionFirmada ? (
+              <div className="requisicion-firmada">
+                <p>Esta requisición ya ha sido autorizada.</p>
+              </div>
+            ) : claveAsignada ? (
+              <button className="firmar-button" onClick={abrirModal}>
+                {firmaExistente ? "Firmar Requisición" : "Crear Firma"}
+              </button>
+            ) : (
+              <button
+                className="asignar-clave-button"
+                onClick={abrirModalClave}
+              >
+                Asignar Clave
+              </button>
+            )}
+
+            {modalClaveVisible && (
+              <div className="modal-overlay">
+                <div className="modal">
+                  <h2>Asignar Clave Presupuestal</h2>
+                  <input
+                    type="text"
+                    value={clavePresupuestal}
+                    onChange={(e) => setClavePresupuestal(e.target.value)}
+                    placeholder="Ingresa la clave"
+                  />
+                  <button onClick={asignarClave}>
+                    Guardar Clave
+                  </button>
+                  <button onClick={() => setModalClaveVisible(false)}>
+                    Cancelar
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {modalVisible && (
+              <div className="firma-modal">
+                <div className="modal-content-firma">
+                  <h4>Introduzca su firma (5 dígitos)</h4>
+                  <input
+                    type="text"
+                    value={firma}
+                    onChange={(e) => setFirma(e.target.value)}
+                    maxLength={5}
+                    placeholder="Ingrese su firma"
+                  />
+                  {mensajeError && (
+                    <p className="error-message">{mensajeError}</p>
+                  )}
+                  <button
+                    onClick={firmarRequisicion}
+                    className="confirmar-firma-button"
+                  >
+                    Confirmar Firma
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </section>
       </main>
     </div>
   );
 }
 
-export default FirmarAutorizarAdmin;
+export default AsignarClaves;
